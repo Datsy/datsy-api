@@ -22,15 +22,26 @@ module.exports = function(grunt) {
       }
     },
 
-    mochacli: {
-      options: {
-        ui: 'bdd',
-        reporter: 'spec',
-        timeout: '15000'
+    mochacov: {
+      unit: {
+        options: {
+          reporter: 'spec'
+        }
       },
 
-      unit: {
-        src: ['test/unit/*_spec.js']
+      coveralls: {
+        options: {
+          coveralls: {
+            serviceName: 'travis-ci'
+          }
+        }
+      },
+
+      options: {
+        files: 'test/**/*_spec.js',
+        ui: 'bdd',
+        timeout: '15000',
+        colors: true
       }
     },
 
@@ -49,11 +60,13 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-nodemon');
-  grunt.loadNpmTasks('grunt-mocha-cli');
+  grunt.loadNpmTasks('grunt-mocha-cov');
 
   // ## Running the test suites
 
-  grunt.registerTask('test-unit', 'Run unit tests', ['mochacli:unit']);
+  grunt.registerTask('test', 'Run unit tests', ['mochacov:unit']);
+
+  grunt.registerTask('travis', 'Run tests for Coveralls.io', ['mochacov:coveralls']);
 
   // When you just say 'grunt'
   grunt.registerTask('default', ['jshint', 'nodemon', 'watch']);
