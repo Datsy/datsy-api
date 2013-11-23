@@ -1,5 +1,11 @@
 cats
 cat_name,cat_age
 VARCHAR(50),INT
-kitty,baby,cutie,pie,mimi,fluffy,scruffy,brad
-1,2,3,4,5,6,7,8
+kitty,1
+baby,2
+cutie,3
+pie,4
+mim,5
+fluffy,6
+scruffy,7
+brad,8

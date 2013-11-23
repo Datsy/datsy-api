@@ -5,28 +5,45 @@ var conString = "postgres://masterofdata:gj1h23gnbfsjdhfg234234kjhskdfjhsdfKJHsd
 var client = new pg.Client(conString);
 var dir='./rawcsv/';
 
+var insertDB = function (createQS, insertQS) {
+  client.connect(function(err) {
+    if(err) {
+      return console.error('could not connect to postgres', err);
+    }
+    // client.query('DROP TABLE IF EXISTS ' + tablename + ';', function(err, result) {
+    //   if(err) { return console.error('error with creation', err);}
+    //   console.log('created table' + tablename);
+    // });
+    client.query(createQS, function(err, result) {
+      if(err) { return console.error('error with creation', err);}
+      console.log('created table');
+    });
+
+    client.query(insertQS, function(err, result) {
+      if(err) { return console.error('error with insertion', err);}
+      console.log('inserted data into');
+      client.end();
+    });
+  });
+};
+
+
 var processFile = function(tablename, col_names, col_types, col_values) {
 
   var num_col = col_names.length;
   var createQS = 'CREATE TABLE IF NOT EXISTS '+ tablename +' (';//ID INT PRIMARY KEY NOT NULL
   var insertQS = 'INSERT INTO ' + tablename+ ' (' + col_names.toString() + ')' + ' VALUES '
 
-  var col_values_array = [];
-
   for (var i = 0; i < num_col; i++) {
     createQS += col_names[i] + ' ' + col_types[i] + ' NOT NULL';
     if (i < num_col - 1) {createQS += ',';}
-    col_values_array.push(col_values[i].split(','));
   }
-  var num_row = col_values_array[0].length;
+  var num_row = col_values.length;
 
   for (var i = 0; i < num_row; i++) {
-    insertQS += ' (';
-    for (var j = 0; j < num_col; j++) {
-      insertQS += '\'' + col_values_array[j][i] + '\'';
-      if (j < num_col -1) {insertQS += ', ';}
-    }
-    insertQS += ')';
+    insertQS += ' (\'';
+    insertQS += col_values[i].split(',').join('\',\'');
+    insertQS += '\')';
     if (i < num_row - 1) {
       insertQS += ',';
     }
@@ -38,27 +55,9 @@ var processFile = function(tablename, col_names, col_types, col_values) {
     
   console.log('create ', createQS);
   console.log('insert ', insertQS);
+  insertDB(createQS, insertQS);
 
 
-  client.connect(function(err) {
-    if(err) {
-      return console.error('could not connect to postgres', err);
-    }
-    // client.query('DROP TABLE IF EXISTS ' + tablename + ';', function(err, result) {
-    //   if(err) { return console.error('error with creation', err);}
-    //   console.log('created table' + tablename);
-    // });
-    client.query(createQS, function(err, result) {
-      if(err) { return console.error('error with creation', err);}
-      console.log('created table' + tablename);
-    });
-
-    client.query(insertQS, function(err, result) {
-      if(err) { return console.error('error with insertion', err);}
-      console.log('inserted data into' + tablename);
-      client.end();
-    });
-  });
 };
 
 
