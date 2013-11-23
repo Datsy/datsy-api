@@ -66,7 +66,7 @@ module.exports = function(grunt) {
 
   grunt.registerTask('test', 'Run unit tests', ['mochacov:unit']);
 
-  grunt.registerTask('travis', 'Run tests for Coveralls.io', ['mochacov:coveralls']);
+  grunt.registerTask('travis', 'Run tests for Coveralls.io', ['mochacov:unit', 'mochacov:coveralls']);
 
   // When you just say 'grunt'
   grunt.registerTask('default', ['jshint', 'nodemon', 'watch']);
