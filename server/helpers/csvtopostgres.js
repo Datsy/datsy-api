@@ -53,11 +53,9 @@ var processFile = function(tablename, col_names, col_types, col_values) {
   insertQS += ';';
   
     
-  console.log('create ', createQS);
-  console.log('insert ', insertQS);
+  // console.log('create ', createQS);
+  // console.log('insert ', insertQS);
   insertDB(createQS, insertQS);
-
-
 };
 
 
