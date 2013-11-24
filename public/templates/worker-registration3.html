@@ -1,0 +1,236 @@
+<div class="container">
+
+  <div class="well hero-spacer">
+    <h3>Your Caregiver Profile, Continued</h3>
+  </div>
+
+
+    <form role="form">
+
+      <div class="row">
+        <div class="well">
+          <div class="form-group">
+            <label>What is your education experience?</label>
+            <select ng-model="education">
+              <option>Some high school</option>
+              <option>High school diploma</option>
+              <option>Some college</option>
+              <option>Undergraduate degree</option>
+              <option>Graduate degree</option>
+            </select>
+          </div>
+          </div>
+        </div>
+      </div>
+
+        <div class="well">
+          <div class="form-group">
+            <label >Number of years worked as a professional caregiver.</label>
+            <select ng-model="yearsExperience">
+              <option>0</option>
+              <option>1</option>
+              <option>2</option>
+              <option>3</option>
+              <option>4</option>
+              <option>5+</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="well">
+          <div class="form-group control-group">
+            <label for="inputEmail">Enter the name of your previous employer</label>
+            <input ng-model="employerName" class="form-control" placeholder="Employer Name" >
+          </div>
+        </div>
+
+        <div class="well">
+          <h4 class="pull-left">Which of the following certifications do you currently have?</h4>
+              <div class="clearfix"></div>
+                <div class="checkbox-columns">
+                    <label class="checkbox span1">
+                        <input type="checkbox" value="option1" ng-model="PCA"> PCA
+                    </label>
+                    <label class="checkbox span2">
+                        <input type="checkbox" ng-model="CHHA" value="option2"> CHHA (Home Health Aide)
+                    </label>
+                    <label class="checkbox span2">
+                        <input type="checkbox" ng-model="CNA" value="option3"> CNA
+                    </label>
+                    <label class="checkbox span2">
+                        <input type="checkbox" ng-model="LPN" value="option3"> LPN
+                    </label>
+                </div>
+          </div>
+        </div>
+
+
+          <div class="well">
+          <h4 class="pull-left">Which of the following languages do you speak?</h4>
+              <div class="clearfix"></div>
+                <div class="checkbox-columns">
+                    <table class='table'>
+                      <tr>
+                        <td><label class="checkbox span1">
+                            <input type="checkbox" ng-model="language.Arabic" value="option1"> Arabic
+                        </label></td>
+                        <td><label class="checkbox span2">
+                            <input type="checkbox" ng-model="language.Chinese_Cantonese" value="option2"> Chinese Cantonese
+                        </label></td>
+                        <td><label class="checkbox span2">
+                            <input type="checkbox" ng-model="language.Chinese_Mandarin" value="option3"> Chinese Mandarin
+                        </label></td>
+                      </tr>
+                      <tr>
+                        <td><label class="checkbox span2">
+                            <input type="checkbox" ng-model="language.Farsi" value="option3"> Farsi
+                        </label></td>
+                        <td><label class="checkbox span2">
+                            <input type="checkbox" ng-model="language.Filipino" value="option3"> Filipino
+                        </label></td>
+                        <td><label class="checkbox span2">
+                            <input type="checkbox" ng-model="language.French" value="option3"> French
+                        </label></td>
+                      </tr>
+                      <tr>
+                        <td><label class="checkbox span2">
+                            <input type="checkbox" ng-model="language.Greek" value="option3"> Greek
+                        </label></td>
+                        <td><label class="checkbox span2">
+                            <input type="checkbox" ng-model="language.Hebrew" value="option3"> Hebrew
+                        </label></td>
+                        <td><label class="checkbox span2">
+                            <input type="checkbox" ng-model="language.Hindu" value="option3"> Hindu
+                        </label></td>
+                      </tr>
+                      <tr>
+                        <td><label class="checkbox span2">
+                            <input type="checkbox" ng-model="language.Italian" value="option3"> Italian
+                        </label></td>
+                        <td><label class="checkbox span2">
+                            <input type="checkbox" ng-model="language.Japanese" value="option3"> Japanese
+                        </label></td>
+                        <td><label class="checkbox span2">
+                            <input type="checkbox" ng-model="language.Korean" value="option3"> Korean
+                        </label></td>
+                      </tr>
+                      <tr>
+                        <td><label class="checkbox span2">
+                            <input type="checkbox" ng-model="language.Polish" value="option3"> Polish
+                        </label></td>
+                        <td><label class="checkbox span2">
+                            <input type="checkbox" ng-model="language.Russian" value="option3"> Russian
+                        </label></td>
+                        <td><label class="checkbox span2">
+                            <input type="checkbox" ng-model="language.Spanish" value="option3"> Spanish
+                        </label></td>
+                      </tr>
+                      <tr>
+                        <td><label class="checkbox span2">
+                            <input type="checkbox" ng-model="language.Swahili" value="option3"> Swahili
+                        </label></td>
+                        <td><label class="checkbox span2">
+                            <input type="checkbox" ng-model="language.Vietnamese" value="option3"> Vietnamese
+                        </label></td>
+                      </tr>
+                    </table>
+                </div>
+          </div>
+        </div>
+
+
+
+          <div class="well">
+          <h4 class="pull-left">Select the experience that you have:</h4>
+              <div class="clearfix"></div>
+                <div class="checkbox-columns">
+                    <table class='table'>
+                      <tr>
+                        <td><label class="checkbox span1">
+                            <input ng-model="spec.Alzheimers" type="checkbox" value="option1"> Experience: Alzheimers/Dementia
+                        </label></td>
+                        <td><label  class="checkbox span2">
+                            <input ng-model="spec.Handicapped" type="checkbox" value="option2"> Experience: Handicapped Patients
+                        </label></td>
+                        <td><label  class="checkbox span2">
+                            <input ng-model="spec.Hospice" type="checkbox" value="option3"> Experience: Hospice Patience
+                        </label></td>
+                      </tr>
+                      <tr>
+                        <td><label  class="checkbox span2">
+                            <input ng-model="spec.Gastronomy" type="checkbox" value="option3"> Experience: Gastronomy Tubes
+                        </label></td>
+                        <td><label  class="checkbox span2">
+                            <input ng-model="spec.Breathing" type="checkbox" value="option3"> Experience: Breathing Treatments
+                        </label></td>
+                        <td><label class="checkbox span2">
+                            <input ng-model="spec.Hoyer" type="checkbox" value="option3"> Experience: Hoyer Lifts / Gait Belts
+                        </label></td>
+                      </tr>
+                      <tr>
+                        <td><label class="checkbox span2">
+                            <input ng-model="spec.SpecialMeal" type="checkbox" value="option3"> Experience: Special Meal Prep
+                        </label></td>
+                        <td><label class="checkbox span2">
+                            <input ng-model="spec.Childcare" type="checkbox" value="option3"> Experience: Childcare
+                        </label></td>
+                        <td><label class="checkbox span2">
+                            <input ng-model="spec.Psychiatric" type="checkbox" value="option3"> Experience: Psychiatric
+                        </label></td>
+                      </tr>
+                      <tr>
+                        <td><label class="checkbox span2">
+                            <input ng-model="spec.Geriatric" type="checkbox" value="option3"> Experience: Geriatric
+                        </label></td>
+                        <td><label class="checkbox span2">
+                            <input ng-model="spec.Homecare" type="checkbox" value="option3"> Experience: Homecare
+                        </label></td>
+                        <td><label class="checkbox span2">
+                            <input ng-model="spec.AssistedLiving" type="checkbox" value="option3"> Experience: Assisted Living
+                        </label></td>
+                      </tr>
+                    </table>
+                </div>
+          </div>
+        </div>
+
+
+        <div class="well">
+          <h4 class="pull-left">Select the certifications you have completed:</h4>
+              <div class="clearfix"></div>
+                <div class="checkbox-columns">
+                    <table class='table'>
+                      <tr>
+                        <td><label class="checkbox span2">
+                            <input ng-model="Fingerprints" type="checkbox" value="option3"> Completed: State Fingerprint Background
+                        </label></td>
+                        <td><label class="checkbox span2">
+                            <input ng-model="AHCALevel2" type="checkbox" value="option3"> Completed: AHCA Level 2 Background
+                        </label></td>
+                        <td><label class="checkbox span2">
+                            <input ng-model="CPR" type="checkbox" value="option3"> Completed: CPR Certification
+                        </label></td>
+                      </tr>
+                      <tr>
+                        <td><label class="checkbox span2">
+                            <input ng-model="FirstAid" type="checkbox" value="option3"> Completed: First Aid Certification
+                        </label></td>
+                        <td><label class="checkbox span2">
+                            <input ng-model="BLS" type="checkbox" value="option3"> Completed: BLS Certification (Life Support)
+                        </label></td>
+                        <td><label class="checkbox span2">
+                            <input ng-model="TBTest" type="checkbox" value="option3"> Completed: TB Test/Chest X-Ray
+                        </label></td>
+                      </tr>
+                    </table>
+                </div>
+          </div>
+        </div>
+
+
+        <a ng-click="processFormData()"><button type="submit" class="btn btn-default">Next...</button></a>
+        </form>
+      </div>
+      
+      
+      <hr>
