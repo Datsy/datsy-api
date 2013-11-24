@@ -21,7 +21,6 @@ var insertDB = function (createQS, insertQS) {
       client.end();
     });
   });
-  
 };
 
 var createQString = function(tablename, col_names, col_types, col_values) {
@@ -43,18 +42,12 @@ var createQString = function(tablename, col_names, col_types, col_values) {
       insertQS += ',';
     }
   }
-
   createQS += ');';
   insertQS += ';';
-        // client.end();
   insertDB(createQS, insertQS);
 };
 
-
 var readOne = function (filepath) {
-  // console.log(filepath);
-  // fs.readFile('./rawcsv/cat_rawdata.txt', {encoding:'utf8'},function(err, data) {
-  // fs.readFileSync(filepath, {encoding:'utf8'},function(err, data) {
     var data = fs.readFileSync('./rawcsv/2013-3rd-quarter.csv', 'utf8');
     var array = data.split('\n');
     var tablename = array[0];
@@ -63,7 +56,6 @@ var readOne = function (filepath) {
     var col_values = array.slice(3);
     createQString(tablename, col_names, col_types, col_values);
 };
-
 
 var readFolder = function () {
   fs.readdir(dir,function(err,files){
