@@ -22,6 +22,10 @@
 *.tar
 *.zip
 
+# Deployment environment variables #
+####################################
+.deploy
+
 # Logs and databases #
 ######################
 *.log
