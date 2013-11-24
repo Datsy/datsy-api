@@ -6,7 +6,9 @@ var client = new pg.Client(conString);
 var dir='./rawcsv/';
 
 var insertDB = function (createQS, insertQS) {
+  // client.end();
   client.connect(function(err) {
+  console.log('run');
     if(err) {
       return console.error('could not connect to postgres', err);
     }
@@ -24,12 +26,11 @@ var insertDB = function (createQS, insertQS) {
 };
 
 
-var processFile = function(tablename, col_names, col_types, col_values) {
+var createQString = function(tablename, col_names, col_types, col_values) {
   var num_col = col_names.length;
   var createQS = 'CREATE TABLE IF NOT EXISTS '+ tablename +' (';//ID INT PRIMARY KEY NOT NULL
   var insertQS = 'INSERT INTO ' + tablename+ ' (' + col_names.toString() + ')' + ' VALUES '
 
-  console.log(createQS.substring(0,20));
   for (var i = 0; i < num_col; i++) {
     createQS += col_names[i] + ' ' + col_types[i] + ' NOT NULL';
     if (i < num_col - 1) {createQS += ',';}
@@ -47,11 +48,7 @@ var processFile = function(tablename, col_names, col_types, col_values) {
 
   createQS += ');';
   insertQS += ';';
-  fs.writeFile('output.txt', createQS,function() {
-    
-  });
-  // console.log('create ', createQS.substring(createQS.length - 20));
-  // console.log('insert ', insertQS);
+        // client.end();
   insertDB(createQS, insertQS);
 };
 
@@ -66,9 +63,7 @@ var readOne = function (filepath) {
     var col_names = array[1].split(',');
     var col_types = array[2].split(',');
     var col_values = array.slice(3);
-
-    // Invoke the next step here however you like
-    processFile(tablename, col_names, col_types, col_values);          // Or put the next step in a function and invoke it
+    createQString(tablename, col_names, col_types, col_values);
 };
 
 
