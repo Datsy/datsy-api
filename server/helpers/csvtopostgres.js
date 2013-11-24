@@ -39,7 +39,7 @@ var createQString = function(tablename, col_names, col_types, col_values) {
 
   for (var i = 0; i < num_row; i++) {
     insertQS += ' (\'';
-    insertQS += col_values[i].split(',').join('\',\'');
+    insertQS += col_values[i].replace(/[^A-Za-z\s\d,&://]/g, '').split(',').join('\',\'');
     insertQS += '\')';
     if (i < num_row - 1) {
       insertQS += ',';
