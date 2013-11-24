@@ -8,23 +8,21 @@ var dir='./rawcsv/';
 var insertDB = function (createQS, insertQS) {
   // client.end();
   client.connect(function(err) {
-  console.log('run');
     if(err) {
       return console.error('could not connect to postgres', err);
     }
-    client.query(createQS, function(err, result) {
-      if(err) { return console.error('error with creation', err);}
-      console.log('created table');
-    });
-
+    // client.query(createQS, function(err, result) {
+    //   if(err) { return console.error('error with creation', err);}
+    //   console.log('created table');
+    // });
     client.query(insertQS, function(err, result) {
       if(err) { return console.error('error with insertion', err);}
       console.log('inserted data into');
       client.end();
     });
   });
+  
 };
-
 
 var createQString = function(tablename, col_names, col_types, col_values) {
   var num_col = col_names.length;
