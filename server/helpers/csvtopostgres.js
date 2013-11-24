@@ -1,7 +1,8 @@
 var pg = require('pg');
 var fs = require('fs');
 
-var conString = "postgres://masterofdata:gj1h23gnbfsjdhfg234234kjhskdfjhsdfKJHsdf234@137.135.14.92/postgres";
+var credentials = require('./dbconfig.json').db;
+var conString = "postgres://"+credentials.user+":" +credentials.password+ "@137.135.14.92/postgres";
 var client = new pg.Client(conString);
 var dir='./rawcsv/';
 
