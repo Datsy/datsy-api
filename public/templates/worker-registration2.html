@@ -1,0 +1,229 @@
+<script type="text/javascript"
+      src="https://apis.google.com/js/auth.js?onload=init">
+    </script>
+      <div class="well hero-spacer">
+        <h3>Your Caregiver Profile</h3>
+      </div>
+
+      <div class="row">
+        <form role="form">
+
+        <div class="well">
+          <div class="form-group">
+            <label for="inputEmail">What is your street name and number</label>
+            <input ng-model="street" class="form-control" placeholder="E.g. 123 Main Street" >
+            <br>
+            <label for="inputEmail">City, State, and Zip</label>
+            <input ng-model="cityStateZip" class="form-control" placeholder="E.g. San Francisco, CA 94103" >
+          </div>
+        </div>
+        <div class="well">
+          <div class="form-group">
+            <label for="exampleInputEmail1">Your Hourly Rate, Homecare and Hospital Jobs</label>
+            <select ng-model="hourlyRate">
+              <option>$8.00-$10.00</option>
+              <option>$10.00-$12.00</option>
+              <option>$12.00-$14.00</option>
+              <option>$14.00-$16.00</option>
+              <option>$18.00-$20.00</option>
+              <option>$20.00-$22.00</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="exampleInputEmail1">Your Hourly Rate, Live-in Homecare Jobs</label>
+            <select ng-model="dailyRate">
+              <option>$8.00-$10.00</option>
+              <option>$10.00-$12.00</option>
+              <option>$12.00-$14.00</option>
+              <option>$14.00-$16.00</option>
+              <option>$18.00-$20.00</option>
+              <option>$20.00-$22.00</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="well">
+          <h4 class="pull-left">Select the job opportunities that you are qualifed and would like to be considered for</h4>
+              <div class="clearfix"></div>
+                <div class="checkbox-columns">
+                    <label class="checkbox span1">
+                        <input ng-model="caregiver" type="checkbox" value="option1"> Caregiver/Homemaker
+                    </label>
+                    <label class="checkbox span2">
+                        <input ng-model="CHHA" type="checkbox" value="option2"> CHHA (Home Health Aide)
+                    </label>
+                    <label class="checkbox span2">
+                        <input ng-model="STNA" type="checkbox" value="option3"> STNA
+                    </label>
+                    <label class="checkbox span2">
+                        <input ng-model="PCA" type="checkbox" value="option3"> PCA
+                    </label>
+                    <label class="checkbox span2">
+                        <input ng-model="LPN" type="checkbox" value="option3"> LPN
+                    </label>
+                    <label class="checkbox span2">
+                        <input ng-model="CNA" type="checkbox" value="option3"> CNA
+                    </label>
+                </div>
+          </div>
+        </div>
+
+        <div class="row"> 
+          <div class="well">
+            <h4 class="pull-left">Which type of position are you interested in?</h4>
+                <div class="clearfix"></div>
+                  <div class="checkbox-columns">
+                      <label class="checkbox span2">
+                          <input ng-model="fullTime" type="checkbox" value="option1"> Full-Time
+                      </label>
+                      <label class="checkbox span2">
+                          <input type="checkbox" ng-model="partTime" value="option2"> Part-Time
+                      </label>
+                  </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row"> 
+          <div class="well">
+            <h4 class="pull-left">Which shift are you interested in?  Check all that apply.</h4>
+            <div class="clearfix"></div>
+              <div class="checkbox-columns">
+                  <label class="checkbox span2">
+                      <input type="checkbox" ng-model="dayShift" value="option1"> Day Shift
+                  </label>
+                  <label class="checkbox span2">
+                      <input type="checkbox" ng-model="nightShift" value="option2"> Night Shift
+                  </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="row"> 
+          <div class="well">
+            <h4 class="pull-left">Are you interested in working weekdays or weekends?  Select all that apply.</h4>
+                <div class="clearfix"></div>
+                  <div class="checkbox-columns">
+                      <label class="checkbox span2">
+                          <input type="checkbox" ng-model="weekDays" value="option1"> Weekdays
+                      </label>
+                      <label class="checkbox span2">
+                          <input type="checkbox" ng-model="weekEnds" value="option2"> Weekends
+                      </label>
+                  </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row"> 
+          <div class="well">
+            <h4 class="pull-left">Which of the following are you interested in?</h4>
+              <div class="clearfix"></div>
+                <div class="checkbox-columns">
+                  <label class="checkbox span2">
+                    <input type="checkbox" ng-model="homeCare" value="option1"> Home Care
+                  </label>
+                  <label class="checkbox span2">
+                    <input type="checkbox" ng-model="facilityCare" value="option2"> Facility
+                  </label>
+                </div>
+              </div>
+          </div>
+        </div>
+
+        <div class="row"> 
+          <div class="well">
+            <h4 class="pull-left">How many miles are you willing to travel for work?</h4>
+              <div class="clearfix"></div>
+              <select ng-model="range">
+                <option>up to 5 miles</option>
+                <option>up to 10 miles</option>
+                <option>up to 20 miles</option>
+                <option>up to 30 miles</option>
+                <option>up to 50 miles</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="row"> 
+          <div class="well">
+            <h4 class="pull-left">Some clients require a caregiver that can provide transportation to/from appointments.  Can you legally drive a client in your own car?</h4>
+              <div class="clearfix"></div>
+              <select ng-model="carAvailable">
+                <option>Yes</option>
+                <option>No</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="well">
+            <h4 class="pull-left">Which are you available to work with?</h4>
+            <div class="clearfix"></div>
+            <label class="checkbox span2">
+              <input type="checkbox" ng-model="catsOk" value="option3"> Available: Work With Clients Owning Cats
+              </label>
+              <label class="checkbox span2">
+                  <input type="checkbox" ng-model="dogsOk" value="option3"> Available: Work With Clients Owning Dogs
+              </label>
+              <label class="checkbox span2">
+                  <input type="checkbox" ng-model="smokeOk" value="option3"> Available: Work With Clients That Smoke
+              </label>
+              <label class="checkbox span2">
+                  <input type="checkbox" ng-modle="lift25ok" value="option3"> Available: Lift 25+ Pounds
+              </label>
+          </div>
+        </div>
+
+        <div class="row">
+        <div class="well">
+          <div class="form-group">
+          <h4>On a scale from one to five, how important is each of the following to you?</h4>
+            <label for="exampleInputEmail1">Patient Match</label>
+            <select ng-model="patientMatchScore">
+              <option>1</option>
+              <option>2</option>
+              <option>3</option>
+              <option>4</option>
+              <option>5</option>
+            </select>
+            <label for="exampleInputEmail1">Schedule Match</label>
+            <select ng-model="scheduleMatchScore">
+              <option>1</option>
+              <option>2</option>
+              <option>3</option>
+              <option>4</option>
+              <option>5</option>
+            </select>
+            <label for="exampleInputEmail1">Working close to home</label>
+            <select ng-model="workCloseToHomeScore">
+              <option>1</option>
+              <option>2</option>
+              <option>3</option>
+              <option>4</option>
+              <option>5</option>
+            </select>
+            <label for="exampleInputEmail1">Work Environment</label>
+            <select ng-model="workEnvironmentScore">
+              <option>1</option>
+              <option>2</option>
+              <option>3</option>
+              <option>4</option>
+              <option>5</option>
+            </select>
+          </div
+        </div>
+        </div>
+
+
+
+        <a ng-click="processFormData()"><button class="btn btn-default">Next...</button></a>
+        </form>
+      </div>
+
+
+
