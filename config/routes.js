@@ -42,7 +42,7 @@ module.exports = function(app,passport,Models){
   app.post('/signup', home.signup);
   app.get('/worker-sign-up/checkEmail', home.checkEmailIfExists);
   app.get('/signup/:token', home.workerSignupVerify);
-
+  app.post('/uploadFile', home.uploadFile);
   //**********************************
   // define admin routes
   //**********************************
