@@ -1,19 +1,32 @@
 {
-  "name": "INSERT_NAME_HERE",
-  "version": "0.0.1",
-  "description": "INSERT_DESCRIPTION_HERE",
+  "name": "Datsy",
+  "version": "0.1.0",
+  "description": "The Facebook of Data",
   "repository": {
     "type": "git",
     "url": "INSERT_REPOSITIRY_URL_HERE"
   },
   "dependencies": {
-    "express": "~3.4.4",
+    "express": "~3.4.x",
     "request": "~2.27.0",
     "factual-api": "~1.0.6",
     "pg": "~2.8.3",
     "node-fs": "~0.1.7",
-    "jugglingdb": "~0.2.4",
     "csv": "~0.3.6"
+    "jade": "*",
+    "passport": "latest",
+    "passport-local": "latest",
+    "connect-flash": "latest",
+    "email-templates": "0.0.5",
+    "nodemailer": "0.3.x",
+    "password-hash": "latest",
+    "q": "latest",
+    "underscore": "1.5.x",
+    "mailcomposer": "latest",
+    "simplesmtp": "latest",
+    "jugglingdb": "0.2.x",
+    "jugglingdb-postgres": "latest",
+    "knex": "~0.4.13"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
@@ -26,6 +39,12 @@
     "mocha": "~1.13.0",
     "chai": "~1.8.1",
     "coveralls": "~2.3.0",
-    "mocha-lcov-reporter": "0.0.1"
+    "mocha-lcov-reporter": "0.0.1",
+    "superagent": "latest",
+    "expect.js": "latest",
+    "should": "latest"
+  },
+  "scripts": {
+    "test": "NODE_ENV=test node_modules/.bin/mocha -w"
   }
 }
