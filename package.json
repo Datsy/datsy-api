@@ -12,7 +12,7 @@
     "factual-api": "~1.0.6",
     "pg": "~2.8.3",
     "node-fs": "~0.1.7",
-    "csv": "~0.3.6"
+    "csv": "~0.3.6",
     "jade": "*",
     "passport": "latest",
     "passport-local": "latest",
