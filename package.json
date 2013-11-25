@@ -26,7 +26,8 @@
     "simplesmtp": "latest",
     "jugglingdb": "0.2.x",
     "jugglingdb-postgres": "latest",
-    "knex": "~0.4.13"
+    "knex": "~0.4.13",
+    "azure": "~0.7.17"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
