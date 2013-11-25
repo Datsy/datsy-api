@@ -1,0 +1,18 @@
+extend layout
+
+block head
+
+block content
+  .container
+    div
+      .well.hero-spacer.well-background
+        h3 Please Login
+      .row
+        form(method='post', action='/user-login')
+          .form-group
+            label Email
+            input.form-control(type='text', placeholder='Enter your email', name='email', size='30')
+          .form-group
+            label Password
+            input.form-control(type='password', placeholder='Enter your password', name='password')
+            button.btn.btn-default Sign In

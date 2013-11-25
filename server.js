@@ -5,8 +5,8 @@
 var express = require('express');
 var http = require('http');
 var path = require('path');
-var config = require('./config/config.js');
-var router = require('./config/routes.js');
+var config = require('./config.js');
+var router = require('./server/config/routes.js');
 var util = require('util');
 var passport = require("passport");
 var port = process.env.PORT || 5000;
@@ -22,22 +22,22 @@ console.log("****************************");
 ////////////////////////////////////////
 //Database initialization
 ////////////////////////////////////////
-app.set('dbUrl', config.db[app.get('env')]);
-uristring = app.get('dbUrl');
+// app.set('dbUrl', config.db[app.get('env')]);
+// uristring = app.get('dbUrl');
 
-Models = require("./models/initModel.js")();
+Models = require("./server/models/initModel.js")();
 
-var models_dir = __dirname + '/models';
+var models_dir = __dirname + '/server/models';
 fs.readdirSync(models_dir).forEach(function (file) {
   if(file[0] === '.') return;
   require(models_dir+'/'+ file);
 });
 
-require('./config/passport')(passport, config, Models);
+require('./server/config/passport')(passport, config, Models);
 
 app.configure(function () {
   app.set('port', process.env.PORT || 3000);
-  app.set('views', __dirname + '/views');
+  app.set('views', __dirname + '/server/views');
   app.set('view engine', 'jade');
   app.use(express.favicon());
   app.use(express.logger('dev'));
@@ -49,7 +49,7 @@ app.configure(function () {
   app.use(express.methodOverride());
   app.use(flash());
   app.use(app.router);
-  app.use(express.static(path.join(__dirname, 'public')));
+  app.use(express.static(path.join(__dirname, 'client')));
 });
 
 //if in development, use error handler
