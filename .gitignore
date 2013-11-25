@@ -23,10 +23,6 @@
 *.tar
 *.zip
 
-# Deployment environment variables #
-####################################
-.deploy
-
 # Logs and databases #
 ######################
 *.log
@@ -43,3 +39,7 @@
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# Api Keys and Password
+#########################
+setting.js
