@@ -10,7 +10,7 @@ var index = function(Models){
 
   var User = Models.User;
   var EmailToken = Models.EmailToken;
-  var mailer = require('../util/sendEmail.js');
+  var mailer = require('../helpers/sendEmail.js');
 
   indexRoutes.index = function(req, res){
     res.render('index', { title: 'Express' });
