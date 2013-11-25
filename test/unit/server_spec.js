@@ -1,7 +1,7 @@
 var expect = require('chai').expect;
 var request = require('superagent');
 var should = require('should');
-var mailer = require('../../util/sendEmail.js');
+var mailer = require('../../server/helpers/sendEmail.js');
 
 console.log('NODE_ENV: '+process.env.NODE_ENV);
 
