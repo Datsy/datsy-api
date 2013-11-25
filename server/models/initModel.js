@@ -1,18 +1,18 @@
 var initModel = function(){
   var Models = {};
   var q = require('q');
-	var Schema = require('jugglingdb').Schema;
-	var schema = new Schema('postgres', {
-	  database: 'datsy',
-	  username: 'woonketwong'
+  var Schema = require('jugglingdb').Schema;
+  var schema = new Schema('postgres', {
+	database: 'datsy',
+	username: 'woonketwong'
 	  //port: 5432,
 	  //hostname: "localhost",
-	}); //port number depends on your configuration
+  }); //port number depends on your configuration
 
-	var JobApplicant = require('./jobApplicantModel.js')(schema);
-	var EmailToken = require('./emailTokenModel.js')(schema);
+	var User = require('./userModel.js')(schema);
+  var EmailToken = require('./emailTokenModel.js')(schema);
   Models = {
-  	JobApplicant: JobApplicant,
+  	User: User,
     EmailToken: EmailToken          
   };
 

@@ -1,5 +1,5 @@
 module.exports = function (passport, config, Models) {
-  var JobApplicant = Models.JobApplicant;
+  var User = Models.User;
   var LocalStrategy = require('passport-local').Strategy;
 
   passport.serializeUser(function(user, done) {
@@ -7,18 +7,17 @@ module.exports = function (passport, config, Models) {
   });
 
   passport.deserializeUser(function(id, done) {
-    JobApplicant.findOne({where:{ "_id": id }}, function (err, user) {
+    User.findOne({where:{ "_id": id }}, function (err, user) {
       done(err, user);
     });
   });
 
-  passport.use('jobApplicant', new LocalStrategy({
+  passport.use('user', new LocalStrategy({
 	  usernameField: 'email',
 	  passwordField: 'password'
   },
   function(email, password, done) {
-    console.log("In passport");
-    JobApplicant.prototype.isValidUserPassword(email, password, done);
+    User.prototype.isValidUserPassword(email, password, done);
   }));
 
 }
