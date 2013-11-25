@@ -29,6 +29,7 @@ dbconfig.json
 *.log
 *.sql
 *.sqlite
+*.csv
 
 # OS generated files #
 ######################
@@ -40,3 +41,4 @@ dbconfig.json
 .Trashes
 ehthumbs.db
 Thumbs.db
+
