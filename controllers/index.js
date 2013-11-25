@@ -5,6 +5,9 @@ var index = function(Models){
   var passwordHash = require('password-hash');
   var crypto = require('crypto');
   var q = require('q');
+  var fs = require('fs');
+  var csv = require('csv');
+
   var JobApplicant = Models.JobApplicant;
   var EmailToken = Models.EmailToken;
   var mailer = require('../util/sendEmail.js');
@@ -103,6 +106,7 @@ var index = function(Models){
           console.log("ERROR:",err);
         }
         console.log("good");
+      var deferred = q.defer();
         var confirmationLink = req.protocol + "://" + req.get('host') + req.url + "/" + newEmailToken.token;;
         var locals = {
           email: newEmailToken.email,
@@ -157,6 +161,51 @@ var index = function(Models){
           res.end(result);
         }
     });
+  };
+
+  indexRoutes.uploadFile = function(req, res){
+    console.log("****uploadFile", req.files);
+
+    var newPath = __dirname + "/../util/uploads/file1.csv";
+    
+    var readFile = function(){
+      var deferred = q.defer();
+      fs.readFile(req.files.csvFile.path, function (err, data) {
+        var newPath = __dirname + "/../util/uploads/file1.csv";
+        console.log("**new path", newPath);
+        fs.writeFile(newPath, data, function (err) {
+          deferred.resolve('deferred resolved!!');
+          // res.render('login');
+        });
+      });
+      return deferred.promise;
+    }
+    
+    readFile()
+    .then(function(){
+      // parse csv file
+      csv()
+      .from.path(newPath, { delimiter: ',', escape: '"' })
+      .to.stream(fs.createWriteStream(__dirname+'/sample.out'))
+      .transform( function(row){
+        row.unshift(row.pop());
+        return row;
+      })
+      .on('record', function(row,index){
+        console.log('#'+index+' '+JSON.stringify(row));
+      })
+      .on('close', function(count){
+        // when writing to a file, use the 'close' event
+        // the 'end' event may fire before the file has been written
+        console.log('Number of lines: '+count);
+      })
+      .on('error', function(error){
+        console.log(error.message);
+      });
+      res.render('login');
+    })
+  
+
   };
 
   return indexRoutes;
