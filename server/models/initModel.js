@@ -1,10 +1,11 @@
 var initModel = function(){
   var Models = {};
   var q = require('q');
+  // var setting = require('setting');
   var Schema = require('jugglingdb').Schema;
   var schema = new Schema('postgres', {
-	database: 'datsy',
-	username: 'woonketwong'
+	database: 'datsy'
+	// username: 'woonketwong'
 	  //port: 5432,
 	  //hostname: "localhost",
   }); //port number depends on your configuration
