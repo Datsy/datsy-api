@@ -1,8 +1,8 @@
 var passwordHash = require('password-hash');
 
-var JobApplicantModel = function(schema){
+var userModel = function(schema){
 
-  var JobApplicant = schema.define("user", {
+  var User = schema.define("user", {
     name: {type: String},
     email: {type: String},
     password: {type: String},
@@ -10,9 +10,9 @@ var JobApplicantModel = function(schema){
   });
 
 
-  JobApplicant.prototype.isValidUserPassword = function(email, rawPassword, done) {
+  User.prototype.isValidUserPassword = function(email, rawPassword, done) {
     console.log("is valid user password")
-    JobApplicant.findOne({where: {email : email}}, function(err, data){
+    User.findOne({where: {email : email}}, function(err, data){
       console.log(data)
       // if(err) throw err;
       if(err){
@@ -30,16 +30,16 @@ var JobApplicantModel = function(schema){
           message : 'Incorrect password'
         });
       } else {
-        console.log('job applicant login successful');
+        console.log('user login successful');
         return done(null, data);
       }
     });
   };
 
-  // JobApplicant.prototype.signup = function(name, email, password, done){
-  //   console.log("In jobApplicantSchema ")
-  //   var jobApplicant = this;
-  //   jobApplicant.create({
+  // User.prototype.signup = function(name, email, password, done){
+  //   console.log("In userSchema ")
+  //   var user = this;
+  //   user.create({
   //   name: name,
   //   email : email,
   //   password : password
@@ -50,10 +50,10 @@ var JobApplicantModel = function(schema){
   //   });
   // }
 
-  return JobApplicant;
+  return User;
 }
   
-module.exports = JobApplicantModel;
+module.exports = userModel;
 
 
 

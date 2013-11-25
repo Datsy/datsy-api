@@ -5,7 +5,7 @@ var LoginView = Backbone.View.extend({
 	    <h3>Please Login</h3>\
 	  </div>\
 	  <div class="row">\
-	    <form method="post" action="/worker-login">\
+	    <form method="post" action="/user-login">\
 	      <div class="form-group">\
 	        <label>Email</label>\
 	        <input type="text" placeholder="Enter your email" name="email" size="30" class="form-control">\

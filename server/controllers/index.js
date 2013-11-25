@@ -8,7 +8,7 @@ var index = function(Models){
   var fs = require('fs');
   var csv = require('csv');
 
-  var JobApplicant = Models.JobApplicant;
+  var User = Models.User;
   var EmailToken = Models.EmailToken;
   var mailer = require('../util/sendEmail.js');
 
@@ -28,37 +28,37 @@ var index = function(Models){
     res.end('fail');
   }
 
-  indexRoutes.workerSignupVerify = function(req, res){
+  indexRoutes.userSignupVerify = function(req, res){
     console.log("In SignupVerify");
     EmailToken.findOne({where: {token: req.params['token']}},
       function (err, result) {
         if (err) {
-          console.log("ERROR - workerSignupVerify aborted!!");
+          console.log("ERROR - userSignupVerify aborted!!");
         }
-        console.log("in workerSignupVerify");
+        console.log("in userSignupVerify");
         if (result === null){ //no email token found
           res.writeHead(404);
           res.end();
         } else{
-          var newUser = new JobApplicant({
+          var newUser = new User({
             name: result.name,
             email: result.email,
             password: result.password,
             account: "user" 
           });
           // console.log("RESULT***",result);
-          JobApplicant.findOne({where: {email: newUser}}, 
+          User.findOne({where: {email: newUser}}, 
             function (err, result) {
               if (err) {
-                console.log("ERROR - creating (workerSignupVerify) user aborted!!");
+                console.log("ERROR - creating (userSignupVerify) user aborted!!");
                 console.log("ERROR:",err);
               }
-                console.log("in JobApplicant findOne");
+                console.log("in User findOne");
               if (result === null) { // create user
                 // console.log('result is null, we are creating a new user');
                 newUser.save(function (err, data) {
                   if (err) console.log("ERR!!! - ",err);
-                    console.log('** workerSignupVerify is successful ** ');
+                    console.log('** userSignupVerify is successful ** ');
                     // console.log("Result Obj***", data);
                     res.render('login');
                 });
@@ -75,8 +75,6 @@ var index = function(Models){
 
   indexRoutes.signup = function(req, res){
     console.log("In signup");
-    console.log(req.body.password);
-    console.log(req.body);
     var newEmailToken = new EmailToken({
       name: req.body.name,
       email: req.body.email,
@@ -95,17 +93,14 @@ var index = function(Models){
       return deferred.promise;
     }
 
-    console.log("before createToken");
     createToken().then(function(){
 
-      console.log("In createToken");
       newEmailToken.token = token;
       newEmailToken.save(function (err) {
         if (err) {
           console.log("ERROR in saving new email token!!!");
           console.log("ERROR:",err);
         }
-        console.log("good");
       var deferred = q.defer();
         var confirmationLink = req.protocol + "://" + req.get('host') + req.url + "/" + newEmailToken.token;;
         var locals = {
@@ -116,7 +111,7 @@ var index = function(Models){
         };
         mailer.sendOne('registrationVerif', locals, function(err, responseStatus, html, text){
           if (err){
-            console.log("ERROR in sending registration verification email to job applicant!!!");
+            console.log("ERROR in sending registration verification email to user!!!");
             console.log("ERR MSG:", err);
           } else {
             console.log("Registration verification email sent successfully to:", locals.email);
@@ -131,7 +126,7 @@ var index = function(Models){
   indexRoutes.checkEmailIfExists = function(req,res){
    
     // console.log("Email:",req.query.email);
-    JobApplicant.findOne({email: req.query.email}, 'email', 
+    User.findOne({email: req.query.email}, 'email', 
       function (err, result) {
         if (err) {
           console.log("ERROR - checkEmailIfExists aborted!!");
@@ -146,14 +141,14 @@ var index = function(Models){
     });
   };
 
-  indexRoutes.workerReadInfo = function(req, res){
-    var jobApplicantModel = JobApplicant;
-    var newUser = new jobApplicantModel(req.body);
+  indexRoutes.userReadInfo = function(req, res){
+    var userModel = User;
+    var newUser = new user(req.body);
     
-    jobApplicantModel.findOne({name: newUser.name, email: newUser.email}, 'name email', 
+    userModel.findOne({name: newUser.name, email: newUser.email}, 'name email', 
       function (err, result) {
         if (err) {
-          console.log("ERROR - read worker info aborted!!");
+          console.log("ERROR - read user info aborted!!");
         }
         if (result !== null) {
           // console.log("*****DATA*****",data);

@@ -1,4 +1,4 @@
-var config = require('../config/config.js');
+var config = require('../../config.js');
 var nodemailer = require('nodemailer');
 var path = require('path');
 var templatesDir = path.resolve(__dirname, '..', 'views/mailer');
@@ -11,8 +11,8 @@ var EmailAddressRequiredError = new Error('email address required');
 var defaultTransport = nodemailer.createTransport('SMTP', {
  service: 'Gmail',
  auth: {
-   user: config.mailer.auth.user,
-   pass: config.mailer.auth.pass
+   user: config['allEnv'].mailer.auth.user,
+   pass: config['allEnv'].mailer.auth.pass
  }
 });
 
@@ -42,8 +42,9 @@ exports.sendOne = function (templateName, locals, fn) {
        return fn(null, '250 2.0.0 OK 1350452502 s5sm19782310obo.10', html, text);
      }
      var transport = defaultTransport;
+     // console.log("****password",transport.auth.pass);
      transport.sendMail({
-       from: config.mailer.defaultFromAddress,
+       from: config['allEnv'].mailer.defaultFromAddress,
        to: locals.email,
        subject: locals.subject,
        html: html,

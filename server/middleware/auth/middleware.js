@@ -20,14 +20,14 @@ authMiddleware.ensureEmployerAuthenticated = function(req, res, next) {
   }
 }
 
-authMiddleware.ensureJobApplicantAuthenticated = function(req, res, next) {
-  if (isAuthenticated(req, "jobApplicant")){
-    console.log("--->route is authenticated for Job Applicant");
+authMiddleware.ensureUserAuthenticated = function(req, res, next) {
+  if (isAuthenticated(req, "user")){
+    console.log("--->route is authenticated for user");
     return next();
   }
   else{
-    console.log("--->route is not authenticated for Job Applicant");
-    res.redirect('/worker-login-fail');
+    console.log("--->route is not authenticated for user");
+    res.redirect('/user-login-fail');
   }
 }
 
