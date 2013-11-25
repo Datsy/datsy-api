@@ -1,5 +1,7 @@
 /node_modules
 
+dbconfig.json
+
 # Compiled source #
 ###################
 *.com
