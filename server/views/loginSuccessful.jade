@@ -1,0 +1,14 @@
+extends layout
+  
+block head
+  
+block content
+  .container
+    div
+      .well.hero-spacer.well-background
+        h3 Login!!
+    div
+      form(action="/uploadFile", method="post", enctype="multipart/form-data")
+        input(type="file", name="csvFile")
+        input(type='submit', name='submit')
+ 
