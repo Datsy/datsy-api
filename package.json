@@ -10,6 +10,8 @@
     "express": "~3.4.4",
     "request": "~2.27.0",
     "bookshelf": "~0.5.7"
+    "factual-api"
+    "fs"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
