@@ -4,25 +4,26 @@ var fs = require('fs');
 var credentials = require('./dbconfig.json').db;
 var conString = "postgres://"+credentials.user+":" +credentials.password+ "@" + credentials.localhost + "/" + credentials.dbname;
 var client = new pg.Client(conString);
-var dir='./rawcsv/';
-
+// var dir='./rawcsv/';
 var rowlimit = 500;
 var num_row = 0;
 var table = {};
 
-var readFolder = function () {
-  fs.readdir(dir,function(err,files){
-    if (err) throw err;
-    files.forEach(function(file){
-      //file is a string containing the file name
-      if (file.substring(file.length - 3) === 'csv')  {
-        readOne(dir+file);
-      }
-    });
-  });
-};
+// modify this only!!
+var filepath = './rawcsv/2013-3rd-quarterfull.csv'; //edit this to change file
+// var readFolder = function () {
+//   fs.readdir(dir,function(err,files){
+//     if (err) throw err;
+//     files.forEach(function(file){
+//       //file is a string containing the file name
+//       if (file.substring(file.length - 3) === 'csv')  {
+//         readOne(dir+file);
+//       }
+//     });
+//   });
+// };
 var readOne = function (filepath) {
-    var data = fs.readFileSync('./rawcsv/2013-3rd-quarterfull.csv', 'utf8');
+    var data = fs.readFileSync(filepath, 'utf8');
     var array = data.split('\n');
     table.tablename = array[0];
     table.col_names = array[1].split(',');
@@ -77,7 +78,7 @@ var insertDB = function (startRow) {
   }
   insertQS += ';';
 
-  fs.writeFile('./output.txt', insertQS, function() {});
+  // fs.writeFile('./output.txt', insertQS, function() {});
   client.query(insertQS, function(err, result) {
     if (err) { return console.error('error with insertion', err);}
     console.log('inserted data into starting from ' + startRow);
@@ -89,6 +90,6 @@ var insertDB = function (startRow) {
   });
 }
 
-readOne();
+readOne(filepath);
 
 
