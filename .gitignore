@@ -1,4 +1,5 @@
 /node_modules
+/bower_components
 
 # Compiled source #
 ###################
@@ -21,6 +22,10 @@
 *.rar
 *.tar
 *.zip
+
+# Deployment environment variables #
+####################################
+.deploy
 
 # Logs and databases #
 ######################
