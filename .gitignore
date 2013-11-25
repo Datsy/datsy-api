@@ -1,4 +1,5 @@
 /node_modules
+/bower_components
 
 dbconfig.json
 
@@ -42,3 +43,7 @@ dbconfig.json
 ehthumbs.db
 Thumbs.db
 
+=======
+# Api Keys and Password
+#########################
+setting.js

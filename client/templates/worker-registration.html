@@ -1,0 +1,36 @@
+<div class="container" ng-controller='reg1Ctrl'>
+
+    <div>
+      <div class="well hero-spacer">
+        <h3>New Caregiver Application</h3>
+      </div>
+      <div class="row">
+        <form role="form">
+          <div class="form-group">
+            <label for="exampleInputEmail1">Your Name</label>
+            <input ng-model="name" class="form-control" id="InputName" placeholder="Enter your name">
+          </div>
+
+          <div class="form-group control-group">
+            <h4 style="color:red">{{error1}}</h4>
+            <h4 style="color:red">{{error2}}</h4>
+            <h4 style="color:red">{{error3}}</h4>
+            <label>Enter Email Address</label>
+            <input ng-model="email" class="form-control" placeholder="Enter email" >
+          </div>
+          <div class="form-group">
+            <label>Enter your Phone Number</label>
+            <input  class="form-control" placeholder="Phone Number" ng-model="phone">
+          </div>
+          <div class="form-group">
+            <label>Password</label>
+            <input type="password" ng-model="password1" class="form-control" placeholder="Password">
+          </div>
+          <div class="form-group">
+            <label>Re-Enter Password</label>
+            <input type="password" ng-model="password2"class="form-control" placeholder="Password">
+            <a ng-click="processFormData()"><button class="btn btn-default">Next...</button></a>
+          </div>
+        </form>
+      </div>
+    </div>
