@@ -1,0 +1,108 @@
+select {
+  -webkit-appearance: menulist-button;
+  select - menulist user agent stylesheet
+  -webkit-font-smoothing: auto;
+  -webkit-rtl-ordering: logical;
+  -webkit-writing-mode: horizontal-tb;
+  align-items: center;
+  background-color: rgb(255, 255, 255);
+  border-bottom-color: rgb(204, 204, 204);
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-image-outset: 0px;
+  border-image-repeat: stretch;
+  border-image-slice: 100%;
+  border-image-source: none;
+  border-image-width: 1;
+  border-left-color: rgb(204, 204, 204);
+  border-left-style: solid;
+  border-left-width: 1px;
+  border-right-color: rgb(204, 204, 204);
+  border-right-style: solid;
+  border-right-width: 1px;
+  border-top-color: rgb(204, 204, 204);
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  box-sizing: border-box;
+  color: rgb(85, 85, 85);
+  cursor: pointer;
+  display: block;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  height: 30px;
+  letter-spacing: normal;
+  line-height: normal;
+  margin-bottom: 10px;
+  margin-left: 0px;
+  margin-right: 0px;
+  margin-top: 0px;
+  padding-bottom: 0px;
+  padding-left: 0px;
+  padding-right: 0px;
+  padding-top: 0px;
+  text-align: start;
+  text-indent: 0px;
+  text-shadow: none;
+  text-transform: none;
+  vertical-align: middle;
+  white-space: pre;
+  width: 220px;
+  word-spacing: 0px;
+  writing-mode: lr-tb;
+}
+
+.searchField{
+  display:inline;
+  width: 30%;
+}
+
+.searchInput{
+  margin-bottom: 10px;
+}
+
+.right{
+  float:right;
+}
+.frm_container {
+background: none repeat scroll 0 0 #FFFFFF;
+box-shadow: 0 12px 12px #B8B8B8;
+padding: 20px 30px;
+position:relative;
+}
+
+.frm_container h1 {
+  font-size: 20px;
+  font-weight: normal;
+  margin-bottom: 20px;
+  } 
+.frm_container .list {
+  margin: 15px;
+  }
+.frm_container .list li {
+  line-height: 25px;
+  }
+.frm li .helptext {
+  color: #DF0000;
+display: inline-block;
+font-size: 12px;
+font-style: italic;
+  } 
+.imgleft {
+  float: left;
+padding-bottom: 13px;
+padding-right: 20px;
+  }
+.employer-reg-desc{
+padding: 0px 18px;
+}
+.well-background{
+  background-color: #0b333f;
+  color: white;
+}

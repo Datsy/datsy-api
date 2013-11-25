@@ -1,0 +1,357 @@
+<div ng-controller="wProfileCtrl">
+
+  <div class='well'>
+    <h3>Basic Info:</h3>
+
+    <table class="table" style="width:600px">
+        <tr>
+            <td><b>Name:</b></td>
+            <td>{{worker.name}}</td>
+        </tr>
+        <tr>
+            <td><b>Email Address:</b></td>
+            <td>{{worker.email}}</td>
+        </tr>
+        <tr>
+            <td><b>Phone Number:</b></td>
+            <td>{{worker.phone}}</td>
+        </tr>
+    </table>
+  </div>
+
+
+  <div class='well'>
+    <h3>Rates:</h3>
+
+    <table class="table" style="width:600px">
+    <tr>
+        <td><b>hourlyRate:</b></td>
+        <td>{{worker.preferences.hourlyRate}}</td>
+    </tr>
+    <tr>
+        <td><b>dailyRate:</b></td>
+        <td>{{worker.preferences.dailyRate}}</td>
+    </tr>
+    </table>
+  </div>
+
+  <div class='well'>
+    <h3>Job Type:</h3>
+
+    <table class="table" style="width:600px">
+
+    <tr>
+        <td><b>Caregiver:</b></td>
+        <td>{{worker.preferences.jobType.caregiver}}</td>
+    </tr>
+    <tr>
+        <td><b>CHHA:</b></td>
+        <td>{{worker.preferences.jobType.CHHA}}</td>
+    </tr>
+    <tr>
+        <td><b>STNA:</b></td>
+        <td>{{worker.preferences.jobType.STNA}}</td>
+    </tr>
+    <tr>
+        <td><b>PCA:</b></td>
+        <td>{{worker.preferences.jobType.PCA}}</td>
+    </tr>
+    <tr>
+        <td><b>LPN:</b></td>
+        <td>{{worker.preferences.jobType.LPN}}</td>
+    </tr>
+    <tr>
+        <td><b>CNA:</b></td>
+        <td>{{worker.preferences.jobType.CNA}}</td>
+    </tr>
+
+
+    </table>
+  </div>
+
+  <div class='well'>
+    <h3>Info:</h3>
+    <table class="table" style="width:600px">
+    <tr>
+        <td><b>Interested in full time:</b></td>
+        <td>{{worker.preferences.fullTime}}</td>
+        </tr>
+        <tr>
+        <td><b>Interested in part time:</b></td>
+        <td>{{worker.preferences.partTime}}</td>
+        </tr>
+        <tr>
+        <td><b>Can work day shift:</b></td>
+        <td>{{worker.preferences.dayShift}}</td>
+        </tr>
+        <tr>
+        <td><b>Can work night shift:</b></td>
+        <td>{{worker.preferences.nightShift}}</td>
+        </tr>
+        <tr>
+        <td><b>Can work Weekdays:</b></td>
+        <td>{{worker.preferences.weekDays}}</td>
+        </tr>
+        <tr>
+        <td><b>Can work Weekends:</b></td>
+        <td>{{worker.preferences.weekEnds}}</td>
+        </tr>
+        <tr>
+        <td><b>Prefers Home Care:</b></td>
+        <td>{{worker.preferences.homeCare}}</td>
+        </tr>
+        <tr>
+        <td><b>Prefers Facility Care:</b></td>
+        <td>{{worker.preferences.facilityCare}}</td>
+        </tr>
+        <tr>
+        <td><b>Working Radius:</b></td>
+        <td>{{worker.preferences.workRadius}}</td>
+        </tr>
+        <tr>
+        <td><b>Can work with cats:</b></td>
+        <td>{{worker.preferences.catsOk}}</td>
+        </tr>
+        <tr>
+        <td><b>Can work with dogs:</b></td>
+        <td>{{worker.preferences.dogsOk}}</td>
+        </tr>
+        <tr>
+        <td><b>Can work with smokers:</b></td>
+        <td>{{worker.preferences.smokeOk}}</td>
+        </tr>
+        <tr>
+        <td><b>Can lift twenty five pounds:</b></td>
+        <td>{{worker.preferences.lift25ok}}</td>
+        </tr>
+        <tr>
+        <td><b>Has a car available:</b></td>
+        <td>{{worker.preferences.carAvailable}}</td>
+        </tr>
+        <tr>
+        <td><b>Education level:</b></td>
+        <td>{{worker.preferences.education}}</td>
+        </tr>
+        <tr>
+        <td><b>Years of experience:</b></td>
+        <td>{{worker.preferences.yearsExperience}}</td>
+        </tr>
+        <tr>
+        <td><b>Name of previous employer:</b></td>
+        <td>{{worker.preferences.previousEmployerName}}</td>
+        </tr>
+    </table>
+  </div>
+
+  <div class='well'>
+    <h3>Languages:</h3>
+    <table class="table" style="width:600px">
+        <tr>
+        <td><b>PCA:</b></td>
+        <td>{{worker.preferences.certifications.PCA}}</td>
+        </tr>
+        <tr>
+        <td><b>CHHA:</b></td>
+        <td>{{worker.preferences.certifications.CHHA}}</td>
+        </tr>
+        <tr>
+        <td><b>CNA:</b></td>
+        <td>{{worker.preferences.certifications.CNA}}</td>
+        </tr>
+        <tr>
+        <td><b>LPN:</b></td>
+        <td>{{worker.preferences.certifications.LPN}}</td>
+        </tr>
+    </table>
+  </div>
+
+  <div class='well'>
+    <h3>Languages:</h3>
+
+    <table class="table" style="width:600px">
+        <tr>
+        <td><b>Arabic:</b></td>
+        <td>{{worker.preferences.languages.Arabic}}</td>
+        </tr>
+        <tr>
+        <td><b>Chinese Cantonese:</b></td>
+        <td>{{worker.preferences.languages.Chinese_Cantonese}}</td>
+        </tr>
+        <tr>
+        <td><b>Chinese Mandarin:</b></td>
+        <td>{{worker.preferences.languages.Chinese_Mandarin}}</td>
+        </tr>
+        <tr>
+        <td><b>Farsi:</b></td>
+        <td>{{worker.preferences.languages.Farsi}}</td>
+        </tr>
+        <tr>
+        <td><b>Filipino:</b></td>
+        <td>{{worker.preferences.languages.Filipino}}</td>
+        </tr>
+        <tr>
+        <td><b>French:</b></td>
+        <td>{{worker.preferences.languages.French}}</td>
+        </tr>
+        <tr>
+        <td><b>Greek:</b></td>
+        <td>{{worker.preferences.languages.Greek}}</td>
+        </tr>
+        <tr>
+        <td><b>Hebrew:</b></td>
+        <td>{{worker.preferences.languages.Hebrew}}</td>
+        </tr>
+        <tr>
+        <td><b>Hindu:</b></td>
+        <td>{{worker.preferences.languages.Hindu}}</td>
+        </tr>
+        <tr>
+        <td><b>Italian:</b></td>
+        <td>{{worker.preferences.languages.Italian}}</td>
+        </tr>
+        <tr>
+        <td><b>Japanese:</b></td>
+        <td>{{worker.preferences.languages.Japanese}}</td>
+        </tr>
+        <tr>
+        <td><b>Korean:</b></td>
+        <td>{{worker.preferences.languages.Korean}}</td>
+        </tr>
+        <tr>
+        <td><b>Polish:</b></td>
+        <td>{{worker.preferences.languages.Polish}}</td>
+        </tr>
+        <tr>
+        <td><b>Russian:</b></td>
+        <td>{{worker.preferences.languages.Russian}}</td>
+        </tr>
+        <tr>
+        <td><b>Spanish:</b></td>
+        <td>{{worker.preferences.languages.Spanish}}</td>
+        </tr>
+        <tr>
+        <td><b>Swahili:</b></td>
+        <td>{{worker.preferences.languages.Swahili}}</td>
+        </tr>
+        <tr>
+        <td><b>Vietnamese:</b></td>
+        <td>{{worker.preferences.languages.Vietnamese}}</td>
+        </tr>
+    </table>
+  </div>
+
+  <div class='well'>
+    <h3>Proficiencies:</h3>
+
+    <table class="table" style="width:600px">
+        <tr>
+        <td><b>Alzheimers:</b></td>
+        <td>{{worker.preferences.specializations.Alzheimers}}</td>
+        </tr>
+        <tr>
+        <td><b>Handicapped:</b></td>
+        <td>{{worker.preferences.specializations.Handicapped}}</td>
+        </tr>
+        <tr>
+        <td><b>Hospice:</b></td>
+        <td>{{worker.preferences.specializations.Hospice}}</td>
+        </tr>
+        <tr>
+        <td><b>Gastronomy:</b></td>
+        <td>{{worker.preferences.specializations.Gastronomy}}</td>
+        </tr>
+        <tr>
+        <td><b>Breathing:</b></td>
+        <td>{{worker.preferences.specializations.Breathing}}</td>
+        </tr>
+        <tr>
+        <td><b>Hoyer:</b></td>
+        <td>{{worker.preferences.specializations.Hoyer}}</td>
+        </tr>
+        <tr>
+        <td><b>Special Meal Preparation:</b></td>
+        <td>{{worker.preferences.specializations.SpecialMeal}}</td>
+        </tr>
+        <tr>
+        <td><b>Child Care:</b></td>
+        <td>{{worker.preferences.specializations.ChildCare}}</td>
+        </tr>
+        <tr>
+        <td><b>Psychiatric:</b></td>
+        <td>{{worker.preferences.specializations.Psychiatric}}</td>
+        </tr>
+        <tr>
+        <td><b>Geriatric:</b></td>
+        <td>{{worker.preferences.specializations.Geriatric}}</td>
+        </tr>
+        <tr>
+        <td><b>Homecare:</b></td>
+        <td>{{worker.preferences.specializations.Homecare}}</td>
+        </tr>
+        <tr>
+        <td><b>AssistedLiving:</b></td>
+        <td>{{worker.preferences.specializations.AssistedLiving}}</td>
+        </tr>
+        <tr>
+        <td><b>Fingerprints:</b></td>
+        <td>{{worker.preferences.specializations.Fingerprints}}</td>
+        </tr>
+        <tr>
+        <td><b>AHCA Level 2:</b></td>
+        <td>{{worker.preferences.specializations.AHCALevel2}}</td>
+        </tr>
+        <tr>
+        <td><b>CPR:</b></td>
+        <td>{{worker.preferences.specializations.CPR}}</td>
+        </tr>
+        <tr>
+        <td><b>FirstAid:</b></td>
+        <td>{{worker.preferences.specializations.FirstAid}}</td>
+        </tr>
+        <tr>
+        <td><b>BLS:</b></td>
+        <td>{{worker.preferences.specializations.BLS}}</td>
+        </tr>
+        <tr>
+        <td><b>TB Test:</b></td>
+        <td>{{worker.preferences.specializations.TBTest}}</td>
+        </tr>
+    </table>
+  </div>
+
+
+  <div class='well'>
+    <h3>Interests and Preferences:</h3>
+    <table class="table" style="width:600px">
+        <tr>
+        <td><b>Description of an ideal patient:</b></td>
+        <td>{{worker.preferences.idealPatient}}</td>
+        </tr>
+        <tr>
+        <td><b>Description of ideal work environment:</b></td>
+        <td>{{worker.preferences.idealWorkEnvironment}}</td>
+        </tr>
+        <tr>
+        <td><b>Interests:</b></td>
+        <td>{{worker.preferences.interests}}</td>
+        </tr>
+        <tr>
+        <td><b>Importance of having a favorable patient:</b></td>
+        <td>{{worker.preferences.patientMatchScore}}</td>
+        </tr>
+        <tr>
+        <td><b>Importance of having a schedule match:</b></td>
+        <td>{{worker.preferences.scheduleMatchScore}}</td>
+        </tr>
+        <tr>
+        <td><b>Importance of working close to home:</b></td>
+        <td>{{worker.preferences.workCloseToHomeScore}}</td>
+        </tr>
+        <tr>
+        <td><b>Importance of working environment:</b></td>
+        <td>{{worker.preferences.workEnvironmentScore}}</td>
+        </tr>
+    </table>
+  </div>
+
+</div>
