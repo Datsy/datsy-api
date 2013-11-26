@@ -10,7 +10,9 @@ var num_row = 0;
 var table = {};
 
 // modify this only!!
+
 var filepath = './LocationDemographicscsv/2013-11-26T17-52-10LocationDemographics.csv'; //edit this to change file
+ //edit this to change file
 // var readFolder = function () {
 //   fs.readdir(dir,function(err,files){
 //     if (err) throw err;
@@ -70,7 +72,7 @@ var insertDB = function (startRow) {
   }
   for (var i = startRow; i < startRow + rowlimit; i++) {
     insertQS += ' (\'';
-    insertQS += table.col_values[i].replace(/[^A-Za-z\s\d,&:-//]/g, '').split(',').join('\',\'');
+    insertQS += table.col_values[i].replace(/[^A-Za-z\s\d,&:.-//]/g, '').split(',').join('\',\'');
     insertQS += '\')';
     if (i < startRow + rowlimit - 1) {
       insertQS += ',';

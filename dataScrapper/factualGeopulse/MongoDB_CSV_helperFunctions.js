@@ -19,12 +19,12 @@ var getAllKeys = function(obj,keysArr,vals, keychain) {
         vals.push(val);
       } else {
         vals.push("null");//replace null, undefined or {}
+
       }
     }
   }
   return[keysArr, vals];
 };
-
 
 var checkKeys = function(keyvals, checkKeys) {
   var parsedVals = [];
@@ -71,6 +71,7 @@ exports.checkKeys = checkKeys;
 //         age_and_sex: {a:333,c:444}  } ;
         
 // var checkObj = 
+
 //       { area_statistics: {a:34,b:{ac:3,bc:5}},
 //         income: undefined,
 //         housing: 4,
@@ -80,3 +81,4 @@ exports.checkKeys = checkKeys;
         
 // var a = checkKeys(getAllKeys(testObj),getAllKeys(checkObj)[0]);
 // console.log(a);
+
