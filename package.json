@@ -47,6 +47,6 @@
     "should": "*"
   },
   "scripts": {
-    "test": "NODE_ENV=test node_modules/.bin/mocha -w"
+    "test": "grunt travis"
   }
 }
