@@ -8,8 +8,9 @@ var index = function(Models){
   var fs = require('fs');
   var csv = require('csv');
   var csvToDatabase = require('../helpers/csvToDatabase.js');
-
+  var hat = require('hat');
   var User = Models.User;
+  var TableMetaData = Models.TableMetaData;
   var EmailToken = Models.EmailToken;
   var mailer = require('../helpers/sendEmail.js');
 
@@ -45,10 +46,10 @@ var index = function(Models){
             name: result.name,
             email: result.email,
             password: result.password,
-            account: "user" 
+            account: "user"
           });
           // console.log("RESULT***",result);
-          User.findOne({where: {email: newUser}}, 
+          User.findOne({where: {email: newUser.email}}, 
             function (err, result) {
               if (err) {
                 console.log("ERROR - creating (userSignupVerify) user aborted!!");
@@ -56,7 +57,7 @@ var index = function(Models){
               }
                 console.log("in User findOne");
               if (result === null) { // create user
-                // console.log('result is null, we are creating a new user');
+                console.log('result is null, we are creating a new user', newUser);
                 newUser.save(function (err, data) {
                   if (err) console.log("ERR!!! - ",err);
                     console.log('** userSignupVerify is successful ** ');
@@ -178,14 +179,28 @@ var index = function(Models){
       });
       return deferred.promise;
     }
-    
+
     readFile()
     .then(function(){
       console.log("in writing to Azure database");
       csvToDatabase(newPath);
+      // console.log("***form params", req);
+      var tableMetaData = new TableMetaData({
+        name: req.body.table_name,
+        description: req.body.table_description,
+        author: req.body.table_author
+      });
+      tableMetaData.save(function (err, data) {
+        if (err){
+          console.log('** ERROR in saving table meta data **');
+          console.log("ERR!!! - ",err);
+        } else{
+          console.log('** success in saving meta data ** ');
+        }
+      });
     });
-    
-    res.render('login');
+
+    res.render('loginSuccessful');
 
   //   .then(function(){
   //     // parse csv file
@@ -209,6 +224,40 @@ var index = function(Models){
   //     });
   //     res.render('login');
   //   })
+  };
+
+  indexRoutes.generateApiKey = function(req, res){
+    var apiKey = hat(bits=128, base=16);
+ 
+    console.log("In generateApiKey", apiKey);
+    console.log("User Session", req.session);
+    console.log("User object", req.user);
+
+    User.findOne({where:{id:req.user.id}}, function(err, result){
+        if (err) {
+          console.log("ERROR in saving API key!");
+          res.writeHead(500);
+          res.end("500 Internal Server Error error:", err);
+        } else {
+          console.log('Success in finding a user', result);
+          result.apikey = apiKey;
+          User.upsert(result, function (err, data) {
+            if (err){
+              console.log('** ERROR in updating user API key **');
+              console.log("ERR!!! - ",err);
+            } else{
+              console.log('** user update with API key is successful ** ');
+              res.send(apiKey);
+            }
+          });
+        }
+    })
+  };
+
+  indexRoutes.userTableMetaData = function(req, res){
+    console.log("In userTableMetaData");
+    res.writeHead(200);
+    res.end();
   };
 
   return indexRoutes;

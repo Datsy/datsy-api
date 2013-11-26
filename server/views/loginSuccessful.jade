@@ -21,3 +21,31 @@ block content
 				input(type="file", name="csvFile")
 			.form-group
 				input#signup-submit.btn.btn-default(type='submit', name='submit')
+		div 
+			table.table.table-hover#apiKey
+				tr
+					th API Key
+						button#genApiKey(type='button') Generate
+				tr#apiKeyRow
+
+		div.user-table
+			table.table.table-hover
+				h3 Tables
+				tr
+					th Name
+					th Description
+					th Author
+					th Number of Row
+					th Attributes
+					th Action
+				tr
+					td placeholder
+					td placeholder
+					td placeholder
+					td placeholder
+					td placeholder
+					td
+						button(type='button', onclick='alert("Edit me!")') Edit
+						button(type='button', onclick='alert("Delete me!")') Delete
+
+		script(src='/app.js')
