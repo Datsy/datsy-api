@@ -10,7 +10,6 @@ module.exports = {
     dataset.author = jsonMetadata.author;
     dataset.user_id = jsonMetadata.user_id;
     dataset.numcols = jsonMetadata.numcols;
-    numrows
     
     dataset.save(function(err, dataset) {
       if(err) {
@@ -21,15 +20,15 @@ module.exports = {
     });
   },
 
-  saveDatasetInDbFromFile : function(filepath) {
-    var json = fs.readFile(filepath, function(err, data) {
-      if(err) {
-        console.log(err);
-      } else {
-        saveDatasetInDb(JSON.parse(filepath));
-      }
-    });
-  },
+  // saveDatasetInDbFromFile : function(filepath) {
+  //   var json = fs.readFile(filepath, function(err, data) {
+  //     if(err) {
+  //       console.log(err);
+  //     } else {
+  //       saveDatasetInDb(JSON.parse(filepath));
+  //     }
+  //   });
+  // },
 
   saveDatasetColumnsInDb : function(dataset) {
     for(var i = 0; i < dataset.columns.length; i++) {
