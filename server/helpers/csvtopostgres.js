@@ -52,7 +52,7 @@ var createDB = function (createQS, insertQS) {
     client.query(createQS, function(err, result) {
       if(err) { return console.error('error with creation', err);}
       console.log('created table');
-      insertDB(848000 + 500);
+      insertDB(0);
     });
   });
 };
