@@ -2,14 +2,14 @@ module.exports = {
 
   saveDatasetInDb : function(jsonMetadata) {
     
-    var dataset = new Dataset;
-    dataset.url = jsonMetadata.url;
-    dataset.name = jsonMetadata.name;
-    dataset.title = jsonMetadata.title;
+    var dataset         = new Dataset();
+    dataset.url         = jsonMetadata.url;
+    dataset.name        = jsonMetadata.name;
+    dataset.title       = jsonMetadata.title;
     dataset.description = transformForPostgres(jsonMetadata.description);
-    dataset.author = jsonMetadata.author;
-    dataset.user_id = jsonMetadata.user_id;
-    dataset.numcols = jsonMetadata.numcols;
+    dataset.author      = jsonMetadata.author;
+    dataset.user_id     = jsonMetadata.user_id;
+    dataset.numcols     = jsonMetadata.numcols;
     
     dataset.save(function(err, dataset) {
       if(err) {
@@ -20,15 +20,15 @@ module.exports = {
     });
   },
 
-  // saveDatasetInDbFromFile : function(filepath) {
-  //   var json = fs.readFile(filepath, function(err, data) {
-  //     if(err) {
-  //       console.log(err);
-  //     } else {
-  //       saveDatasetInDb(JSON.parse(filepath));
-  //     }
-  //   });
-  // },
+  saveDatasetInDbFromFile : function(filepath) {
+    var json = fs.readFile(filepath, function(err, data) {
+      if(err) {
+        console.log(err);
+      } else {
+        saveDatasetInDb(JSON.parse(filepath));
+      }
+    });
+  },
 
   saveDatasetColumnsInDb : function(dataset) {
     for(var i = 0; i < dataset.columns.length; i++) {
@@ -93,19 +93,7 @@ module.exports = {
     return string.replace("\n", " ");
   }
 }
-
-// tagName -> tag -> tagId -> columns
-// tagName -> tag -> tagId -> datasets
-// column data type -> columns
-// dataset name -> datasets
-
-
-
-
+// should be able to:
 // search by name, column, tags
-
-// saerch for particular data set meta data based on id
+// search for particular data set meta data based on id
 // search based on tag, or column type
-
-
-// read JSON file -> JSON object -> 

@@ -1,7 +1,7 @@
-var credentials = require('../config.js').db;
+var credentials = require('../config/dbconfig.json').db;
 var Schema = require('jugglingdb').Schema;
 var schema = new Schema('postgres', {
-  database: 'metadata1',
+  database: 'metadata3',
   username: credentials.user,
   host: credentials.localhost,
   password: credentials.password
@@ -19,7 +19,7 @@ var Dataset = schema.define('datasets', {
 });
 
 var DatasetColumns = schema.define('datasetcolumns', {
-  // dataset_id: { type: Number }, // fk
+  dataset_id: { type: Number }, // fk
   col_name: { type: String, length: 45 },
   col_datatype: { type: String, length: 45 },
   col_meaning: { type: Schema.Text }
@@ -32,23 +32,19 @@ var Tags = schema.define('tags', {
 var DataTags = schema.define('datatags', {
   data_category: { type: String, length: 15 },
   data_id: { type: Number },
-  // tag_id: { type: Number } // fk
+  tag_id: { type: Number } // fk
 });
   
 // Dataset.hasMany(DatasetColumns, {as: 'column', foreignKey: 'tableId' });
 
-// ALTER TABLE datasetcolumns
-// ADD FOREIGN KEY (dataset_id) 
-// REFERENCES datasets;
+// ALTER TABLE datasetcolumns ADD FOREIGN KEY (dataset_id) REFERENCES datasets;
 
 // DatasetColumns.belongsTo(Dataset, {as: 'dataset', foreignKey: 'tableId'});
 
 // Tags.hasMany(DataTags, {as: 'datatag', foreignKey: 'tagId'});
 // DataTags.hasOne(Tags, {as: 'tag', foreignKey: 'tagId'});
 
-// ALTER TABLE datatags
-// ADD FOREIGN KEY (tag_id) 
-// REFERENCES tags;
+// ALTER TABLE datatags ADD FOREIGN KEY (tag_id) REFERENCES tags;
 
 schema.autoupdate(function(msg){
   console.log("*** db schema update is done", msg);
