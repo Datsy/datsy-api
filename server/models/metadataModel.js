@@ -60,4 +60,6 @@ schema.autoupdate(function(msg){
     // dbset.save(function(err) {
     //   if (err) console.log('there is a major erro!!');
     // });
+  });
+
 });
