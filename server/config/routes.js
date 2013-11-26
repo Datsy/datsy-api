@@ -18,6 +18,14 @@ module.exports = function(app,passport,Models){
   // by both user and employer 
   // (no authentication is required)
   //**********************************
+  // app.all('*', function(req, res, next) {
+  //   res.header("Access-Control-Allow-Origin", "*");
+  //   res.header("Access-Control-Allow-Headers", "X-Requested-With");
+  //   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+  //   res.header('access-control-max-age', '100');
+  //   next();
+  // });
+
   app.get('/', home.index);
 
   app.post("/user-login", 
@@ -43,6 +51,9 @@ module.exports = function(app,passport,Models){
   app.get('/user-sign-up/checkEmail', home.checkEmailIfExists);
   app.get('/signup/:token', home.userSignupVerify);
   app.post('/uploadFile', home.uploadFile);
+
+  app.get('/userTableMetaData', home.userTableMetaData);
+  app.get('/generateApiKey', home.generateApiKey);
   //**********************************
   // define admin routes
   //**********************************

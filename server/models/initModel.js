@@ -10,11 +10,14 @@ var initModel = function(){
 	  //hostname: "localhost",
   }); //port number depends on your configuration
 
-	var User = require('./userModel.js')(schema);
+  var User = require('./userModel.js')(schema);
   var EmailToken = require('./emailTokenModel.js')(schema);
+  var TableMetaData = require('./tableMetaDataModel.js')(schema);
+
   Models = {
   	User: User,
-    EmailToken: EmailToken          
+    EmailToken: EmailToken,
+    TableMetaData: TableMetaData         
   };
 
 	var updateSchema = function(){

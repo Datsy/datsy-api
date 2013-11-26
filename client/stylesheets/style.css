@@ -57,11 +57,8 @@ select {
   word-spacing: 0px;
   writing-mode: lr-tb;
 }
-<<<<<<< HEAD
 
-=======
 a, a:hover, a:focus {
-
   text-decoration: none;
 }
 .containerdiv {
@@ -78,6 +75,8 @@ a, a:hover, a:focus {
 
 }
 .logodiv {
+	color:white;
+	font-family:'Verdana';
   font-size: 40px;
 }
 .logotext {
@@ -117,7 +116,7 @@ a, a:hover, a:focus {
   font-size: 18px;
   color: rgb(20,20,20)
 }
->>>>>>> 34b51f06e4e4fa90533d06969b917ddfa19f4c04
+
 .searchField{
   display:inline;
   width: 30%;
