@@ -14,22 +14,23 @@
     "node-fs": "~0.1.7",
     "csv": "~0.3.6",
     "jade": "*",
-    "passport": "latest",
-    "passport-local": "latest",
-    "connect-flash": "latest",
+    "passport": "*",
+    "passport-local": "*",
+    "connect-flash": "*",
     "email-templates": "0.0.5",
     "nodemailer": "0.3.x",
-    "password-hash": "latest",
-    "q": "latest",
+    "password-hash": "*",
+    "q": "*",
     "underscore": "1.5.x",
-    "mailcomposer": "latest",
-    "simplesmtp": "latest",
+    "mailcomposer": "*",
+    "simplesmtp": "*",
     "jugglingdb": "0.2.x",
-    "jugglingdb-postgres": "latest",
+    "jugglingdb-postgres": "*",
     "knex": "~0.4.13",
     "azure": "~0.7.17"
   },
   "devDependencies": {
+
     "grunt": "~0.4.1",
     "grunt-contrib-watch": "~0.5.3",
     "grunt-contrib-jshint": "~0.7.2",
@@ -41,11 +42,11 @@
     "chai": "~1.8.1",
     "coveralls": "~2.3.0",
     "mocha-lcov-reporter": "0.0.1",
-    "superagent": "latest",
-    "expect.js": "latest",
-    "should": "latest"
+    "superagent": "*",
+    "expect.js": "*",
+    "should": "*"
   },
   "scripts": {
-    "test": "NODE_ENV=test node_modules/.bin/mocha -w"
+    "test": "grunt travis"
   }
 }

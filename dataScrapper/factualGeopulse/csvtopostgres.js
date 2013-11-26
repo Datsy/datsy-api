@@ -36,11 +36,7 @@ var readOne = function (filepath) {
 var createQString = function() {
   var createQS = 'CREATE TABLE IF NOT EXISTS '+ table.tablename +' (';//ID INT PRIMARY KEY NOT NULL
   for (var i = 0; i < table.num_col; i++) {
-<<<<<<< HEAD
     createQS += table.col_names[i] + ' ' + table.col_types[i] + ' NOT NULL';
-=======
-    createQS += table.col_names[i] + ' ' + table.col_types[i];
->>>>>>> 34b51f06e4e4fa90533d06969b917ddfa19f4c04
     if (i < table.num_col - 1) {createQS += ',';}
   }
   createQS += ');';
@@ -56,11 +52,7 @@ var createDB = function (createQS, insertQS) {
     client.query(createQS, function(err, result) {
       if(err) { return console.error('error with creation', err);}
       console.log('created table');
-<<<<<<< HEAD
       insertDB(848000 + 500);
-=======
-      insertDB(0);
->>>>>>> 34b51f06e4e4fa90533d06969b917ddfa19f4c04
     });
   });
 };
@@ -78,11 +70,7 @@ var insertDB = function (startRow) {
   }
   for (var i = startRow; i < startRow + rowlimit; i++) {
     insertQS += ' (\'';
-<<<<<<< HEAD
     insertQS += table.col_values[i].replace(/[^A-Za-z\s\d,&://]/g, '').split(',').join('\',\'');
-=======
-    insertQS += table.col_values[i].replace(/[^A-Za-z\s\d,&:\-//]/g, '').split(',').join('\',\'');
->>>>>>> 34b51f06e4e4fa90533d06969b917ddfa19f4c04
     insertQS += '\')';
     if (i < startRow + rowlimit - 1) {
       insertQS += ',';
