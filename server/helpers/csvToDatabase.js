@@ -38,7 +38,7 @@ var csvToDatabase = function(filepath){
     console.log("creating string");
     var createQS = 'CREATE TABLE IF NOT EXISTS '+ table.tablename +' (';//ID INT PRIMARY KEY NOT NULL
     for (var i = 0; i < table.num_col; i++) {
-      createQS += table.col_names[i] + ' ' + table.col_types[i] + ' NOT NULL';
+      createQS += table.col_names[i] + ' ' + table.col_types[i];
       if (i < table.num_col - 1) {createQS += ',';}
     }
     createQS += ');';
@@ -73,7 +73,7 @@ var csvToDatabase = function(filepath){
     }
     for (var i = startRow; i < startRow + rowlimit; i++) {
       insertQS += ' (\'';
-      insertQS += table.col_values[i].replace(/[^A-Za-z\s\d,&://]/g, '').split(',').join('\',\'');
+      insertQS += table.col_values[i].replace(/[^A-Za-z\s\d,&:\-//]/g, '').split(',').join('\',\'');
       insertQS += '\')';
       if (i < startRow + rowlimit - 1) {
         insertQS += ',';
