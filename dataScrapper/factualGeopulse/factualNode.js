@@ -88,12 +88,12 @@ var retrieveDataAfterInitialize = function(latitude, longitude, step, prevData) 
         retrieveDataAfterInitialize(latitude + step, longitude, step, currentCheck);
       }, 500);
     }      
-  }, 'in retrieveDataAfterInitialize');
+  }, 'in retrieveDataAfterInitialize, count = ' + counter +';latitude,' + latitude +'logitude:'+longitude+'step'+step+'prevData'+prevData);
 
 };
 
 checkCSVFolder(csvFolder);
 var currentCSV = fs.createWriteStream(fileName);
-initialize(midPoint.latitude, midPoint.longitude, 0.005);
+initialize(midPoint.latitude, midPoint.longitude, 0.05);
 
 
