@@ -4389,12 +4389,20 @@ textarea.input-group-sm > .input-group-btn > .btn {
 }
 
 .navbar-default .navbar-brand {
+<<<<<<< HEAD
   color: #777777;
+=======
+  color: #eeeeee;
+>>>>>>> 34b51f06e4e4fa90533d06969b917ddfa19f4c04
 }
 
 .navbar-default .navbar-brand:hover,
 .navbar-default .navbar-brand:focus {
+<<<<<<< HEAD
   color: #5e5e5e;
+=======
+  color: #eeeeee;
+>>>>>>> 34b51f06e4e4fa90533d06969b917ddfa19f4c04
   background-color: transparent;
 }
 
@@ -4493,7 +4501,11 @@ textarea.input-group-sm > .input-group-btn > .btn {
 }
 
 .navbar-default .navbar-link {
+<<<<<<< HEAD
   color: #777777;
+=======
+  color: #eeeeee;
+>>>>>>> 34b51f06e4e4fa90533d06969b917ddfa19f4c04
 }
 
 .navbar-default .navbar-link:hover {
@@ -4501,12 +4513,21 @@ textarea.input-group-sm > .input-group-btn > .btn {
 }
 
 .navbar-inverse {
+<<<<<<< HEAD
   background-color: #0b333f;
   border-color: #f0bf00;
 }
 
 .navbar-inverse .navbar-brand {
   color: #000000;
+=======
+  background-color: #050505;
+  border-color: #050505;
+}
+
+.navbar-inverse .navbar-brand {
+  color: #eeeeee;
+>>>>>>> 34b51f06e4e4fa90533d06969b917ddfa19f4c04
   font-size: 30px;
   font-weight: 200;
   color:white;
