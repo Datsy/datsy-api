@@ -10,7 +10,7 @@ var num_row = 0;
 var table = {};
 
 // modify this only!!
-var filepath = './LocationDemographicscsv/2013-11-26T17-52-10LocationDemographics.csv'; //edit this to change file
+var filepath = './LocationDemographicscsv/2013-11-26T20-01-19LocationDemographics.csv'; //edit this to change file
 // var readFolder = function () {
 //   fs.readdir(dir,function(err,files){
 //     if (err) throw err;
