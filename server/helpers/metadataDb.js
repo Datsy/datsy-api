@@ -21,13 +21,8 @@ module.exports = {
   },
 
   saveDatasetInDbFromFile : function(filepath) {
-    var json = fs.readFile(filepath, function(err, data) {
-      if(err) {
-        console.log(err);
-      } else {
-        saveDatasetInDb(JSON.parse(filepath));
-      }
-    });
+    var json = require(filepath);
+    saveDatasetInDb(json);
   },
 
   saveDatasetColumnsInDb : function(dataset) {
