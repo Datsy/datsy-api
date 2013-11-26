@@ -3,12 +3,21 @@ extends layout
 block head
   
 block content
-  .container
-    div
-      .well.hero-spacer.well-background
-        h3 Login!!
-    div
-      form(action="/uploadFile", method="post", enctype="multipart/form-data")
-        input(type="file", name="csvFile")
-        input(type='submit', name='submit')
- 
+	.container
+		div
+			.well.hero-spacer.well-background
+				h3 Welcome!!
+		form(action="/uploadFile", method="post", enctype="multipart/form-data")
+			.form-group
+				label Table Name
+				input.form-control(type='text', placeholder='Enter table name', name='table_name', size='30')
+			.form-group
+				label Description
+				input.form-control(type='text', placeholder='Enter table description', name='table_description', size='30')
+			.form-group
+				label Author
+				input.form-control(type='text', placeholder='Enter table author', name='table_author', size='30')	
+			.form-group
+				input(type="file", name="csvFile")
+			.form-group
+				input#signup-submit.btn.btn-default(type='submit', name='submit')

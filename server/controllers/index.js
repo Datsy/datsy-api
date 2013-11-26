@@ -7,6 +7,7 @@ var index = function(Models){
   var q = require('q');
   var fs = require('fs');
   var csv = require('csv');
+  var csvToDatabase = require('../helpers/csvToDatabase.js');
 
   var User = Models.User;
   var EmailToken = Models.EmailToken;
@@ -159,15 +160,17 @@ var index = function(Models){
   };
 
   indexRoutes.uploadFile = function(req, res){
-    console.log("****uploadFile", req.files);
+    // console.log("****uploadFile", req.files);
 
-    var newPath = __dirname + "/../util/uploads/file1.csv";
+    var newPath = __dirname + "/../helpers/uploads/file1.csv";
     
+    console.log("*****uploadFile req", req);
+
     var readFile = function(){
       var deferred = q.defer();
       fs.readFile(req.files.csvFile.path, function (err, data) {
-        var newPath = __dirname + "/../util/uploads/file1.csv";
-        console.log("**new path", newPath);
+        var newPath = __dirname + "/../helpers/uploads/file1.csv";
+        // console.log("**new path", newPath);
         fs.writeFile(newPath, data, function (err) {
           deferred.resolve('deferred resolved!!');
           // res.render('login');
@@ -178,29 +181,34 @@ var index = function(Models){
     
     readFile()
     .then(function(){
-      // parse csv file
-      csv()
-      .from.path(newPath, { delimiter: ',', escape: '"' })
-      .to.stream(fs.createWriteStream(__dirname+'/sample.out'))
-      .transform( function(row){
-        row.unshift(row.pop());
-        return row;
-      })
-      .on('record', function(row,index){
-        console.log('#'+index+' '+JSON.stringify(row));
-      })
-      .on('close', function(count){
-        // when writing to a file, use the 'close' event
-        // the 'end' event may fire before the file has been written
-        console.log('Number of lines: '+count);
-      })
-      .on('error', function(error){
-        console.log(error.message);
-      });
-      res.render('login');
-    })
-  
+      console.log("in writing to Azure database");
+      csvToDatabase(newPath);
+    });
+    
+    res.render('login');
 
+  //   .then(function(){
+  //     // parse csv file
+  //     csv()
+  //     .from.path(newPath, { delimiter: ',', escape: '"' })
+  //     .to.stream(fs.createWriteStream(__dirname+'/sample.out'))
+  //     .transform( function(row){
+  //       row.unshift(row.pop());
+  //       return row;
+  //     })
+  //     .on('record', function(row,index){
+  //       console.log('#'+index+' '+JSON.stringify(row));
+  //     })
+  //     .on('close', function(count){
+  //       // when writing to a file, use the 'close' event
+  //       // the 'end' event may fire before the file has been written
+  //       console.log('Number of lines: '+count);
+  //     })
+  //     .on('error', function(error){
+  //       console.log(error.message);
+  //     });
+  //     res.render('login');
+  //   })
   };
 
   return indexRoutes;
