@@ -4,9 +4,11 @@ var url = require('url');
 var helper = require('../helper/MongoDB_CSV_helperFunctions.js')
 var csvToPostgres = require('../helper/csvtopostgres.js');
 var 
+var fileName = "SFGovEarthquakes";
+var filePath = './' +fileName +'.csv';
+var logFilePath = './sfGovlog.csv';
 
-var fileName = "earthquakes";
-exports.SFgov = function() {
+exports.SFgov = function(filePath) {
   // setInterval(function() {
     var jsonReq = http.request(options, function (res) {
       var data = '';
@@ -16,7 +18,8 @@ exports.SFgov = function() {
 
       });
       res.on('end', function () {
-        writeNewData(data);
+        writeNewData(filePath, data);
+        writeNewData(logFilePath, filepath, JSON.stringify(data));
         console.log('end');
       });
     });

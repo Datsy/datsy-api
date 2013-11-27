@@ -22,6 +22,8 @@ var fileName = csvFolder +  timeStamp + dataBaseName + '.csv';
 var totalKeys = [];
 
 var factualReq = function(lat, longt, cb, msg) {
+  lat = +lat.toFixed(2);
+  longt = +longt.toFixed(2);
   factual.get('/places/geopulse', {geo:{"$point":[lat,longt]}},function(err, res) {
     if (err || !res || !res.data) {
       if (err) {console.log('error', err, msg);}
