@@ -25,7 +25,7 @@
     "mailcomposer": "*",
     "simplesmtp": "*",
     "jugglingdb": "0.2.x",
-    "jugglingdb-postgres": "*",
+    "jugglingdb-postgres": "git://github.com/bradfordh/postgres-adapter.git#master",
     "knex": "~0.4.13",
     "azure": "~0.7.17",
     "hat": "0.0.x"
