@@ -62,12 +62,16 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-nodemon');
   grunt.loadNpmTasks('grunt-mocha-cov');
 
-  // ## Running the test suites
+  // Running the test suites
 
   grunt.registerTask('test', 'Run unit tests', ['mochacov:unit']);
 
   grunt.registerTask('travis', 'Run tests', ['mochacov:unit']);
-  
+
+  //  Starting the server
+
+  grunt.registerTask('server', 'Run the Node.js server on localhost', ['nodemon']);
+
   // When you just say 'grunt'
-  grunt.registerTask('default', ['jshint', 'nodemon', 'watch']);
+  grunt.registerTask('default', ['jshint', 'mochacov:unit', 'watch']);
 };

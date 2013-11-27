@@ -10,6 +10,7 @@ var index = function(Models){
   var csvToDatabase = require('../helpers/csvToDatabase.js');
   var hat = require('hat');
   var User = Models.User;
+  var Metadata = Models.Metadata;
   var EmailToken = Models.EmailToken;
   var mailer = require('../helpers/sendEmail.js');
   
@@ -22,6 +23,10 @@ var index = function(Models){
     // get apiKey
     var apiKey;
     var tableMetaData = [];
+
+    // read table meta data
+    // Metadata.find({})
+
     User.findOne({where:{id:req.user.id}}, function(err, result){
         if (err) {
           console.log("ERROR in reading API key!");
@@ -176,23 +181,19 @@ var index = function(Models){
     // construct table meta json
     var d = new Date();
     var tableMetaData = {
-      table_name: '',
+      tableID: '',
+      userID: req.user.id,
       title: req.body.table_title,
       description: req.body.table_description,
       author: req.body.table_author,
       url: req.body.table_url,
-      num_cols: 100000, // hardcoded for now
-      num_rows: 6, //hardcoded for now
+      row_count: 100000, // hardcoded for now
+      col_count: 6, //hardcoded for now
       created_at: d.toUTCString(),
       columns:[]
     };
 
     var newPath = __dirname + "/../helpers/uploads/file1.csv";
-    
-    console.log("*****uploadFile tableMetaData", tableMetaData);
-    console.log("*****uploadFile req.files.info", req.files);
-    console.log("***********uploadFile req.body", req.body);
-
     var readFile = function(){
       var deferred = q.defer();
       fs.readFile(req.files.csvFile.path, function (err, data) {
@@ -218,7 +219,7 @@ var index = function(Models){
       })
       .on('record', function(row,index){
         if(index===0){
-
+          tableMetaData.tableID = row[0];
         }
         if (index===1){
           for(var i = 0; i < row.length; i++){
@@ -235,6 +236,7 @@ var index = function(Models){
         // when writing to a file, use the 'close' event
         // the 'end' event may fire before the file has been written
         console.log("***********tableMetaData", tableMetaData);
+        Metadata.saveDataset(tableMetaData);
         console.log('Number of lines: '+count);
       })
       .on('error', function(error){
@@ -264,11 +266,10 @@ var index = function(Models){
         } else {
           console.log('Success in finding a user', result);
           apiKey = result.apikey;
-          res.render('loginSuccessful', {tableMetaData: userTableMetaData,
-            apiKey: apiKey});
+          res.render('loginSuccessful', {tableMetaData: userTableMetaData, apiKey: apiKey});
+
         }
     })
-
   //   .then(function(){
   //     // parse csv file
   //     csv()

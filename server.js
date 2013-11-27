@@ -25,7 +25,7 @@ console.log("****************************");
 // app.set('dbUrl', config.db[app.get('env')]);
 // uristring = app.get('dbUrl');
 
-Models = require("./server/models/initModel.js")();
+Models = require("./server/models/initModel.js")(app);
 
 // Interesting to know what this code is doing
 // var models_dir = __dirname + '/server/models';
