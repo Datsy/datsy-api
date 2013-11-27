@@ -22,22 +22,32 @@ var index = function(Models){
     req.session.passport.userType = "user";
     // get apiKey
     var apiKey;
-    var tableMetaData = [];
+    var tableMetaData;
 
     // read table meta data
-    // Metadata.find({})
-
-    User.findOne({where:{id:req.user.id}}, function(err, result){
-        if (err) {
-          console.log("ERROR in reading API key!");
-          res.writeHead(500);
-          res.end("500 Internal Server Error error:", err);
-        } else {
-          console.log('Success in finding a user', result);
-          apiKey = result.apikey;
-          res.render('loginSuccessful', {tableMetaData: tableMetaData,
-            apiKey: apiKey});
-        }
+    Metadata.Dataset.all({where:{userID:req.user.id}}, function(err,result){
+      if (err) {
+        console.log("ERROR in reading Metadata.Dataset!");
+        console.log(err);
+        res.writeHead(500);
+        res.end("500 Internal Server Error error:", err);
+      } else {
+        tableMetaData = result;
+        console.log("********Read tableMetaData:", tableMetaData)
+        User.findOne({where:{id:req.user.id}}, function(err, result){
+          if (err) {
+            console.log("ERROR in reading API key!");
+            res.writeHead(500);
+            res.end("500 Internal Server Error error:", err);
+          } else {
+            console.log('Success in finding a user', result);
+            apiKey = result.apikey;
+            console.log("*****tableMeta*****", tableMetaData);
+            res.render('loginSuccessful', {tableMetaData: tableMetaData,
+              apiKey: apiKey});
+          }
+        })
+      }
     })
   }
 
@@ -219,7 +229,9 @@ var index = function(Models){
       })
       .on('record', function(row,index){
         if(index===0){
+          console.log("****TABLE ID", row[0]);
           tableMetaData.tableID = row[0];
+          console.log("****TABLE ID", tableMetaData.tableID);
         }
         if (index===1){
           for(var i = 0; i < row.length; i++){
@@ -236,8 +248,37 @@ var index = function(Models){
         // when writing to a file, use the 'close' event
         // the 'end' event may fire before the file has been written
         console.log("***********tableMetaData", tableMetaData);
+        csvToDatabase(newPath);
         Metadata.saveDataset(tableMetaData);
         console.log('Number of lines: '+count);
+/////////
+        var apiKey;
+        var userTableMetaData;
+
+        // read table meta data
+        Metadata.Dataset.all({where:{userID:req.user.id}}, function(err,result){
+          if (err) {
+            console.log("ERROR in reading Metadata.Dataset!");
+            console.log(err);
+            res.writeHead(500);
+            res.end("500 Internal Server Error error:", err);
+          } else {
+            userTableMetaData = result;
+            User.findOne({where:{id:req.user.id}}, function(err, result){
+              if (err) {
+                console.log("ERROR in reading API key!");
+                res.writeHead(500);
+                res.end("500 Internal Server Error error:", err);
+              } else {
+                console.log('Success in finding a user', result);
+                apiKey = result.apikey;
+                res.render('loginSuccessful', {tableMetaData: userTableMetaData,
+                  apiKey: apiKey});
+              }
+            })
+          }
+        })
+///////
       })
       .on('error', function(error){
         console.log(error.message);
@@ -255,21 +296,23 @@ var index = function(Models){
       // });
     // });
 
-    // get apiKey
-    var apiKey;
-    var userTableMetaData = [tableMetaData];
-    User.findOne({where:{id:req.user.id}}, function(err, result){
-        if (err) {
-          console.log("ERROR in reading API key!");
-          res.writeHead(500);
-          res.end("500 Internal Server Error error:", err);
-        } else {
-          console.log('Success in finding a user', result);
-          apiKey = result.apikey;
-          res.render('loginSuccessful', {tableMetaData: userTableMetaData, apiKey: apiKey});
 
-        }
-    })
+
+
+    // get apiKey
+    // var apiKey;
+    // var userTableMetaData = [tableMetaData];
+    // User.findOne({where:{id:req.user.id}}, function(err, result){
+    //     if (err) {
+    //       console.log("ERROR in reading API key!");
+    //       res.writeHead(500);
+    //       res.end("500 Internal Server Error error:", err);
+    //     } else {
+    //       console.log('Success in finding a user', result);
+    //       apiKey = result.apikey;
+    //       res.render('loginSuccessful', {tableMetaData: userTableMetaData, apiKey: apiKey});
+    //     }
+    // })
   //   .then(function(){
   //     // parse csv file
   //     csv()
