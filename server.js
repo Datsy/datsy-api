@@ -14,7 +14,7 @@ var app = express();
 var fs = require('fs');
 var flash = require("connect-flash");
 var uristring, Models;
-
+var allowCrossDomain = require('./server/middleware/generalMiddleware.js')().allowCrossDomain;
 // log process.env.NODE_ENV
 console.log("****************************");
 console.log("* Current ENV:", app.get('env'));
@@ -35,6 +35,14 @@ fs.readdirSync(models_dir).forEach(function (file) {
 
 require('./server/config/passport')(passport, config, Models);
 
+  // app.all('*', function(req, res, next) {
+  //   res.header("Access-Control-Allow-Origin", "*");
+  //   res.header("Access-Control-Allow-Headers", "X-Requested-With");
+  //   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+  //   res.header('access-control-max-age', '100');
+  //   next();
+  // });
+
 app.configure(function () {
   app.set('port', process.env.PORT || 3000);
   app.set('views', __dirname + '/server/views');
@@ -48,6 +56,7 @@ app.configure(function () {
   app.use(passport.session());
   app.use(express.methodOverride());
   app.use(flash());
+  app.use(allowCrossDomain);
   app.use(app.router);
   app.use(express.static(path.join(__dirname, 'client')));
 });

@@ -1,7 +1,7 @@
 {
   "name": "Datsy",
   "version": "0.1.0",
-  "description": "The Facebook of Data",
+  "description": "The Facebook of Big Data",
   "repository": {
     "type": "git",
     "url": "INSERT_REPOSITIRY_URL_HERE"
@@ -27,7 +27,8 @@
     "jugglingdb": "0.2.x",
     "jugglingdb-postgres": "*",
     "knex": "~0.4.13",
-    "azure": "~0.7.17"
+    "azure": "~0.7.17",
+    "hat": "0.0.x"
   },
   "devDependencies": {
 
@@ -47,6 +48,6 @@
     "should": "*"
   },
   "scripts": {
-    "test": "NODE_ENV=test node_modules/.bin/mocha -w"
+    "test": "grunt travis"
   }
 }

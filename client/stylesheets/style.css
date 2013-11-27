@@ -58,6 +58,65 @@ select {
   writing-mode: lr-tb;
 }
 
+a, a:hover, a:focus {
+  text-decoration: none;
+}
+.containerdiv {
+/*  position:absolute;*/
+  width:1400px;
+  height:800px;
+  top: 20px;
+  left:50%;
+  /*overflow:hidden;*/
+  margin-left: -200px;
+  margin-top: -15px;
+  background-image: url('../imgs/stockholm1.jpg');
+  background-size: 100%;
+
+}
+.logodiv {
+	color:white;
+	font-family:'Verdana';
+  font-size: 40px;
+}
+.logotext {
+  color:#eeeeee;
+  font-family: 'Verdana';
+  font-size: 40px;
+}
+.signupbuttondiv {
+  position:absolute;
+  width:100px;
+  left:50%;
+  top: 75%;
+  margin-left: -50px;
+  font-size: 18px;
+
+}
+.signupboxdiv {
+  position:absolute;
+  top: 15%;
+  width: 400px;
+  height:400px;
+  left:50%;
+  margin-left: -200px;
+  border-width: 1px;
+  border-color:black;
+  border-style: solid;
+  border-radius: 5px;
+
+  background-color: rgba(200,200,200,0.6);
+}
+
+.textboxsignupdiv {
+  margin-top: 20%;
+  margin-left: 10%;
+  margin-right:10%;
+  font-family: 'Verdana';
+  font-size: 18px;
+  color: rgb(20,20,20)
+}
+
 .searchField{
   display:inline;
   width: 30%;

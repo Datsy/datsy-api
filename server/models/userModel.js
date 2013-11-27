@@ -6,6 +6,7 @@ var userModel = function(schema){
     name: {type: String},
     email: {type: String},
     password: {type: String},
+    apikey: {type: String},
     account: {type: String}
   });
 
