@@ -87,7 +87,7 @@ var retrieveDataAfterInitialize = function(latitude, longitude, step, prevData) 
   if (latitude < USborder.SouthLat) {
     counter ++;
     setTimeout(function() {
-      retrieveDataAfterInitialize(midPoint.latitude, midPoint.longitude + counter*step, step, prevData);
+      retrieveDataAfterInitialize(midPoint.latitude, -96.4 + counter*step, step, prevData);
       console.log('hit the south latitude range');
     }, 10000);
     return;
