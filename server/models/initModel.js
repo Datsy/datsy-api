@@ -12,13 +12,13 @@ var initModel = function(){
 
   var User = require('./userModel.js')(schema);
   var EmailToken = require('./emailTokenModel.js')(schema);
-  var TableMetaData = require('./tableMetaDataModel.js')(schema);
+  // var Tablecolumnmeta = require('./userTableMeta/tablecolumnmeta.js')(schema);
+  // var Tablemeta = require('./userTableMeta/tablemeta.js')(schema);
+  // var Tabletag = require('./userTableMeta/tabletag.js')(schema);
 
-  Models = {
-  	User: User,
-    EmailToken: EmailToken,
-    TableMetaData: TableMetaData         
-  };
+  // Create the table relationships
+  // Tablemeta.hasAndBelongsToMany(Tabletag, {as: 'tag', foreignKey: 'dataset_id'});
+  // Tablemeta.hasMany(Tablecolumn, {as: 'datacolumn', foreignKey: 'dataset_id'});
 
 	var updateSchema = function(){
 	  var deferred = q.defer();
@@ -34,7 +34,12 @@ var initModel = function(){
 
 	updateSchema().then(function(){
 	});
-  
+
+  Models = {
+  	User: User,
+    EmailToken: EmailToken
+  };
+
   return Models;
 }
 

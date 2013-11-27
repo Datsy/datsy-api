@@ -27,11 +27,12 @@ console.log("****************************");
 
 Models = require("./server/models/initModel.js")();
 
-var models_dir = __dirname + '/server/models';
-fs.readdirSync(models_dir).forEach(function (file) {
-  if(file[0] === '.') return;
-  require(models_dir+'/'+ file);
-});
+// Interesting to know what this code is doing
+// var models_dir = __dirname + '/server/models';
+// fs.readdirSync(models_dir).forEach(function (file) {
+//   if(file[0] === '.') return;
+//   require(models_dir+'/'+ file);
+// });
 
 require('./server/config/passport')(passport, config, Models);
 

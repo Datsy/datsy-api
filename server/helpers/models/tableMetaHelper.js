@@ -1,43 +1,7 @@
-var metadataModel = function(schema) {
+var tableMetaHelper = function(){
+  var helperObject = {};  
 
-  // Namespace for the Metadata tables / relationships
-
-  var Metadata = {};
-
-  //  Define the table schemas
-
-  Metadata.Dataset = schema.define('dataset', {
-    tableName: {type: String},
-    url: {type: String},
-    title: {type: String},
-    description: {type: String},
-    author: {type: String},
-    date_added: {type: Date},
-    row_count: {type: Number},
-    col_count: {type: Number}
-  });
-
-  Metadata.Tag = schema.define('tag', {
-    label: {type: String}
-  });
-
-  Metadata.DataColumn = schema.define('datacolumn', {
-    name: {type: String, length: 45},
-    datatype: {type: String, length: 45},
-    description: {type: Schema.Text}
-  });
-
-  // Create the table relationships
-
-  Metadata.Dataset.hasAndBelongsToMany(Metadata.Tag, {as: 'tag', foreignKey: 'dataset_id'});
-
-  Metadata.Dataset.hasMany(Metadata.DataColumn, {as: 'datacolumn', foreignKey: 'dataset_id'});
-
-
-  // define helper functions
-
-
-  Metadata.prototype.saveDatasetInDb = function(jsonMetadata) {
+  helperObject.saveDatasetInDb = function(jsonMetadata) {
     
     var dataset         = new Dataset();
     dataset.url         = jsonMetadata.url;
@@ -52,17 +16,17 @@ var metadataModel = function(schema) {
       if(err) {
         console.log(err);
       } else {
-        saveDatasetColumnsInDb(dataset);  
+        saveDatasetColumnsInDb(dataset);
       }
     });
   },
 
-  Metadata.prototype.saveDatasetInDbFromFile = function(filepath) {
+  helperObject.saveDatasetInDbFromFile = function(filepath) {
     var json = require(filepath);
     saveDatasetInDb(json);
   },
 
-  Metadata.prototype.saveDatasetColumnsInDb = function(dataset) {
+  helperObject.saveDatasetColumnsInDb = function(dataset) {
     for(var i = 0; i < dataset.columns.length; i++) {
       var column = dataset.columns[i];
       DatasetColumns.create({
@@ -80,7 +44,7 @@ var metadataModel = function(schema) {
     }
   },
 
-  Metadata.prototype.getColumnsByDatatype = function(datatypeString) {
+  helperObject.getColumnsByDatatype = function(datatypeString) {
     return DatasetColumns.all({colDatatype: datatypeString}, function(err, DatasetColumns){
       if(err) {
         console.log(err);
@@ -90,7 +54,7 @@ var metadataModel = function(schema) {
     });
   },
 
-  Metadata.prototype.getDatasetsByTagName = function(tagName) {
+  helperObject.getDatasetsByTagName = function(tagName) {
     // tagName -> array of Datasets
     var tag = getTagByName(tagName);
     return DataTags.all({where: {id: tag.id, dataCategory: 'set'}}, function(err, DatasetIds){
@@ -102,7 +66,7 @@ var metadataModel = function(schema) {
     });
   },
 
-  Metadata.prototype.getColumnsByTagName = function(tagName) {
+  helperObject.getColumnsByTagName = function(tagName) {
     var tag = getTagByName(tagName);
     var tagId = tag.id;
     return DataTags.all({where: {id: tagId, dataCategory: 'column'}}, function(err, ColumnIds){
@@ -114,19 +78,14 @@ var metadataModel = function(schema) {
     });
   },
   
-  Metadata.prototype.getTagByName = function(tagName) {
+  helperObject.getTagByName = function(tagName) {
     return Tags.findOne({where: {label: tagName}});
   }
 
-  /*
-    Helpers
-  */
-  Metadata.prototype.transformForPostgres = function(string) {
+  helperObject.transformForPostgres = function(string) {
     return string.replace("\n", " ");
   }
 
-  return Metadata;
-};
+  return helperObject;
 
-  module.exports = metadataModel;
-
+}
