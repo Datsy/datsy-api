@@ -3,7 +3,7 @@
 var Factual = require('factual-api');
 var fs = require('fs');
 // var csv = require('csv');
-var helper = require('./MongoDB_CSV_helperFunctions.js');
+var helper = require('../helper/MongoDB_CSV_helperFunctions.js');
 var getAllKeys = helper.getAllKeys;
 var checkCSVFolder = helper.checkCSVFolder;
 var factual = new Factual(process.env.FACTUAL_ACCESS_KEY, process.env.FACTUAL_SECRET_KEY);

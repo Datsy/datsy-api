@@ -10,7 +10,7 @@ var num_row = 0;
 var table = {};
 
 // modify this only!!
-var filepath = './LocationDemographicscsv/2013-11-26T20-01-19LocationDemographics.csv'; //edit this to change file
+var filepath = '../USstockHistory167Mb_output/stockdata.csv'; //edit this to change file
 // var readFolder = function () {
 //   fs.readdir(dir,function(err,files){
 //     if (err) throw err;
@@ -75,7 +75,7 @@ var insertDB = function (startRow) {
   }
   for (var i = startRow; i < startRow + rowlimit; i++) {
     insertQS += ' (\'';
-    insertQS += table.col_values[i].replace(/[^A-Za-z\s\d,&:.\-//]/g, '').split(',').join('\',\'');
+    insertQS += table.col_values[i].replace(/[^A-Za-z\s\d,&:\.\-//]/g, '').split(',').join('\',\'');
     insertQS += '\')';
 //for insertion into Postgres, must use "null", but not 'null'
 
@@ -98,10 +98,10 @@ var insertDB = function (startRow) {
       insertQS += ',';
     }
   }
-  insertQS = insertQS.replace(/\'null\'/g,'null');
+  // insertQS = insertQS.replace(/\'null\'/g,'null');
   insertQS += ';';
 
-  fs.writeFile('./output.txt', insertQS, function() {});
+  // fs.writeFile('./output.txt', insertQS, function() {});
   client.query(insertQS, function(err, result) {
     if (err) { return console.error('error with insertion', err);}
     console.log('inserted data into starting from ' + startRow);
@@ -113,6 +113,6 @@ var insertDB = function (startRow) {
   });
 }
 
-readOne(filepath);
+exports.readOne = readOne;
 
 
