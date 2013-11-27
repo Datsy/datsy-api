@@ -25,7 +25,7 @@ var index = function(Models){
     var tableMetaData;
 
     // read table meta data
-    Metadata.Dataset.all({where:{userID:req.user.id}}, function(err,result){
+    Metadata.Dataset.all({where:{user_id:req.user.id}}, function(err,result){
       if (err) {
         console.log("ERROR in reading Metadata.Dataset!");
         console.log(err);
@@ -191,8 +191,8 @@ var index = function(Models){
     // construct table meta json
     var d = new Date();
     var tableMetaData = {
-      tableID: '',
-      userID: req.user.id,
+      table_id: '',
+      user_id: req.user.id,
       title: req.body.table_title,
       description: req.body.table_description,
       author: req.body.table_author,
@@ -230,8 +230,8 @@ var index = function(Models){
       .on('record', function(row,index){
         if(index===0){
           console.log("****TABLE ID", row[0]);
-          tableMetaData.tableID = row[0];
-          console.log("****TABLE ID", tableMetaData.tableID);
+          tableMetaData.table_id = row[0];
+          console.log("****TABLE ID", tableMetaData.table_id);
         }
         if (index===1){
           for(var i = 0; i < row.length; i++){
@@ -256,7 +256,7 @@ var index = function(Models){
         var userTableMetaData;
 
         // read table meta data
-        Metadata.Dataset.all({where:{userID:req.user.id}}, function(err,result){
+        Metadata.Dataset.all({where:{user_id:req.user.id}}, function(err,result){
           if (err) {
             console.log("ERROR in reading Metadata.Dataset!");
             console.log(err);
