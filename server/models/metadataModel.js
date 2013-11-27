@@ -7,11 +7,11 @@ var metadataModel = function(schema) {
   //  Define the table schemas
 
   Metadata.Dataset = schema.define('dataset', {
-    tableName: {type: String},
+    table_name: {type: String, unique: true},
     url: {type: String},
-    title: {type: String},
+    title: {type: String, length: 45},
     description: {type: String},
-    author: {type: String},
+    author: {type: String, length: 45},
     date_added: {type: Date},
     row_count: {type: Number},
     col_count: {type: Number}
@@ -19,60 +19,70 @@ var metadataModel = function(schema) {
 
 
   Metadata.Tag = schema.define('tag', {
-    label: {type: String}
+    label: {type: String, length: 45}
   });
 
 
   Metadata.DataColumn = schema.define('datacolumn', {
     name: {type: String, length: 45},
     datatype: {type: String, length: 45},
-    description: {type: Schema.Text}
+    description: {type: String}
   });
 
 
   // Create the table relationships
 
-  Metadata.DDataset.hasAndBelongsToMany(Metadata.Tag, {as: 'tag', foreignKey: 'dataset_id'});
+  Metadata.Dataset.hasAndBelongsToMany(Metadata.Tag, {as: 'tag', foreignKey: 'dataset_id'});
 
   Metadata.Dataset.hasMany(Metadata.DataColumn, {as: 'datacolumn', foreignKey: 'dataset_id'});
 
 
-  // define helper functions
+  //
+  // Define helper functions
+  //
 
 
-  Metadata.prototype.saveDatasetInDb = function(jsonMetadata) {
-    
-    var dataset         = new Dataset();
+  // Saves a JSON object into the database
+
+  Metadata.saveDataset = function(jsonMetadata) {
+
+    var dataset         = new this.Dataset();
     dataset.url         = jsonMetadata.url;
     dataset.name        = jsonMetadata.name;
     dataset.title       = jsonMetadata.title;
-    dataset.description = transformForPostgres(jsonMetadata.description);
+    dataset.description = this.transformForPostgres(jsonMetadata.description);
     dataset.author      = jsonMetadata.author;
     dataset.user_id     = jsonMetadata.user_id;
     dataset.numcols     = jsonMetadata.numcols;
-    
+
+    var self = this;
     dataset.save(function(err, dataset) {
       if(err) {
         console.log(err);
       } else {
-        saveDatasetColumnsInDb(dataset);  
+        self.saveColumns(dataset, jsonMetadata);
       }
     });
-  },
+  };
 
-  Metadata.prototype.saveDatasetInDbFromFile = function(filepath) {
+
+  // Reads a JSON file from the disk
+
+  Metadata.readJSONFile = function(filepath) {
     var json = require(filepath);
-    saveDatasetInDb(json);
-  },
+    this.saveDataset(json);
+  };
 
-  Metadata.prototype.saveDatasetColumnsInDb = function(dataset) {
-    for(var i = 0; i < dataset.columns.length; i++) {
-      var column = dataset.columns[i];
-      DatasetColumns.create({
-        table_id: dataset.id,
-        colName: column.name,
-        colDatatype: column.datatype,
-        colMeaning: column.meaning
+
+  // Saves column data to the database
+
+  Metadata.saveColumns = function(dataset, jsonMetadata) {
+    for(var i = 0; i < jsonMetadata.columns.length; i++) {
+      var column = jsonMetadata.columns[i];
+      dataset.datacolumn.create({
+        name: column.name,
+        datatype: column.datatype,
+        description: column.meaning
       }, function(err, data) {
         if(err) {
           console.log(err);
@@ -81,19 +91,19 @@ var metadataModel = function(schema) {
         }
       });
     }
-  },
+  };
 
-  Metadata.prototype.getColumnsByDatatype = function(datatypeString) {
-    return DatasetColumns.all({colDatatype: datatypeString}, function(err, DatasetColumns){
-      if(err) {
-        console.log(err);
-      } else {
-        return DatasetColumns;
-      }
-    });
-  },
 
-  Metadata.prototype.getDatasetsByTagName = function(tagName) {
+  // Gets all columns containing a certain datatype
+
+  Metadata.getColumnsByDatatype = function(datatypeString, cb) {
+    return this.DataColumn.all({where: {datatype: datatypeString}}, cb);
+  };
+
+
+  // Gets all datasets with a certain tag
+
+  Metadata.getDatasetsByTagName = function(tagName) {
     // tagName -> array of Datasets
     var tag = getTagByName(tagName);
     return DataTags.all({where: {id: tag.id, dataCategory: 'set'}}, function(err, DatasetIds){
@@ -103,9 +113,12 @@ var metadataModel = function(schema) {
         return Datasets.all({id: DatasetIds});
       }
     });
-  },
+  };
 
-  Metadata.prototype.getColumnsByTagName = function(tagName) {
+
+  // Gets all columns with a certain tag
+
+  Metadata.getColumnsByTagName = function(tagName) {
     var tag = getTagByName(tagName);
     var tagId = tag.id;
     return DataTags.all({where: {id: tagId, dataCategory: 'column'}}, function(err, ColumnIds){
@@ -115,18 +128,21 @@ var metadataModel = function(schema) {
         return DatasetColumns.all({id: ColumnIds});
       }
     });
-  },
-  
-  Metadata.prototype.getTagByName = function(tagName) {
+  };
+
+
+  // Returns the tab object for a given name
+
+  Metadata.getTagByName = function(tagName) {
     return Tags.findOne({where: {label: tagName}});
   }
 
-  /*
-    Helpers
-  */
-  Metadata.prototype.transformForPostgres = function(string) {
+  // Return new lines from string
+
+  Metadata.transformForPostgres = function(string) {
     return string.replace("\n", " ");
   }
+
 
   return Metadata;
 };
