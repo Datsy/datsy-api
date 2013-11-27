@@ -12,29 +12,29 @@ var initModel = function(){
 
   var User = require('./userModel.js')(schema);
   var EmailToken = require('./emailTokenModel.js')(schema);
-  var TableMetaData = require('./tableMetaDataModel.js')(schema);
+  var Metadata = require('./metadataModel.js')(schema);
 
   Models = {
-  	User: User,
+    User: User,
     EmailToken: EmailToken,
-    TableMetaData: TableMetaData         
+    Metadata: Metadata
   };
 
 	var updateSchema = function(){
 	  var deferred = q.defer();
 	  console.log("updating schema");
-	  
+
 	  schema.autoupdate(function(msg){
 	    console.log("*** db schema update completed")
 	    deferred.resolve('deferred resolved!!');
 	  });
-	  
+
 	  return deferred.promise;
 	};
 
 	updateSchema().then(function(){
 	});
-  
+
   return Models;
 }
 
