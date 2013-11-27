@@ -8,7 +8,7 @@ var metadataModel = function(schema) {
 
   Metadata.Dataset = schema.define('datasetmeta', {
     tableID: {type: String, unique: true},
-    userID: {type: String, unique: true},
+    userID: {type: Number, unique: true},
     url: {type: String},
     title: {type: String},
     description: {type: String},
