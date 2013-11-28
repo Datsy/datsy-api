@@ -7,8 +7,8 @@ number of data sets.
 Running Grunt
 -------
 
-Run `grunt` from the command line to automatically do the following after each
-JavaScript file has been saved/modified:
+When you run `grunt` from the command line, the following will happen after each
+file save:
 * lint your changes and display any errors
 * run all unit tests within `test/` and display any errors
 
