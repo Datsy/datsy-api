@@ -19,7 +19,7 @@ Please make sure there are not errors before pushing changes.
 API Endpoints
 -------
 
-### Search
+### Search Endpoint
 
 ###### Parameters
 | Name     | Required    | Description                                    |
@@ -44,6 +44,6 @@ http://...../search?term=Bike+Share&type=tag
 - [ ] Search by `type=tag` (i.e., `../search?term=Bike&type=tag`)
 - [ ] Search by `type=dataset` (i.e., `../search?term=Bike&type=dataset`)
 - [ ] Search with multiple terms for `tag` and `dataset` types
-- [ ] Retreive list of all `tags` (i.e., `../tags`)
-- [ ] **Development Purposes Only:** Retreive joined sample data (i.e. `../dev`)
+- [ ] Retrieve list of all `tags` (i.e., `../tags`)
+- [ ] *Development Purposes Only:* Retrieve joined sample data (i.e. `../dev`)
 
