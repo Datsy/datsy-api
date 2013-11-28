@@ -15,3 +15,34 @@ kick-off a process to automatically:
 
 Please make sure there are not errors before pushing changes.
 
+
+API Endpoints
+-------
+
+#### Search
+
+###### Parameters
+| Name     | Required    | Description                                    |
+| -------- | ----------- | ---------------------------------------------- |
+| `term`   | Required    | TODO                                           |
+| `type`   | Required    | Possible values are `tag` and `dataset`.       |
+
+
+###### Example
+```
+http://...../search?term=Bike+Share&type=tag
+```
+
+###### Response
+```
+// TODO: Insert sample response based on the example above.
+```
+
+
+Task List:
+- [ ] Search by `type=tag` (i.e., `../search?term=Bike&type=tag`)
+- [ ] Search by `type=dataset` (i.e., `../search?term=Bike&type=dataset`)
+- [ ] Search with multiple terms for `tag` and `dataset` types
+- [ ] Retreive list of all `tags` (i.e., `../tags`)
+- [ ] **Development Purposes Only:** Retreive joined sample data (i.e. `../dev`)
+
