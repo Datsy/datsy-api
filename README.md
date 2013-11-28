@@ -19,7 +19,7 @@ Please make sure there are not errors before pushing changes.
 API Endpoints
 -------
 
-#### Search
+### Search
 
 ###### Parameters
 | Name     | Required    | Description                                    |
