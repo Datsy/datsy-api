@@ -30,10 +30,7 @@ module.exports = function(app,passport,Models){
 
   app.post("/user-login", 
     passport.authenticate('user', {failureRedirect : "#/user-login-fail"}),
-    function(req,res) {
-      req.session.passport.userType = "user";
-      res.render('loginSuccessful');
-    }
+    home.loginSuccess
   );
 
   app.get('/logout', function(req, res){

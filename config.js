@@ -21,11 +21,10 @@ config = {
       }
     },
     database: {
-      client: 'sqlite3',
-      connection: {
-        filename: path.join(__dirname, '/content/data/ghost-dev.db')
-      },
-      debug: false
+      user: "",
+      password: "",
+      host: "",
+      dbname: "datsy"
     },
     server: {
       // Host to be passed to node's `net.Server#listen()`
@@ -49,17 +48,12 @@ config = {
           pass: process.env.GMAIL_PASSWORD
         }
       }
-    },
+    },    
     database: {
-      client: 'mysql',
-      connection: {
-        user: process.env.MYSQL_USER,
-        password: process.env.MYSQL_PASSWORD,
-        host: process.env.MYSQL_HOST,
-        database: process.env.MYSQL_DATABASE,
-        filename: path.join(__dirname, '/content/data/ghost.db')
-      },
-      debug: false
+      user: "masterofdata",
+      password: "gj1h23gnbfsjdhfg234234kjhskdfjhsdfKJHsdf234",
+      host: "137.135.14.92",
+      dbname: "postgres"
     },
     server: {
       // Host to be passed to node's `net.Server#listen()`

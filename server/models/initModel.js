@@ -1,40 +1,50 @@
-var initModel = function(){
+var initModel = function(app){
   var Models = {};
   var q = require('q');
+  var dbSetting = require('../../config.js')[app.get('env')].database;
   // var setting = require('setting');
   var Schema = require('jugglingdb').Schema;
   var schema = new Schema('postgres', {
-	database: 'datsy'
-	// username: 'woonketwong'
-	  //port: 5432,
-	  //hostname: "localhost",
-  }); //port number depends on your configuration
+    username: dbSetting.user,
+    password: dbSetting.password,
+    host: dbSetting.host,
+    database: dbSetting.dbname
+  });
 
   var User = require('./userModel.js')(schema);
   var EmailToken = require('./emailTokenModel.js')(schema);
-  var TableMetaData = require('./tableMetaDataModel.js')(schema);
+
+  // var Tablecolumnmeta = require('./userTableMeta/tablecolumnmeta.js')(schema);
+  // var Tablemeta = require('./userTableMeta/tablemeta.js')(schema);
+  // var Tabletag = require('./userTableMeta/tabletag.js')(schema);
+
+  // Create the table relationships
+  // Tablemeta.hasAndBelongsToMany(Tabletag, {as: 'tag', foreignKey: 'dataset_id'});
+  // Tablemeta.hasMany(Tablecolumn, {as: 'datacolumn', foreignKey: 'dataset_id'});
+
+  var Metadata = require('./metadataModel.js')(schema);
 
   Models = {
-  	User: User,
+    User: User,
     EmailToken: EmailToken,
-    TableMetaData: TableMetaData         
+    Metadata: Metadata
   };
 
 	var updateSchema = function(){
 	  var deferred = q.defer();
 	  console.log("updating schema");
-	  
+
 	  schema.autoupdate(function(msg){
 	    console.log("*** db schema update completed")
 	    deferred.resolve('deferred resolved!!');
 	  });
-	  
+
 	  return deferred.promise;
 	};
 
 	updateSchema().then(function(){
 	});
-  
+
   return Models;
 }
 
