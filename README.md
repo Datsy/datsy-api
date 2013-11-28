@@ -20,8 +20,6 @@ Run `grunt prod` to do the following:
 * connect to a production PostgreSQL database
 * run nodemon with the `--debug` setting
 
-Please make sure there are not errors before pushing changes.
-
 
 API Endpoints
 -------
