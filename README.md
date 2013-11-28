@@ -13,11 +13,11 @@ file save:
 * run all unit tests within `test/` and display any errors
 
 Run `grunt dev` to do the following:
-* start a PostgreSQL database on `localhost`
+* connect to a development PostgreSQL database on `localhost`
 * run nodemon with the `--debug` setting
 
 Run `grunt prod` to do the following:
-* connect to a production PostgreSQL database
+* connect to a production PostgreSQL database based on the information in the config file
 * run nodemon with the `--debug` setting
 
 
