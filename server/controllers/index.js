@@ -1,18 +1,18 @@
 /* GET home page */
 
 var index = function(Models){
-  var indexRoutes = {};
-  var passwordHash = require('password-hash');
-  var crypto = require('crypto');
-  var q = require('q');
-  var fs = require('fs');
-  var csv = require('csv');
-  var csvToDatabase = require('../helpers/csvToDatabase.js');
-  var hat = require('hat');
-  var User = Models.User;
-  var Metadata = Models.Metadata;
-  var EmailToken = Models.EmailToken;
-  var mailer = require('../helpers/sendEmail.js');
+  var indexRoutes = {},
+      passwordHash = require('password-hash'),
+      crypto = require('crypto'),
+      q = require('q'),
+      fs = require('fs'),
+      csv = require('csv'),
+      csvToDatabase = require('../helpers/csvToDatabase.js'),
+      hat = require('hat'),
+      User = Models.User,
+      Metadata = Models.Metadata,
+      EmailToken = Models.EmailToken,
+      mailer = require('../helpers/sendEmail.js');
 
   indexRoutes.index = function(req, res){
     res.render('index', { title: 'Express' });
