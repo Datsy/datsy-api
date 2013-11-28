@@ -25,13 +25,14 @@ console.log("****************************");
 // app.set('dbUrl', config.db[app.get('env')]);
 // uristring = app.get('dbUrl');
 
-Models = require("./server/models/initModel.js")();
+Models = require("./server/models/initModel.js")(app);
 
-var models_dir = __dirname + '/server/models';
-fs.readdirSync(models_dir).forEach(function (file) {
-  if(file[0] === '.') return;
-  require(models_dir+'/'+ file);
-});
+// Interesting to know what this code is doing
+// var models_dir = __dirname + '/server/models';
+// fs.readdirSync(models_dir).forEach(function (file) {
+//   if(file[0] === '.') return;
+//   require(models_dir+'/'+ file);
+// });
 
 require('./server/config/passport')(passport, config, Models);
 
