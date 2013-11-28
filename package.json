@@ -1,10 +1,10 @@
 {
   "name": "Datsy",
   "version": "0.1.0",
-  "description": "The Facebook of Big Data",
+  "description": "Datsy-API is a free, open and simple API to access and explore an ever growing number of data sets.",
   "repository": {
     "type": "git",
-    "url": "INSERT_REPOSITIRY_URL_HERE"
+    "url": "https://github.com/Datsy/datsy-api"
   },
   "dependencies": {
     "express": "~3.4.x",
@@ -31,7 +31,6 @@
     "hat": "0.0.x"
   },
   "devDependencies": {
-
     "grunt": "~0.4.1",
     "grunt-contrib-watch": "~0.5.3",
     "grunt-contrib-jshint": "~0.7.2",
