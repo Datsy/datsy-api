@@ -45,6 +45,15 @@ module.exports = function(grunt) {
       }
     },
 
+    env: {
+      dev: {
+        NODE_ENV: 'development'
+      },
+      prod: {
+        NODE_ENV: 'production'
+      }
+    },
+
     watch: {
       gruntfile: {
         files: 'Gruntfile.js',
@@ -61,6 +70,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-nodemon');
   grunt.loadNpmTasks('grunt-mocha-cov');
+  grunt.loadNpmTasks('grunt-env');
 
   // Running the test suites
 
@@ -68,9 +78,11 @@ module.exports = function(grunt) {
 
   grunt.registerTask('travis', 'Run tests', ['mochacov:unit']);
 
-  //  Starting the server
+  //  Running different environment builds
 
-  grunt.registerTask('server', 'Run the Node.js server on localhost', ['nodemon']);
+  grunt.registerTask('dev', 'Run the development build', ['env:dev', 'nodemon']);
+
+  grunt.registerTask('prod', 'Run the production build', ['env:prod', 'nodemon']);
 
   // When you just say 'grunt'
   grunt.registerTask('default', ['jshint', 'mochacov:unit', 'watch']);
