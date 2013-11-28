@@ -7,11 +7,18 @@ number of data sets.
 Running Grunt
 -------
 
-When you checkout a branch, open up a new tab and run the command `grunt` to
-kick-off a process to automatically:
-* lint your changes to JavaScript files
-* run the defined tests that are withing the `test/` folder
-* restart the server when server-related files change
+Run `grunt` from the command line to automatically do the following after each
+JavaScript file has been saved/modified:
+* lint your changes and display any errors
+* run all unit tests within `test/` and display any errors
+
+Run `grunt dev` to do the following:
+* start a PostgreSQL database on `localhost`
+* run nodemon with the `--debug` setting
+
+Run `grunt prod` to do the following:
+* connect to a production PostgreSQL database
+* run nodemon with the `--debug` setting
 
 Please make sure there are not errors before pushing changes.
 
