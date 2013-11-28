@@ -4,6 +4,6 @@ var Tabletag = function(schema){
   });
 
   return Tabletag;
-}
+};
 
 module.exports = Tabletag;
