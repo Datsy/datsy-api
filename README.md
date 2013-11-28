@@ -37,9 +37,10 @@ http://...../search?term=Bike+Share&type=tag
 ```
 // TODO: Insert sample response based on the example above.
 ```
+<br />
+<br />
 
-
-Task List:
+**Task List:**
 - [ ] Search by `type=tag` (i.e., `../search?term=Bike&type=tag`)
 - [ ] Search by `type=dataset` (i.e., `../search?term=Bike&type=dataset`)
 - [ ] Search with multiple terms for `tag` and `dataset` types
