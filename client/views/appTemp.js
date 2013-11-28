@@ -17,8 +17,8 @@ window.Datsy = Backbone.View.extend({
         }
     });
     // Instantiate the router
-    var app_router = new AppRouter;
-    
+    var app_router = new AppRouter();
+
     app_router.on('route:login', this.userLoginNav);
     app_router.on('route:signup', this.userSignupNav);
     app_router.on('route:verifyEmail', this.verifyEmailNav);

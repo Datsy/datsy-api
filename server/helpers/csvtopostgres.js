@@ -88,7 +88,7 @@ var insertDB = function (startRow) {
       client.end();
     }
   });
-}
+};
 
 readOne(filepath);
 

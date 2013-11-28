@@ -6,6 +6,7 @@ module.exports = function(grunt) {
     jshint: {
       gruntfile: 'Gruntfile.js',
       server: 'server/**/*.js',
+      client: 'client/*.js',
       options: {
         globals: {
           eqeqeq: true

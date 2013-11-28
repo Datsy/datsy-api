@@ -14,8 +14,8 @@ module.exports = function(app,passport,Models){
   // });
 
   //**********************************
-  // define general routes that are accessible 
-  // by both user and employer 
+  // define general routes that are accessible
+  // by both user and employer
   // (no authentication is required)
   //**********************************
   // app.all('*', function(req, res, next) {
@@ -28,7 +28,7 @@ module.exports = function(app,passport,Models){
 
   app.get('/', home.index);
 
-  app.post("/user-login", 
+  app.post("/user-login",
     passport.authenticate('user', {failureRedirect : "#/user-login-fail"}),
     home.loginSuccess
   );
@@ -37,7 +37,7 @@ module.exports = function(app,passport,Models){
     console.log("Before Logout Session:", req.session);
     req.logout();
     // Also destroy the req.session.passport.userType
-    delete req.session.passport.userType
+    delete req.session.passport.userType;
     console.log("After Logout Session:", req.session);
     res.writeHead(200);
     res.end();

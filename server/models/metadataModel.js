@@ -77,19 +77,21 @@ var metadataModel = function(schema) {
   // Saves column data to the database
 
   Metadata.saveColumns = function(dataset, jsonMetadata) {
+    var cb = function(err, data) {
+      if (err) {
+        console.log(err);
+      } else {
+        return data;
+      }
+    };
+
     for(var i = 0; i < jsonMetadata.columns.length; i++) {
       var column = jsonMetadata.columns[i];
       dataset.datacolumnmeta.create({
         name: column.name,
         datatype: column.datatype,
         description: column.description
-      }, function(err, data) {
-        if(err) {
-          console.log(err);
-        } else {
-          return data;
-        }
-      });
+      }, cb);
     }
   };
 
@@ -98,7 +100,7 @@ var metadataModel = function(schema) {
 
   Metadata.transformForPostgres = function(string) {
     return string.replace("\n", " ");
-  }
+  };
 
 
   return Metadata;

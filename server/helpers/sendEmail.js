@@ -11,8 +11,8 @@ var EmailAddressRequiredError = new Error('email address required');
 var defaultTransport = nodemailer.createTransport('SMTP', {
  service: 'Gmail',
  auth: {
-   user: config['allEnv'].mailer.auth.user,
-   pass: config['allEnv'].mailer.auth.pass
+   user: config.allEnv.mailer.auth.user,
+   pass: config.allEnv.mailer.auth.pass
  }
 });
 
@@ -44,7 +44,7 @@ exports.sendOne = function (templateName, locals, fn) {
      var transport = defaultTransport;
      // console.log("****password",transport.auth.pass);
      transport.sendMail({
-       from: config['allEnv'].mailer.defaultFromAddress,
+       from: config.allEnv.mailer.defaultFromAddress,
        to: locals.email,
        subject: locals.subject,
        html: html,
@@ -58,4 +58,4 @@ exports.sendOne = function (templateName, locals, fn) {
      });
    });
  });
-}
+};

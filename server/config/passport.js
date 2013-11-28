@@ -3,7 +3,7 @@ module.exports = function (passport, config, Models) {
   var LocalStrategy = require('passport-local').Strategy;
 
   passport.serializeUser(function(user, done) {
-	  done(null, user.id);
+    done(null, user.id);
   });
 
   passport.deserializeUser(function(id, done) {
@@ -13,11 +13,10 @@ module.exports = function (passport, config, Models) {
   });
 
   passport.use('user', new LocalStrategy({
-	  usernameField: 'email',
-	  passwordField: 'password'
+    usernameField: 'email',
+    passwordField: 'password'
   },
   function(email, password, done) {
     User.prototype.isValidUserPassword(email, password, done);
   }));
-
-}
+};
