@@ -1,10 +1,10 @@
 var SignupView = Backbone.View.extend({
 
-  events: { 
+  events: {
     //"click #signup-submit": "verifyEmailPath",
   },
 
-  verifyEmailPath: function(e) { 
+  verifyEmailPath: function(e) {
     console.log('verify email path');
     // e.preventDefault();
     console.log(window.location);
@@ -12,7 +12,7 @@ var SignupView = Backbone.View.extend({
   },
 
   template: _.template('\
-  	<div> \
+    <div> \
       <div class="well hero-spacer"> \
         <h3>Sign Up</h3> \
       </div> \
@@ -40,7 +40,7 @@ var SignupView = Backbone.View.extend({
         </form> \
       </div> \
     </div> \
-	'
+  '
   ),
 
   render: function() {
