@@ -1,7 +1,7 @@
 var express = require('express'),
     path = require('path'),
     config = require('./config.js'),
-    router = require('./server/config/routes.js'),
+    routes = require('./server/routes'),
     passport = require("passport"),
     port = process.env.PORT || 5000,
     app = express(),
@@ -46,6 +46,12 @@ app.configure(function () {
   app.use(express.static(path.join(__dirname, 'client')));
 });
 
+// Initialize routing
+
+routes.frontend(app, passport, Models);
+
+// TODO: add api routes
+
 
 // If in development, use Express error handler
 
@@ -72,6 +78,5 @@ app.use(function(req, res, next){
   res.type('txt').send('Not found');
 });
 
-router(app, passport, Models);
 
 app.listen(port);
