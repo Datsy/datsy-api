@@ -1,17 +1,13 @@
 var express = require('express'),
-    http = require('http'),
     path = require('path'),
     config = require('./config.js'),
-    router = require('./server/config/routes.js'),
-    util = require('util'),
+    routes = require('./server/routes'),
     passport = require("passport"),
     port = process.env.PORT || 5000,
     app = express(),
-    fs = require('fs'),
     flash = require("connect-flash"),
-    uristring,
-    Models,
     allowCrossDomain = require('./server/middleware/generalMiddleware.js')().allowCrossDomain;
+
 
 // Log process.env.NODE_ENV
 
@@ -19,11 +15,18 @@ console.log("****************************");
 console.log("* Current ENV:", app.get('env'));
 console.log("****************************");
 
-// Database initialization
 
-Models = require("./server/models/initModel.js")(app);
+// Initialize database models
+
+var Models = require("./server/models/initModel.js")(app);
+
+
+// Initialize passport
 
 require('./server/config/passport')(passport, config, Models);
+
+
+// Configure Express server
 
 app.configure(function () {
   app.set('port', process.env.PORT || 3000);
@@ -42,6 +45,12 @@ app.configure(function () {
   app.use(app.router);
   app.use(express.static(path.join(__dirname, 'client')));
 });
+
+// Initialize routing
+
+routes.frontend(app, passport, Models);
+
+// TODO: add api routes
 
 
 // If in development, use Express error handler
@@ -69,6 +78,5 @@ app.use(function(req, res, next){
   res.type('txt').send('Not found');
 });
 
-router(app, passport, Models);
 
 app.listen(port);
