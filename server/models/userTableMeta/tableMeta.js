@@ -10,6 +10,6 @@ var Tablemeta = function(schema){
   });
 
   return Tablemeta;
-}
+};
 
 module.exports = Tablemeta;

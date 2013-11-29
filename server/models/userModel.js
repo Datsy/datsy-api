@@ -12,9 +12,9 @@ var userModel = function(schema){
 
 
   User.prototype.isValidUserPassword = function(email, rawPassword, done) {
-    console.log("is valid user password")
+    console.log("is valid user password");
     User.findOne({where: {email : email}}, function(err, data){
-      console.log(data)
+      console.log(data);
       // if(err) throw err;
       if(err){
         console.log('login error');
@@ -52,8 +52,8 @@ var userModel = function(schema){
   // }
 
   return User;
-}
-  
+};
+
 module.exports = userModel;
 
 

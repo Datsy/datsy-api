@@ -1,4 +1,3 @@
-
 var authMiddleware = {};
 
 var isAuthenticated = function(req, userType) {
@@ -18,7 +17,7 @@ authMiddleware.ensureEmployerAuthenticated = function(req, res, next) {
     console.log("------>route is not authenticated for Employer");
     res.redirect('/employer-login-fail');
   }
-}
+};
 
 authMiddleware.ensureUserAuthenticated = function(req, res, next) {
   if (isAuthenticated(req, "user")){
@@ -29,6 +28,6 @@ authMiddleware.ensureUserAuthenticated = function(req, res, next) {
     console.log("--->route is not authenticated for user");
     res.redirect('/user-login-fail');
   }
-}
+};
 
 module.exports = authMiddleware;

@@ -1,19 +1,19 @@
 /* GET home page */
 
 var index = function(Models){
-  var indexRoutes = {};
-  var passwordHash = require('password-hash');
-  var crypto = require('crypto');
-  var q = require('q');
-  var fs = require('fs');
-  var csv = require('csv');
-  var csvToDatabase = require('../helpers/csvToDatabase.js');
-  var hat = require('hat');
-  var User = Models.User;
-  var Metadata = Models.Metadata;
-  var EmailToken = Models.EmailToken;
-  var mailer = require('../helpers/sendEmail.js');
-  
+  var indexRoutes = {},
+      passwordHash = require('password-hash'),
+      crypto = require('crypto'),
+      q = require('q'),
+      fs = require('fs'),
+      csv = require('csv'),
+      csvToDatabase = require('../helpers/csvToDatabase.js'),
+      hat = require('hat'),
+      User = Models.User,
+      Metadata = Models.Metadata,
+      EmailToken = Models.EmailToken,
+      mailer = require('../helpers/sendEmail.js');
+
   indexRoutes.index = function(req, res){
     res.render('index', { title: 'Express' });
   };
@@ -33,7 +33,7 @@ var index = function(Models){
         res.end("500 Internal Server Error error:", err);
       } else {
         tableMetaData = result;
-        console.log("********Read tableMetaData:", tableMetaData)
+        console.log("********Read tableMetaData:", tableMetaData);
         User.findOne({where:{id:req.user.id}}, function(err, result){
           if (err) {
             console.log("ERROR in reading API key!");
@@ -46,20 +46,20 @@ var index = function(Models){
             res.render('loginSuccessful', {tableMetaData: tableMetaData,
               apiKey: apiKey});
           }
-        })
+        });
       }
-    })
-  }
+    });
+  };
 
   indexRoutes.loginFail = function(req, res){
     console.log('login fail route');
     res.writeHead(200);
     res.end('fail');
-  }
+  };
 
   indexRoutes.userSignupVerify = function(req, res){
     console.log("In SignupVerify");
-    EmailToken.findOne({where: {token: req.params['token']}},
+    EmailToken.findOne({where: {token: req.params.token}},
       function (err, result) {
         if (err) {
           console.log("ERROR - userSignupVerify aborted!!");
@@ -76,7 +76,7 @@ var index = function(Models){
             account: "user"
           });
           // console.log("RESULT***",result);
-          User.findOne({where: {email: newUser.email}}, 
+          User.findOne({where: {email: newUser.email}},
             function (err, result) {
               if (err) {
                 console.log("ERROR - creating (userSignupVerify) user aborted!!");
@@ -100,7 +100,7 @@ var index = function(Models){
         }
     });
     // res.render('login');
-  }
+  };
 
   indexRoutes.signup = function(req, res){
     console.log("In signup");
@@ -131,7 +131,7 @@ var index = function(Models){
           console.log("ERROR:",err);
         }
       var deferred = q.defer();
-        var confirmationLink = req.protocol + "://" + req.get('host') + req.url + "/" + newEmailToken.token;;
+        var confirmationLink = req.protocol + "://" + req.get('host') + req.url + "/" + newEmailToken.token;
         var locals = {
           email: newEmailToken.email,
           subject: 'Verify your Datsy account',
@@ -149,18 +149,18 @@ var index = function(Models){
 
         res.render('verifyEmail', { title: 'Express' });
       });
-    })
+    });
   };
 
   indexRoutes.checkEmailIfExists = function(req,res){
-   
+
     // console.log("Email:",req.query.email);
-    User.findOne({email: req.query.email}, 'email', 
+    User.findOne({email: req.query.email}, 'email',
       function (err, result) {
         if (err) {
           console.log("ERROR - checkEmailIfExists aborted!!");
         }
-        if (result === null) { 
+        if (result === null) {
           res.writeHead(200);
           res.end("true");
         } else{
@@ -173,8 +173,8 @@ var index = function(Models){
   indexRoutes.userReadInfo = function(req, res){
     var userModel = User;
     var newUser = new user(req.body);
-    
-    userModel.findOne({name: newUser.name, email: newUser.email}, 'name email', 
+
+    userModel.findOne({name: newUser.name, email: newUser.email}, 'name email',
       function (err, result) {
         if (err) {
           console.log("ERROR - read user info aborted!!");
@@ -215,7 +215,7 @@ var index = function(Models){
         });
       });
       return deferred.promise;
-    }
+    };
 
     readFile()
     .then(function(){
@@ -239,7 +239,7 @@ var index = function(Models){
               "name": row[i],
               "datatype": "String",
               "description": row[i]
-            }
+            };
             tableMetaData.columns.push(colObj);
           }
         }
@@ -275,16 +275,16 @@ var index = function(Models){
                 res.render('loginSuccessful', {tableMetaData: userTableMetaData,
                   apiKey: apiKey});
               }
-            })
+            });
           }
-        })
+        });
 ///////
       })
       .on('error', function(error){
         console.log(error.message);
-      })
+      });
     });
-    
+
     // .then(function(){
       // console.log("in writing to Azure database");
       // csvToDatabase(newPath);
@@ -339,7 +339,7 @@ var index = function(Models){
 
   indexRoutes.generateApiKey = function(req, res){
     var apiKey = hat(bits=128, base=16);
- 
+
     console.log("In generateApiKey", apiKey);
     console.log("User Session", req.session);
     console.log("User object", req.user);
@@ -362,7 +362,7 @@ var index = function(Models){
             }
           });
         }
-    })
+    });
   };
 
   indexRoutes.userTableMetaData = function(req, res){
@@ -372,7 +372,7 @@ var index = function(Models){
   };
 
   return indexRoutes;
-}
+};
 
 module.exports = index;
 

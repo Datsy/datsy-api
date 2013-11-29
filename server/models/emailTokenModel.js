@@ -5,9 +5,9 @@ var EmailTokenModel = function(schema){
     password: {type: String},
     phone: {type: String},
     token: {type: String}
-  })
+  });
 
   return EmailToken;
-}
+};
 
 module.exports = EmailTokenModel;

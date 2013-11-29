@@ -89,13 +89,13 @@ var csvToDatabase = function(filepath){
       if (startRow + rowlimit >= table.num_row) {
         console.log('done!!');
         client.end();
-      };
+      }
     });
   };
 
   readOne(filepath);
 };
 
-module.exports = csvToDatabase; 
+module.exports = csvToDatabase;
 
 

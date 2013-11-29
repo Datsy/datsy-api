@@ -30,22 +30,22 @@ var initModel = function(app){
     Metadata: Metadata
   };
 
-	var updateSchema = function(){
-	  var deferred = q.defer();
-	  console.log("updating schema");
+  var updateSchema = function(){
+    var deferred = q.defer();
+    console.log("updating schema");
 
-	  schema.autoupdate(function(msg){
-	    console.log("*** db schema update completed")
-	    deferred.resolve('deferred resolved!!');
-	  });
+    schema.autoupdate(function(msg){
+      console.log("*** db schema update completed");
+      deferred.resolve('deferred resolved!!');
+    });
 
-	  return deferred.promise;
-	};
+    return deferred.promise;
+  };
 
-	updateSchema().then(function(){
-	});
+  updateSchema().then(function(){
+  });
 
   return Models;
-}
+};
 
 module.exports = initModel;

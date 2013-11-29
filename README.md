@@ -7,13 +7,18 @@ number of data sets.
 Running Grunt
 -------
 
-When you checkout a branch, open up a new tab and run the command `grunt` to
-kick-off a process to automatically:
-* lint your changes to JavaScript files
-* run the defined tests that are withing the `test/` folder
-* restart the server when server-related files change
+When you run `grunt` from the command line, the following will happen after each
+file save:
+* lint your changes and display any errors
+* run all unit tests within `test/` and display any errors
 
-Please make sure there are not errors before pushing changes.
+Run `grunt dev` to do the following:
+* connect to a development PostgreSQL database on `localhost`
+* run nodemon with the `--debug` setting
+
+Run `grunt prod` to do the following:
+* connect to a production PostgreSQL database based on the information in the config file
+* run nodemon with the `--debug` setting
 
 
 API Endpoints
@@ -42,7 +47,7 @@ http://...../search?term=Bike+Share&type=tag
 
 **Task List:**
 - [ ] Search by `type=tag` (i.e., `../search?term=Bike&type=tag`)
-- [ ] Search by `type=dataset` (i.e., `../search?term=Bike&type=title`)
+- [ ] Search by `type=title` (i.e., `../search?term=Bike&type=title`)
 - [ ] Search with multiple terms for `tag` and `title` types
 - [ ] Retrieve list of all `tags` (i.e., `../tags`)
 - [ ] *Development Purposes Only:* Retrieve joined sample data (i.e. `../dev`)

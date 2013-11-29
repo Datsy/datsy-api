@@ -6,6 +6,6 @@ var Tablecolumnmeta = function(schema){
   });
 
   return Tablecolumnmeta;
-}
+};
 
 module.exports = Tablecolumnmeta;
