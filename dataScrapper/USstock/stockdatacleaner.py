@@ -13,8 +13,8 @@ print onlyfiles
 
 ticker = 'blh'
 
-foutfinal = open('./USstockHistory167Mb_output/stockdata.csv', 'w')
-foutmeta = open('./USstockHistory167Mb_output/stockdatameta.csv', 'w')
+foutfinal = open('./USstockHistory167Mb_output_all/stockdata.csv', 'w')
+foutmeta = open('./USstockHistory167Mb_output_all/stockdatameta.csv', 'w')
 
 def firstheader(line):
 	global ticker
