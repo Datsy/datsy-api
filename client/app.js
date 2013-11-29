@@ -1,6 +1,5 @@
 $(document).ready(function(){
 
-  console.log("Here");
   var getUserTableMetaData = function(){
     $.ajax({
       url: 'http://127.0.0.1:5000/userTableMetaData',
@@ -9,8 +8,6 @@ $(document).ready(function(){
       contentType: 'application/json',
       success: function (data) {
         console.log("Data return",data);
-        // alert("success");
-        // addNewMessages(data.results);
       },
       error: function (data) {
         // see: https://developer.mozilla.org/en-US/docs/Web/API/console.error
@@ -29,7 +26,6 @@ $(document).ready(function(){
       type: 'GET',
       contentType: 'application/json',
       success: function (data) {
-        console.log("Data return in gen api key",data);
        $('#apiKeyRow td').remove();
        $('#apiKeyRow').append('<td>' + data + '</td>');
       },
