@@ -1,6 +1,6 @@
 module.exports = function(app, passport, Models){
   var user = Models.User;
-  var home = require('../controllers/index.js')(Models);
+  var home = require('../controllers/frontend.js')(Models);
   var ensureUserAuthenticated = require('../middleware/auth/middleware.js').ensureUserAuthenticated;
 
   //***************************************************
