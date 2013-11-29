@@ -1,9 +1,5 @@
 var AboutUsView = Backbone.View.extend({
-
-  // template: _.template('../templates/aboutUsView.js');
-  // template: _.template('\
-  // ')
-  template: _.template('\
+  template: _.template(' \
     <div class="container"> \
       <div class="hero-spacer"> \
         <div class="row"> \
