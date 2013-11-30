@@ -44,7 +44,7 @@ var metadataModel = function(schema) {
   Metadata.saveDataset = function(jsonMetadata) {
 
     var dataset         = new this.Dataset();
-    dataset.table_id    = jsonMetadata.tableID;
+    dataset.table_name  = jsonMetadata.table_name;
     dataset.user_id     = jsonMetadata.userID;
     dataset.url         = jsonMetadata.url;
     dataset.name        = jsonMetadata.name;
