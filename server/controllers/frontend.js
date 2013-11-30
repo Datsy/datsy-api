@@ -1,63 +1,63 @@
-/* GET home page */
+// Global require, module
 
-var index = function(Models){
-  var indexRoutes = {},
-      passwordHash = require('password-hash'),
-      crypto = require('crypto'),
-      q = require('q'),
-      fs = require('fs'),
-      csv = require('csv'),
-      csvToDatabase = require('../helpers/csvToDatabase.js'),
-      hat = require('hat'),
-      User = Models.User,
-      Metadata = Models.Metadata,
-      EmailToken = Models.EmailToken,
-      mailer = require('../helpers/sendEmail.js');
+var passwordHash = require('password-hash'),
+    crypto = require('crypto'),
+    q = require('q'),
+    fs = require('fs'),
+    csv = require('csv'),
+    csvToDatabase = require('../helpers/csvToDatabase.js'),
+    hat = require('hat'),
+    mailer = require('../helpers/sendEmail.js'),
 
-  indexRoutes.index = function(req, res){
-    res.render('index', { title: 'Express' });
-  };
+    User,
+    Metadata,
+    EmailToken,
 
-  indexRoutes.loginSuccess = function(req, res){
-    req.session.passport.userType = "user";
-    // get apiKey
-    var apiKey;
-    var tableMetaData;
+    frontendControllers;
 
-    // read table meta data
-    Metadata.Dataset.all({where:{user_id:req.user.id}}, function(err,result){
-      if (err) {
-        console.log("ERROR in reading Metadata.Dataset!");
-        console.log(err);
-        res.writeHead(500);
-        res.end("500 Internal Server Error error:", err);
-      } else {
-        tableMetaData = result;
-        console.log("********Read tableMetaData:", tableMetaData);
-        User.findOne({where:{id:req.user.id}}, function(err, result){
-          if (err) {
-            console.log("ERROR in reading API key!");
-            res.writeHead(500);
-            res.end("500 Internal Server Error error:", err);
-          } else {
-            console.log('Success in finding a user', result);
-            apiKey = result.apikey;
-            console.log("*****tableMeta*****", tableMetaData);
-            res.render('loginSuccessful', {tableMetaData: tableMetaData,
-              apiKey: apiKey});
-          }
-        });
-      }
-    });
-  };
 
-  indexRoutes.loginFail = function(req, res){
+frontendControllers = {
+  'init': function(Models) {
+    User = Models.User;
+    Metadata = Models.Metadata;
+    EmailToken = Models.EmailToken;
+  },
+
+  'index': function(req, res) {
+      res.render('index');
+  },
+
+  'loginSuccess': function(req, res) {
+      req.session.passport.userType = "user";
+
+      Metadata.Dataset.all({where: {user_id: req.user.id}}, function(err, datasets) {
+        if (err) {
+          res.writeHead(500);
+          res.end("500 Internal Server Error error:", err);
+        } else {
+
+          User.all({where:{password: req.user.password}}, function(err, result) {
+            if (err) {
+              res.writeHead(500);
+              res.end("500 Internal Server Error error:", err);
+            } else {
+              res.render('loginSuccessful', {
+                datasets: datasets,
+                apiKey: result.apiKey
+              });
+            }
+          });
+        }
+      });
+  },
+
+  'loginFail': function(req, res) {
     console.log('login fail route');
     res.writeHead(200);
     res.end('fail');
-  };
+  },
 
-  indexRoutes.userSignupVerify = function(req, res){
+  'userSignupVerify': function(req, res) {
     console.log("In SignupVerify");
     EmailToken.findOne({where: {token: req.params.token}},
       function (err, result) {
@@ -100,9 +100,9 @@ var index = function(Models){
         }
     });
     // res.render('login');
-  };
+  },
 
-  indexRoutes.signup = function(req, res){
+  'signup': function(req, res) {
     console.log("In signup");
     var newEmailToken = new EmailToken({
       name: req.body.name,
@@ -150,9 +150,9 @@ var index = function(Models){
         res.render('verifyEmail', { title: 'Express' });
       });
     });
-  };
+  },
 
-  indexRoutes.checkEmailIfExists = function(req,res){
+  'checkEmailIfExists': function(req,res) {
 
     // console.log("Email:",req.query.email);
     User.findOne({email: req.query.email}, 'email',
@@ -168,9 +168,9 @@ var index = function(Models){
           res.end("false");
         }
     });
-  };
+  },
 
-  indexRoutes.userReadInfo = function(req, res){
+  'userReadInfo': function(req, res) {
     var userModel = User;
     var newUser = new user(req.body);
 
@@ -185,9 +185,9 @@ var index = function(Models){
           res.end(result);
         }
     });
-  };
+  },
 
-  indexRoutes.uploadFile = function(req, res){
+  'uploadFile': function(req, res) {
     // construct table meta json
     var d = new Date();
     var tableMetaData = {
@@ -284,9 +284,9 @@ var index = function(Models){
         console.log(error.message);
       });
     });
- };
+ },
 
-  indexRoutes.generateApiKey = function(req, res){
+ 'generateApiKey': function(req, res) {
     var apiKey = hat(bits=128, base=16);
 
     console.log("In generateApiKey", apiKey);
@@ -312,17 +312,15 @@ var index = function(Models){
           });
         }
     });
-  };
+  },
 
-  indexRoutes.userTableMetaData = function(req, res){
+  'userTableMetaData': function(req, res) {
     console.log("In userTableMetaData");
     res.writeHead(200);
     res.end();
-  };
-
-  return indexRoutes;
+  }
 };
 
-module.exports = index;
 
+module.exports = frontendControllers;
 
