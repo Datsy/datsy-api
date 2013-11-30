@@ -23,6 +23,9 @@ var fileName = csvFolder +  timeStamp + dataBaseName + '.csv';
 
 
 var factualReq = function(lat, longt, cb, msg) {
+  lat = +lat.toFixed(2);
+  longt = +longt.toFixed(2);
+
   factual.get('/places/geopulse', {geo:{"$point":[lat,longt]}},function(err, res) {
     if (err || !res || !res.data) {
       if (err) {console.log('error', err, msg);}
@@ -46,7 +49,9 @@ var initialize = function(latitude,longitude, step) {
     var keys = 'latitude,longitude,' + retrievedKeys.join(',');
     if (retrievedKeys.length === 101) {totalKeys = retrievedKeys;}
     else {
-      console.log('the start point data is not complete');
+
+      initialize(latitude + step, longitude, step);
+      console.log('the start point data is not complete,start at next latitude');
       return;
     }
     var vals = getAllKeys(res.data.demographics)[1];
@@ -87,6 +92,7 @@ var retrieveDataAfterInitialize = function(latitude, longitude, step, prevData) 
     counter ++;
     setTimeout(function() {
       retrieveDataAfterInitialize(midPoint.latitude, midPoint.longitude + counter*step, step, prevData);
+      // retrieveDataAfterInitialize(midPoint.latitude, -96.4 + counter*step, step, prevData);
       console.log('hit the south latitude range');
     }, 10000);
     return;
@@ -117,5 +123,6 @@ var retrieveDataAfterInitialize = function(latitude, longitude, step, prevData) 
 checkCSVFolder(csvFolder);
 var currentCSV = fs.createWriteStream(fileName);
 initialize(midPoint.latitude, midPoint.longitude, -0.05);
+// initialize(32.25, -96.4, -0.05);
 //CHANGE STEP HERE~ CHANGE LINE 95,LINE86
 

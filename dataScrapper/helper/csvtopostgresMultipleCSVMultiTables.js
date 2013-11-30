@@ -5,23 +5,25 @@ var credentials = require('./dbconfig.json').db;
 var EventEmitter = require('events').EventEmitter;
 
 // modify this only!!edit this to change file
-var dir = '../USstock/USstockHistory167Mb_output/'; 
+var dir = '../USstock/'; 
+
+// var dir = '../USstock/USstockHistory167Mb_output_diffTableName/'; 
 var rowsLeft;
 var table;
-// var controller = new EventEmitter();
 
 var onReadDir = function(err, files) {
   var conString = "postgres://"+credentials.user+":" +credentials.password+ "@" + credentials.localhost + "/" + credentials.dbname;
   var client = new pg.Client(conString);
+  var controller = new EventEmitter();
+
   var fIndx = 0;
   client.connect(function(err) {
     if(err) {
       return console.error('could not connect to postgres', err);
     }
-    getTableAndQueries(client, files[fIndx]);
+    getTableAndQueries(client, files[fIndx],controller);
     var intervalID = setInterval(function(){
       if (rowsLeft === 0) {
-        // controller.emit('empty');
         fIndx += 1;
         getTableAndQueries(client, files[fIndx]);
       }
@@ -33,10 +35,12 @@ var onReadDir = function(err, files) {
   });
 };
 
-var getTableAndQueries = function(client,file) {
+var getTableAndQueries = function(client,file.controller) {
   table = getTableInfo(file);
   rowsLeft = table.num_row;
   insertIntoPSQL(client, table);
+  controller.emit('writeIntoMetaData', table);
+
 };
 
 var getTableInfo = function(file) {

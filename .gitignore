@@ -5,6 +5,8 @@ dbconfig.json
 azurecloudconfig.json
 socrataAPI.json
 
+/USstockHistory167Mb
+output.txt
 
 # Compiled source #
 ###################
@@ -46,7 +48,6 @@ socrataAPI.json
 ehthumbs.db
 Thumbs.db
 
-=======
 # Api Keys and Password
 #########################
 
