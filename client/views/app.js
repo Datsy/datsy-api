@@ -47,9 +47,4 @@ app_router.on('route:login', datsy.userLogin);
 app_router.on('route:signup', datsy.userSignup);
 app_router.on('route:verifyEmail', datsy.userVerifyEmail);
 app_router.on('route:aboutUs', datsy.aboutUs);
-app_router.on('route:getPost', function (id) {
-    // Note the variable in the route definition being passed in here
-    alert( "Get post number " + id );
-});
-
 
