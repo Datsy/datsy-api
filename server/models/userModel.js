@@ -2,7 +2,7 @@ var passwordHash = require('password-hash');
 
 var userModel = function(schema){
 
-  var User = schema.define("user", {
+  var User = schema.define('user_table', {
     name: {type: String},
     email: {type: String},
     password: {type: String},
