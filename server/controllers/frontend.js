@@ -43,7 +43,7 @@ frontendControllers = {
             } else {
               res.render('loginSuccessful', {
                 datasets: datasets,
-                apiKey: result.apiKey
+                apiKey: req.user.apikey
               });
             }
           });
@@ -58,40 +58,38 @@ frontendControllers = {
   },
 
   'userSignupVerify': function(req, res) {
-    console.log("In SignupVerify");
     EmailToken.findOne({where: {token: req.params.token}},
       function (err, result) {
         if (err) {
           console.log("ERROR - userSignupVerify aborted!!");
         }
-        console.log("in userSignupVerify");
+
         if (result === null){ //no email token found
           res.writeHead(404);
           res.end();
         } else{
+          var apiKey = hat(bits=128, base=16);
           var newUser = new User({
             name: result.name,
             email: result.email,
             password: result.password,
-            account: "user"
+            account: "user",
+            apikey: apiKey
           });
-          // console.log("RESULT***",result);
+
           User.findOne({where: {email: newUser.email}},
             function (err, result) {
               if (err) {
                 console.log("ERROR - creating (userSignupVerify) user aborted!!");
                 console.log("ERROR:",err);
               }
-                console.log("in User findOne");
+
               if (result === null) { // create user
-                console.log('result is null, we are creating a new user', newUser);
                 newUser.save(function (err, data) {
                   if (err) console.log("ERR!!! - ",err);
-                    console.log('** userSignupVerify is successful ** ');
-                    // console.log("Result Obj***", data);
-                    res.render('login');
+                  res.render('login');
                 });
-              } else{
+              } else {
                 console.log('That user exists: ', result);
                 res.writeHead(500);
                 res.end("500 Internal Server Error - user existed, could not create account");
@@ -99,11 +97,9 @@ frontendControllers = {
           });
         }
     });
-    // res.render('login');
   },
 
   'signup': function(req, res) {
-    console.log("In signup");
     var newEmailToken = new EmailToken({
       name: req.body.name,
       email: req.body.email,
@@ -147,14 +143,13 @@ frontendControllers = {
           }
         });
 
-        res.render('verifyEmail', { title: 'Express' });
+        res.render('verifyEmail');
       });
     });
   },
 
   'checkEmailIfExists': function(req,res) {
 
-    // console.log("Email:",req.query.email);
     User.findOne({email: req.query.email}, 'email',
       function (err, result) {
         if (err) {
@@ -289,26 +284,22 @@ frontendControllers = {
  'generateApiKey': function(req, res) {
     var apiKey = hat(bits=128, base=16);
 
-    console.log("In generateApiKey", apiKey);
-    console.log("User Session", req.session);
-    console.log("User object", req.user);
-
-    User.findOne({where:{id:req.user.id}}, function(err, result){
+    User.findOne({where:{password: req.user.password}}, function(err, user) {
         if (err) {
           console.log("ERROR in saving API key!");
           res.writeHead(500);
           res.end("500 Internal Server Error error:", err);
         } else {
-          console.log('Success in finding a user', result);
-          result.apikey = apiKey;
-          User.upsert(result, function (err, data) {
+          user.apikey = apiKey;
+          User.upsert(user, function (err, data) {
             if (err){
               console.log('** ERROR in updating user API key **');
               console.log("ERR!!! - ",err);
             } else{
               console.log('** user update with API key is successful ** ');
-              res.send(apiKey);
             }
+
+            return;
           });
         }
     });
