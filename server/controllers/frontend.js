@@ -320,6 +320,12 @@ var index = function(Models){
     res.end();
   };
 
+  indexRoutes.apiDev = function(req, res){
+    console.log("In apiDev");
+    var mockData = require('../helpers/apiDevMock.json');
+    res.send(mockData);
+  }
+
   return indexRoutes;
 };
 
