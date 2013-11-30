@@ -1,7 +1,10 @@
 var initModel = function(app){
   var Models = {};
   var q = require('q');
-  var dbSetting = require('../../config.js')[app.get('env')].database;
+  var config = require('../../config.js');
+  var dbSetting = app? config[app.get('env')].database : config.production.database;
+
+  // console.log(dbSetting,'dbSetting');
   // var setting = require('setting');
   var Schema = require('jugglingdb').Schema;
   var schema = new Schema('postgres', {
