@@ -1,12 +1,16 @@
 var pg = require('pg');
 var fs = require('fs');
-
+var saveMetadata = require('../../server/models/initModel.js')().Metadata.saveDataset;
+// var generateMetadata = require('');
 var credentials = require('./dbconfig.json').db;
 var EventEmitter = require('events').EventEmitter;
 
 // modify this only!!edit this to change file
 var dir = '../USstock/'; 
 
+console.log(dir,'dir');
+console.log(__dirname + '../..');
+console.log(saveMetadata,'function');
 // var dir = '../USstock/USstockHistory167Mb_output_diffTableName/'; 
 var rowsLeft;
 var table;
@@ -15,6 +19,11 @@ var onReadDir = function(err, files) {
   var conString = "postgres://"+credentials.user+":" +credentials.password+ "@" + credentials.localhost + "/" + credentials.dbname;
   var client = new pg.Client(conString);
   var controller = new EventEmitter();
+
+  controller.on('writeIntoMetaData',function(table){
+    console.log(table,'table');
+    // model.saveDataset(table);
+  });
 
   var fIndx = 0;
   client.connect(function(err) {
@@ -35,12 +44,13 @@ var onReadDir = function(err, files) {
   });
 };
 
-var getTableAndQueries = function(client,file.controller) {
+var getTableAndQueries = function(client,file,controller) {
   table = getTableInfo(file);
   rowsLeft = table.num_row;
   insertIntoPSQL(client, table);
-  controller.emit('writeIntoMetaData', table);
-
+  metadata = 3;
+  // generateMetadata(table);
+  controller.emit('writeIntoMetaData', metadata);
 };
 
 var getTableInfo = function(file) {
@@ -50,13 +60,24 @@ var getTableInfo = function(file) {
   var data = fs.readFileSync(filepath, 'utf8');
   var array = data.split('\n');
   var table = {};
-  table.tablename = array[0];
+  table.tablename = getTableName(array[0]).tableName;
+  table.tablename = getTableName(array[0]).stockName;
   table.col_names = array[1].split(',');
   table.col_types = array[2].split(',');
   table.col_values = array.slice(3);
   table.num_col = table.col_names.length;
   table.num_row = table.col_values.length;
   return table;
+};
+
+var getTableName = function(string) {
+  var sep = string.indexOf('ticker');
+  var obj = {
+    tableName: string.slice(sep),
+    stockName: string.slice(0, sep-2).split('_')[1]
+  };
+  obj.tags = obj.stockName.split(' ');
+  return obj;
 };
 
 var insertIntoPSQL = function(client, table) {
