@@ -1,60 +1,38 @@
 module.exports = function(app, passport, Models){
-  var user = Models.User;
-  var home = require('../controllers/frontend.js')(Models);
-  var ensureUserAuthenticated = require('../middleware/auth/middleware.js').ensureUserAuthenticated;
+  var user = Models.User,
+      frontend = require('../controllers/frontend.js'),
+      ensureUserAuthenticated = require('../middleware/auth/middleware.js').ensureUserAuthenticated;
 
-  //***************************************************
-  // Configure to ensure authentication on this route
-  //***************************************************
-  // app.all('/user/*',ensureUserAuthenticated,function(req,res,next){
-  //   next();
-  // });
-  // app.all('/employer/*',ensureEmployerAuthenticated,function(req,res,next){
-  //   next();
-  // });
+  // Initializes the models
 
-  //**********************************
-  // define general routes that are accessible
-  // by both user and employer
-  // (no authentication is required)
-  //**********************************
-  // app.all('*', function(req, res, next) {
-  //   res.header("Access-Control-Allow-Origin", "*");
-  //   res.header("Access-Control-Allow-Headers", "X-Requested-With");
-  //   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-  //   res.header('access-control-max-age', '100');
-  //   next();
-  // });
+  frontend.init(Models);
 
-  app.get('/', home.index);
+
+  // Defines the frontend routes
+
+  app.get('/', frontend.index);
 
   app.post("/user-login",
     passport.authenticate('user', {failureRedirect : "#/user-login-fail"}),
-    home.loginSuccess
+    frontend.loginSuccess
   );
 
   app.get('/logout', function(req, res){
-    console.log("Before Logout Session:", req.session);
     req.logout();
-    // Also destroy the req.session.passport.userType
+
+    // Also, destroy the req.session.passport.userType
+
     delete req.session.passport.userType;
-    console.log("After Logout Session:", req.session);
+
     res.writeHead(200);
     res.end();
   });
 
-  app.get('/', home.index);
-  app.post('/signup', home.signup);
-  app.get('/user-sign-up/checkEmail', home.checkEmailIfExists);
-  app.get('/signup/:token', home.userSignupVerify);
-  app.post('/uploadFile', home.uploadFile);
-
-  app.get('/userTableMetaData', home.userTableMetaData);
-  app.get('/generateApiKey', home.generateApiKey);
-  //**********************************
-  // define admin routes
-  //**********************************
-  // app.get('/adminPanel', admin.allInfo)
-  // app.post('/deleteEntry', admin.deleteEntry);
-
+  app.get('/', frontend.index);
+  app.post('/signup', frontend.signup);
+  app.get('/user-sign-up/checkEmail', frontend.checkEmailIfExists);
+  app.get('/signup/:token', frontend.userSignupVerify);
+  app.post('/uploadFile', frontend.uploadFile);
+  app.get('/userTableMetaData', frontend.userTableMetaData);
+  app.get('/generateApiKey', frontend.generateApiKey);
 };
