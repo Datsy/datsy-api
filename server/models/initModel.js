@@ -11,6 +11,23 @@ var initModel = function(app){
     database: dbSetting.dbname
   });
 
+  //// Test
+  // var testTable = "apple";
+  // console.log(schema);
+  // var TestTable = schema.define(
+  // {
+  //   tableName: 'apple'
+  // });
+
+  // TestTable.findOne({where: {Date: "2013-11-27"}},
+  //   function (err, result) {
+  //     if (err) {
+  //       console.log("TestTable error:", TestTable);
+  //     } else {
+  //       console.log("Result:",result);
+  //     }
+  // });
+
   var User = require('./userModel.js')(schema);
   var EmailToken = require('./emailTokenModel.js')(schema);
 

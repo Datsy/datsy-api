@@ -51,6 +51,7 @@ module.exports = function(app, passport, Models){
 
   app.get('/userTableMetaData', home.userTableMetaData);
   app.get('/generateApiKey', home.generateApiKey);
+  app.get('/dev', home.apiDev);
   //**********************************
   // define admin routes
   //**********************************
