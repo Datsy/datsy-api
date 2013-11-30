@@ -90,9 +90,10 @@ var retrieveDataAfterInitialize = function(latitude, longitude, step, prevData) 
     }      
   }, 'in retrieveDataAfterInitialize, count = ' + counter +';latitude,' + latitude +'logitude:'+longitude+'step'+step+'prevData'+prevData);
 
-
 };
 
 checkCSVFolder(csvFolder);
 var currentCSV = fs.createWriteStream(fileName);
 initialize(midPoint.latitude, midPoint.longitude, 0.05);
+
+
