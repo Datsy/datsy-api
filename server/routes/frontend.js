@@ -34,5 +34,4 @@ module.exports = function(app, passport, Models){
   app.get('/signup/:token', frontend.userSignupVerify);
   app.post('/uploadFile', frontend.uploadFile);
   app.get('/userTableMetaData', frontend.userTableMetaData);
-  app.get('/generateApiKey', frontend.generateApiKey);
 };
