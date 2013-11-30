@@ -1,7 +1,7 @@
 extends layout
-  
+
 block head
-  
+
 block content
 	.container
 		div
@@ -43,7 +43,7 @@ block content
 				input#signup-submit.btn.btn-default(type='submit', name='submit')
 
 
-		div 
+		div
 			table.table.table-hover#apiKey
 				tr
 					th API Key
@@ -62,7 +62,7 @@ block content
 					th Number of Column
 					th URL
 					th Created at
-					- var userTableMetaData = tableMetaData || []
+					- var userTableMetaData = datasets || []
 					- console.log("userTableMetaData", userTableMetaData);
 					- console.log("tableMetaData", tableMetaData);
 					//- var tableMetaData=[{name:"Woon Ket", description:"bike share at SF", author:"SF Gov",numberOfRow:86774, numberOfCol:6}];
