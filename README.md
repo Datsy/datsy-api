@@ -50,5 +50,5 @@ http://...../search?term=Bike+Share&type=tag
 - [ ] Search by `type=title` (i.e., `../search?term=Bike&type=title`)
 - [ ] Search with multiple terms for `tag` and `title` types
 - [ ] Retrieve list of all `tags` (i.e., `../tags`)
-- [ ] *Development Purposes Only:* Retrieve joined sample data (i.e. `../dev`)
+- [X] *Development Purposes Only:* Retrieve joined sample data (i.e. `../dev`)
 
