@@ -5,8 +5,7 @@
 #clean and merge data in one csv 
 from os import listdir
 from os.path import isfile, join
-# mypath = './USstockHistory167Mb/'
-mypath = './'
+mypath = './USstockHistory167Mb/'
 onlyfiles = [ f for f in listdir(mypath) if isfile(join(mypath,f)) and f[-3:] == 'csv'  ]
 # for f in onlyfiles:
 # 	fin = open(mypath + f)
@@ -20,10 +19,9 @@ def firstheader(line, startDate, endDate):
 	end = line.index(']')
 	ticker = line[start:end]
 	 # get the stock ticker and description
-	stockstart = line.index('#') + 1
+	stockstart = line.index('#') + 2
 	metadata = line[stockstart:line.index('[')-1]
 	print metadata
-	print line[stockstart]
 	foutfinal.write('StockName_' + metadata + '__ticker_' + ticker + '__startDate_' + startDate + '__endDate_' + endDate + '__eod\n')
 	return ticker
 
