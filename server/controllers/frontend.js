@@ -312,6 +312,4 @@ frontendControllers = {
   }
 };
 
-
 module.exports = frontendControllers;
-

@@ -49,6 +49,7 @@ app.configure(function () {
 // Initialize routing
 
 routes.frontend(app, passport, Models);
+routes.api(app, passport, Models);
 
 // TODO: add api routes
 
