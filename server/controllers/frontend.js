@@ -249,6 +249,7 @@ var index = function(Models){
         // the 'end' event may fire before the file has been written
         console.log("***********tableMetaData", tableMetaData);
         csvToDatabase(newPath);
+        console.log("*****tableMetaData:", tableMetaData);
         Metadata.saveDataset(tableMetaData);
         console.log('Number of lines: '+count);
 /////////

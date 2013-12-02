@@ -7,7 +7,7 @@ var metadataModel = function(schema) {
   //  Define the table schemas
 
   Metadata.Dataset = schema.define('datasetmeta', {
-    table_name: {type: String, unique: true},
+    table_id: {type: String, unique: true},
     user_id: {type: Number},
     url: {type: String},
     title: {type: String},
@@ -44,8 +44,8 @@ var metadataModel = function(schema) {
   Metadata.saveDataset = function(jsonMetadata) {
 
     var dataset         = new this.Dataset();
-    dataset.table_id    = jsonMetadata.tableID;
-    dataset.user_id     = jsonMetadata.userID;
+    dataset.table_id    = jsonMetadata.table_id;
+    dataset.user_id     = jsonMetadata.user_id;
     dataset.url         = jsonMetadata.url;
     dataset.name        = jsonMetadata.name;
     dataset.title       = jsonMetadata.title;
