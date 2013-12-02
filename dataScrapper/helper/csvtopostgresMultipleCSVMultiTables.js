@@ -1,6 +1,6 @@
 var pg = require('pg');
 var fs = require('fs');
-var saveMetadata = require('../../server/models/initModel.js')().Metadata.saveDataset;
+var saveMetadata = require('../../server/models/metadataModel.js')().saveDataset;
 // var generateMetadata = require('');
 var credentials = require('./dbconfig.json').db;
 var EventEmitter = require('events').EventEmitter;
