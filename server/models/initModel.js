@@ -19,6 +19,8 @@ var initModel = function(app){
   //   tableName: 'apple'
   // });
 
+
+
   // TestTable.findOne({where: {Date: "2013-11-27"}},
   //   function (err, result) {
   //     if (err) {
@@ -42,6 +44,7 @@ var initModel = function(app){
   var Metadata = require('./metadataModel.js')(schema);
 
   Models = {
+    schema: schema,
     User: User,
     EmailToken: EmailToken,
     Metadata: Metadata
@@ -59,7 +62,20 @@ var initModel = function(app){
     return deferred.promise;
   };
 
+  // var testTable = schema.define("apple10",{ 
+  //   adjclose: { type: 'String' },
+  //   date: { type: 'String' },
+  //   open: { type: 'String' },
+  //   high: { type: 'String' },
+  //   low: { type: 'String' },
+  //   close: { type: 'String' },
+  //   volume: { type: 'String' } 
+  // });
+
   updateSchema().then(function(){
+    // testTable.all(function(err, data){
+    //   console.log("--->Table SEARCHED!!", data);
+    // });  
   });
 
   return Models;

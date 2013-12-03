@@ -9,6 +9,7 @@ var index = function(Models){
       csv = require('csv'),
       csvToDatabase = require('../helpers/csvToDatabase.js'),
       hat = require('hat'),
+      schema = Models.schema,
       User = Models.User,
       Metadata = Models.Metadata,
       EmailToken = Models.EmailToken,
@@ -252,7 +253,6 @@ var index = function(Models){
         console.log("*****tableMetaData:", tableMetaData);
         Metadata.saveDataset(tableMetaData);
         console.log('Number of lines: '+count);
-/////////
         var apiKey;
         var userTableMetaData;
 
@@ -279,7 +279,6 @@ var index = function(Models){
             });
           }
         });
-///////
       })
       .on('error', function(error){
         console.log(error.message);
@@ -326,6 +325,82 @@ var index = function(Models){
     var mockData = require('../helpers/apiDevMock.json');
     res.send(mockData);
   }
+
+  indexRoutes.apiSearch = function(req, res){
+    var metaDataResult = {};
+    var resultLength = 0;
+    var expectedResultLength = undefined;
+    if (req.query.type === "title"){
+      var result = Metadata.Dataset.all({where:{title: req.query.term}}, function(err, data){
+        console.log("Here1");
+        expectedResultLength = data.length;
+        resultLength = data.length;
+        console.log("*****Search Result:", data);
+        console.log("Here2");
+        for (var i = 0; i < data.length; i++){
+          metaDataResult[data[i].id] = {tableMeta: data[i]};
+          // metaDataResult.push(metaData);
+          console.log("metaDataResult:", metaDataResult);
+          console.log("Metadata.Dataset start searching");
+          var j = i;
+          (function(j){
+              console.log("---->>>before JJJJ", j);
+
+            Metadata.DataColumn.all({where:{dataset_id:data[0].id}}, function(err, data){
+              console.log("Here3");
+              console.log("---->>>JJJJ", j);
+              console.log("*****Data column:", data);
+              var columnDefines = {};
+              for(var i = 0; i < data.length; i++){
+                columnDefines[data[i].name.toLowerCase()] = {type: data[i].datatype};
+              }
+              console.log("---Column Defines:", columnDefines);
+              console.log("metaDataResult[data[j].dataset_id]:",metaDataResult[data[j].dataset_id]["tableMeta"]);
+              console.log("---table name:", metaDataResult[data[j].dataset_id]["tableMeta"]["table_id"]);
+              var thisTable = schema.define(metaDataResult[data[j].dataset_id]["tableMeta"]["table_id"],columnDefines);
+
+              updateSchema().then(function(){
+                thisTable.all({limit:10}, function(err, data){
+                console.log("--->Table SEARCHED!!", data);
+                console.log("---->>>JJJJ", j);
+                metaDataResult[data[j].id]["row"] = data;
+                console.log("Final metaDataResult:", metaDataResult);
+                res.send(metaDataResult);
+                });                
+              });
+            })
+          })(j);
+        }
+      });
+
+      var doneId = setInterval(function(){
+          console.log("resultLength", resultLength);
+          console.log("dataFoundLength", expectedResultLength);
+          if (resultLength === expectedResultLength){
+            console.log("****Done");
+            clearInterval(doneId);
+          }
+        }
+        ,3000
+      );
+    }
+  }
+
+  var updateSchema = function(){
+    var deferred = q.defer();
+    console.log("updating schema");
+
+    schema.autoupdate(function(msg){
+      console.log("*** db schema update completed");
+      deferred.resolve('deferred resolved!!');
+    });
+
+    return deferred.promise;
+  };
+
+  updateSchema().then(function(){
+  });
+
 
   return indexRoutes;
 };
