@@ -1,0 +1,43 @@
+extends layout
+
+block head
+
+block content
+  .container
+    .row
+     div.panel.panel-default
+        form(action='/uploadFile', method='post', enctype='multipart/form-data')
+          legend Create a New Dataset
+
+          div.span6
+            p.lead 1) Pick the dataset to upload
+            input(type='file', name='uploadFile')
+
+          div.span6
+            p.lead 2) Describe the dataset and attach tags to it
+            label
+              strong Dataset name
+            input.form-control.span4(type='text', name='dataset_title')
+
+            label
+              strong Description (optional)
+            input.form-control.span4(type='text', name='dataset_description')
+
+            label
+              strong Author
+            input.form-control.span4(type='text', name='dataset_author')
+
+            label
+              strong URL
+            input.form-control.span4(type='text', name='dataset_url')
+
+            label
+              strong Tags (comma separated)
+            input.form-control.span4(type='text', name='dataset_tags')
+
+            br
+            br
+
+            input#signup-submit.btn.btn-success.btn-large(type='submit', name='submit')
+
+script(src='/app.js')
