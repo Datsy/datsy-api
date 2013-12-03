@@ -1,4 +1,5 @@
 # still cannot handle removing the last empty line 
+#this file remove the last column from csv, and format the timestamp column as the same as the stock data time.
 import os
 import csv
 import re
