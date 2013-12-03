@@ -1,46 +1,23 @@
-// var db = require('./soda-js');
+//since the csv is a big file, the pipe works but the http.request() res.on method is not working
 var http = require('http');
-var url = require('url');
-var helper = require('../helper/MongoDB_CSV_helperFunctions.js')
-var csvToPostgres = require('../helper/csvtopostgres.js');
-var databaseName = 'earthquakes';
-var fileName = "./"+ databaseName + ".csv";
-exports.SFgov = function() {
-  // setInterval(function() {
-    var jsonReq = http.request(options, function (res) {
-      var data = '';
-      res.on('data', function (chunk) {
-        data += chunk;
-        console.log('receiving');
 
-      });
-      res.on('end', function () {
-        writeNewData(data);
-        console.log('end');
+var fs = require('fs');
+var databaseName = 'ParkingMeters';
+var fileName = "./"+ databaseName + ".csv";
+var url = 'http://data.sfgov.org/api/views/7egw-qt89/rows.csv';
+exports.SFgov = function(url,fileName) {
+    var jsonReq = http.get(url, function(res){
+      var csv = fs.createWriteStream(fileName);
+      res.pipe(csv);
+      res.on('end', function(){
+        console.log('Downloaded');
       });
     });
-    
+
     jsonReq.on('error', function (e) {
       console.log(e.message);
     });
 
-    jsonReq.end();
-  // }, 65000);
 };
 
-var options = {
-  host: 'soda.demo.socrata.com',
-  path: "/resource/earthquakes.json?$where=datetime > '2012-8-10'",
-  method: 'GET',
-  'X-App-Token': 'Fy3jzg1i4UIZGGHjPHKXIe0mZ',
-  contentType: 'application/json'
-};
-
-var writeNewData = function(data) {
-  fs.createWriteStream(fileName);
-  var type 
-  console.log(helpers.getAllKeys(data)[0]);
-  // fs.write(;
-}
-
-exports.SFgov();
+exports.SFgov(url, fileName);
