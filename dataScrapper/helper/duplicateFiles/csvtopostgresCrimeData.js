@@ -59,6 +59,7 @@ var getTableInfo = function(file) {
   filepath = dir + file;
   console.log('reading this file into postgres: ', filepath);
   var data = fs.readFileSync(filepath, 'utf8');
+  
   var array = data.split('\n');
   var table = {};
   table.tablename = getTableName(array[0]).tableName;
