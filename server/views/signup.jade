@@ -1,0 +1,34 @@
+extends layout
+
+block head
+
+block content
+  .container
+    .row
+     div.panel.panel-default
+        form(action='/signup', method='post', enctype='multipart/form-data')
+          legend Signup for an Account
+
+          div.span4
+            label
+              strong First name
+            input.form-control.span4(type='text', name='name')
+
+            label
+              strong E-mail
+            input.form-control.span4(type='text', name='email')
+
+            label
+              strong Password
+            input.form-control.span4(type='password', name='password')
+
+            label
+              strong Re-enter password
+            input.form-control.span4(type='password')
+
+            br
+            br
+
+            input#signup-submit.btn.btn-success.btn-large(type='submit', name='submit')
+
+script(src='/app.js')
