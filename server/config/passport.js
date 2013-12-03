@@ -7,7 +7,7 @@ module.exports = function (passport, config, Models) {
   });
 
   passport.deserializeUser(function(id, done) {
-    User.findOne({where:{ "_id": id }}, function (err, user) {
+    User.findOne({where:{ "id": id }}, function (err, user) {
       done(err, user);
     });
   });
