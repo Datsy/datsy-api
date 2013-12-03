@@ -48,7 +48,10 @@ var initModel = function(app){
   updateSchema().then(function(){
   });
 
-  return Models;
+  return {
+    Models: Models,
+    schema: schema
+  };
 };
 
 module.exports = initModel;
