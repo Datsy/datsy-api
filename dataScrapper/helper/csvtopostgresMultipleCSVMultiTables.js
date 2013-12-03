@@ -30,7 +30,7 @@ var onReadDir = function(err, files) {
     if(err) {
       return console.error('could not connect to postgres', err);
     }
-    getTableAndQueries(client, files[fIndx],controller);
+    getTableAndQueries(client, files[fIndx]);
     var intervalID = setInterval(function(){
       if (rowsLeft === 0) {
         fIndx += 1;
@@ -44,13 +44,13 @@ var onReadDir = function(err, files) {
   });
 };
 
-var getTableAndQueries = function(client,file,controller) {
-  table = getTableInfo(file);
+var getTableAndQueries = function(client,file) {
+  var table = getTableInfo(file);
   rowsLeft = table.num_row;
   insertIntoPSQL(client, table);
-  metadata = 3;
+  // metadata = 3;
   // generateMetadata(table);
-  controller.emit('writeIntoMetaData', metadata);
+  // controller.emit('writeIntoMetaData', metadata);
 };
 
 var getTableInfo = function(file) {
