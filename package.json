@@ -28,6 +28,7 @@
     "jugglingdb-postgres": "git://github.com/bradfordh/postgres-adapter.git#master",
     "knex": "~0.4.13",
     "azure": "~0.7.17",
+    "binary-csv": "~0.1.6",
     "hat": "0.0.x"
   },
   "devDependencies": {
