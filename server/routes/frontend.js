@@ -1,7 +1,7 @@
 module.exports = function(app, passport, Models){
   var user = Models.User,
       frontend = require('../controllers/frontend.js'),
-      ensureUserAuthenticated = require('../middleware/auth/middleware.js').ensureUserAuthenticated;
+      middleware = require('../middleware/middleware.js');
 
   // Initializes the models
 
@@ -12,10 +12,13 @@ module.exports = function(app, passport, Models){
 
   app.get('/', frontend.index);
 
-  app.post("/user-login",
+  app.post('/login',
     passport.authenticate('user', {failureRedirect : "#/user-login-fail"}),
-    frontend.loginSuccess
-  );
+    function(req, res) {
+      res.redirect('/profile');
+  });
+
+  app.get('/profile', middleware.auth, frontend.profile);
 
   app.get('/logout', function(req, res){
     req.logout();
@@ -24,11 +27,13 @@ module.exports = function(app, passport, Models){
 
     delete req.session.passport.userType;
 
-    res.writeHead(200);
-    res.end();
+    frontend.index(req, res);
+
   });
 
-  app.get('/', frontend.index);
+  app.get('/newdataset', middleware.auth, frontend.newdataset);
+  app.get('/about', frontend.about);
+
   app.post('/signup', frontend.signup);
   app.get('/user-sign-up/checkEmail', frontend.checkEmailIfExists);
   app.get('/signup/:token', frontend.userSignupVerify);
