@@ -1,6 +1,8 @@
 from time import time, sleep
 import psycopg2
 import re
+import os, sys
+import csv
 # credentials = require('./dbconfig.json').db;
 # conString = "postgres://"+credentials.user+":" +credentials.password+ "@" + credentials.localhost + "/" + credentials.dbname;
 
@@ -11,7 +13,7 @@ table['col_values'] = []
 
 def queryDB(Qstring):
   try:
-      con = psycopg2.connect("dbname='postgres' user='masterofdata' host='137.135.14.92' password='gj1h23gnbfsjdhfg234234kjhskdfjhsdfKJHsdf234'")
+      con = psycopg2.connect("dbname='postgres' user='masterofdata' host='137.135.14.92' password='gj1h23gnbfsjdhfg234234kjhskdfjhsdfKJHsdf234' port='5432'")
   except:
       print "I am unable to connect to the database"
   cur = con.cursor()
@@ -21,13 +23,15 @@ def queryDB(Qstring):
   except psycopg2.DatabaseError, e:
       if con:
           con.rollback()
-      print 'Error %s' % e    
+      print 'Error %s' % e
       sys.exit(1)
   finally:
       if con:
           con.close()
 
-fin = open('./rawcsv/2013-3rd-quarter.csv')
+file = open('../../dataScrapper/sfGov/Map__Crime_Incidents_-_Previous_Three_Months_clean.csv')
+fin = csv.reader(file, delimiter=',')
+# each item in fin is an array,delimited by ','
 
 # def timeconsumingfunc(list):
 #   sleep(5)
