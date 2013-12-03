@@ -3,6 +3,7 @@ var initModel = function(app){
   var q = require('q');
   var config = require('../../config.js');
   var dbSetting = app? config[app.get('env')].database : config.production.database;
+  var dbStore = app? config[app.get('env')].datastore : config.production.datastore;
 
   // console.log(dbSetting,'dbSetting');
   // var setting = require('setting');
@@ -12,6 +13,14 @@ var initModel = function(app){
     password: dbSetting.password,
     host: dbSetting.host,
     database: dbSetting.dbname
+  });
+
+  // Datastore schema
+  var datastore = new Schema('postgres', {
+    username: dbStore.user,
+    password: dbStore.password,
+    host: dbStore.host,
+    database: dbStore.dbname
   });
 
   var User = require('./userModel.js')(schema);
@@ -50,7 +59,7 @@ var initModel = function(app){
 
   return {
     Models: Models,
-    schema: schema
+    schema: datastore
   };
 };
 

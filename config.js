@@ -21,10 +21,16 @@ config = {
       }
     },
     database: {
-      user: "",
+      user: "bhc",
       password: "",
       host: "",
       dbname: "datsy"
+    },
+    datastore: {
+      user: "bhc",
+      password: "",
+      host: "",
+      dbname: "datastore"
     },
     server: {
       // Host to be passed to node's `net.Server#listen()`
@@ -48,8 +54,14 @@ config = {
           pass: process.env.GMAIL_PASSWORD
         }
       }
-    },    
+    },
     database: {
+      user: "masterofdata",
+      password: "gj1h23gnbfsjdhfg234234kjhskdfjhsdfKJHsdf234",
+      host: "137.135.14.92",
+      dbname: "datsydata"
+    },
+    datastore: {
       user: "masterofdata",
       password: "gj1h23gnbfsjdhfg234234kjhskdfjhsdfKJHsdf234",
       host: "137.135.14.92",
