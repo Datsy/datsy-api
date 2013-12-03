@@ -16,7 +16,7 @@ exports.dataDownloader = function(url,fileName,cb) {
     res.pipe(csv);
     res.on('end', function(){
       console.log('Downloaded', fileName);
-      if (args.length >= 3) {cb();}
+      if (cb && args.length >= 3) {cb();}
     });
   });
 
@@ -26,5 +26,5 @@ exports.dataDownloader = function(url,fileName,cb) {
 
 };
 
-exports.dataDownloader(url,fileName);
+// exports.dataDownloader(url,fileName);
 // exports.SFgovCSV(pathUrl, fileName);
