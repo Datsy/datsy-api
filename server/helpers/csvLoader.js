@@ -1,7 +1,8 @@
 var fs = require('fs'),
     q = require('q'),
     binaryCSV = require('binary-csv'),
-    parser = binaryCSV();
+    parser = binaryCSV(),
+    config = require('../../config.js');
 
 
 var csv = {};
@@ -13,9 +14,9 @@ var csv = {};
 
 csv.file = '';
 csv.metadata = '';
-csv.schema;
 csv.columnNames = [];
 csv.model = {};
+csv.schema;
 
 csv.saveDataset = function(path, schema, metadata) {
   if (!path) {
@@ -23,8 +24,8 @@ csv.saveDataset = function(path, schema, metadata) {
   }
 
   this.path = path;
-  this.metadata = metadata;
   this.schema = schema;
+  this.metadata = metadata;
   this.createModel();
 };
 
