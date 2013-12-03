@@ -6,22 +6,26 @@ var passwordHash = require('password-hash'),
     fs = require('fs'),
     csv = require('csv'),
     csvToDatabase = require('../helpers/csvToDatabase.js'),
+    csvLoader = require('../helpers/csvLoader.js'),
     hat = require('hat'),
     mailer = require('../helpers/sendEmail.js'),
     middleware = require('../middleware/middleware.js'),
+    binaryCSV = require('binary-csv'),
 
     User,
     Metadata,
     EmailToken,
+    schema,
 
     frontendControllers;
 
 
 frontendControllers = {
-  'init': function(Models) {
+  'init': function(Models, Schema) {
     User = Models.User;
     Metadata = Models.Metadata;
     EmailToken = Models.EmailToken;
+    schema = Schema;
   },
 
   'index': function(req, res) {
@@ -57,6 +61,7 @@ frontendControllers = {
   'newdataset': function(req, res) {
     res.render('newdataset', {
       isAuthenticated: true,
+      haveFile: false,
       user: {
         username: req.user.name
       }
@@ -223,8 +228,35 @@ frontendControllers = {
   },
 
   'uploadFile': function(req, res) {
+    var csvPath = req.files.uploadFile.path,
+        parser = binaryCSV(),
+        count = 0,
+        columns;
+
+    var stream = fs.createReadStream(csvPath).pipe(parser)
+      .on('data', function(line) {
+        if (count === 0) {
+          columns = line.toString().split(',');
+          count++;
+        }
+      })
+      .on('close', function() {
+        res.render('newdataset', {
+          isAuthenticated: true,
+          columns: columns,
+          path: csvPath,
+          file: req.files.uploadFile.name,
+          user: {
+            username: req.user.name
+          }
+        });
+      });
+  },
+
+  'saveDataset': function(req, res) {
 
     // Construct metadata JSON object
+    console.log(req.body);
 
     var tableMetaData = {
       user_id: req.user.id,
@@ -242,72 +274,43 @@ frontendControllers = {
 
     // Save the selected CSV file to the server
 
-    var csvPath = req.files.uploadFile.path;
+    var csvPath = req.body.uploadFile;
 
-    var readFile = function(){
-      var deferred = q.defer();
-      fs.readFile(req.files.uploadFile.path, function (err, data) {
-        fs.writeFile(csvPath, data, function (err) {
-          deferred.resolve('deferred resolved!!');
+    tableMetaData.columns = [];
+    for (key in req.body) {
+      if (req.body.hasOwnProperty(key) && key.match('column_')) {
+        tableMetaData.columns.push({
+          name: key.split('column_')[1],
+          description: key.split('column_')[1],
+          datatype: req.body[key]
         });
-      });
-      return deferred.promise;
-    };
+      }
+    }
 
-    readFile()
-    .then(function() {
-      // Parse csv file
-
-      csv()
-      .from.path(csvPath, { delimiter: ',', escape: '"' })
-      .on('record', function(row, index) {
-        if (index === 1) {
-          tableMetaData.columns = [];
-          for(var i = 0; i < row.length; i++) {
-            tableMetaData.columns.push({
-              name: row[i],
-              description: row[i]
-            });
-          }
-        } else if (index === 2) {
-          for(var j = 0; j < row.length; j++) {
-            tableMetaData.columns[j].datatype = row[j];
-          }
-        }
-      })
-      .on('end', function(count) {
-    console.log('PASSING THE FILE TO CSVTODATABASE');
-        csvToDatabase(csvPath);
-    console.log('PASSING THE FILE TO METADATA MODEL');
-        Metadata.saveDataset(tableMetaData);
+    csvLoader.saveDataset(csvPath, schema, tableMetaData);
+    Metadata.saveDataset(tableMetaData);
 
 
-        // Read table meta data
+    // Read table meta data
 
-        Metadata.Dataset.all({where:{user_id: req.user.id}}, function(err, datasets) {
-          if (err) {
-            res.writeHead(500);
-            res.end("500 Internal Server Error error:", err);
-          } else {
-            if (!middleware.isAuth(req)) {
-              res.render('index');
-            } else {
-              res.render('profile', {
-                datasets: datasets,
-                isAuthenticated: true,
-                apiKey: req.user.apikey,
-                user: {
-                  username: req.user.name
-                }
-              });
+    Metadata.Dataset.all({where:{user_id: req.user.id}}, function(err, datasets) {
+      if (err) {
+        res.writeHead(500);
+        res.end("500 Internal Server Error error:", err);
+      } else {
+        if (!middleware.isAuth(req)) {
+          res.render('index');
+        } else {
+          res.render('profile', {
+            datasets: datasets,
+            isAuthenticated: true,
+            apiKey: req.user.apikey,
+            user: {
+              username: req.user.name
             }
-          }
-        });
-      })
-      .on('error', function(error){
-        console.log(error.message);
-      });
-
+          });
+        }
+      }
     });
  },
 
