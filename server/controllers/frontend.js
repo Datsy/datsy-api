@@ -287,7 +287,16 @@ frontendControllers = {
       }
     }
 
+    // Set the col_count
+
+    tableMetaData.col_count = tableMetaData.columns.length;
+
+    // Save to the datastore
+
     csvLoader.saveDataset(csvPath, schema, tableMetaData);
+
+    // Save the metadata
+
     Metadata.saveDataset(tableMetaData);
 
 
