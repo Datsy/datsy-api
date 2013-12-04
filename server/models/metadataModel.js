@@ -15,7 +15,9 @@ var metadataModel = function(schema) {
     author: {type: String},
     created_at: {type: Date},
     row_count: {type: Number},
-    col_count: {type: Number}
+    col_count: {type: Number}, 
+    last_viewed:{type: Date},
+    view_count:{type: Number}
   });
 
   Metadata.Tag = schema.define('datasettag', {
@@ -60,6 +62,7 @@ var metadataModel = function(schema) {
       if(err) {
         console.log(err);
       } else {
+        console.log('successfully saved metadata into database!!!!!!');
         self.saveColumns(dataset, jsonMetadata);
       }
     });
