@@ -393,11 +393,17 @@ frontendControllers = {
       Metadata.Tag.all({where: {label: queryTag[i]}},
         function(err, data){
           console.log("Tag info:", data);
-          var thisTag = new Metadata.Tag({id:data[0].id});
-          thisTag.dataset(function(err, data){
-            console.log("Dataset Found:", data);
-            taggedData.push(data);
-          });
+          if (data.length !== 0){
+            var thisTag = new Metadata.Tag({id:data[0].id});
+            thisTag.dataset(function(err, data){
+              console.log("Dataset Found:", data);
+              taggedData.push(data);
+            });
+          } else {
+            // to facilitate the return of an empty array 
+            // in the following code
+            taggedData.push([]);
+          }
         }
       );
     }
@@ -411,7 +417,7 @@ frontendControllers = {
             res.send(result);
           }
         }
-        ,1000
+        ,500
     );
 
     var filterTaggedData = function(){
