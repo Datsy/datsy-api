@@ -17,6 +17,7 @@ csv.metadata = '';
 csv.columnNames = [];
 csv.model = {};
 csv.schema;
+csv.row_count;
 
 csv.saveDataset = function(path, schema, metadata) {
   if (!path) {
@@ -36,10 +37,12 @@ csv.saveDataset = function(path, schema, metadata) {
  */
 
 csv.saveData = function() {
-  var self = this, count = 0;;
+  this.row_count = 0;
+
+  var self = this;
   fs.createReadStream(this.path).pipe(parser)
     .on('data', function(line) {
-      if (count > 0) {
+      if (self.count > 0) {
         line = line.toString().split(',');
 
         var obj = {};
@@ -47,38 +50,13 @@ csv.saveData = function() {
           obj[self.columnNames[i]] = line[i];
         }
 
+        self.row_count++;
+
         self.Table.create(obj);
-        } else {
-          count++;
-        }
+      } else {
+        self.row_count++;
+      }
     });
-
-//  sequelize.query("COPY capital_bikeshares(duration, start_date, start_station, start_terminal, end_date, end_station, end_terminal, bike, subscriber_type) FROM '" + this.file + "' WITH DELIMITER ',';");
-};
-
-
-/**
- * Create the database query and execute the command
- */
-
-csv.insert = function(lines) {
-  var rows = [];
-  for (var i = 0; i < lines.length; i++) {
-    var attrs = {};
-    for (var j = 0; j < this.columnNames.length; j++) {
-      attrs[this.columnNames[j]] = lines[i][j];
-    }
-    rows.push(attrs);
-  }
-
-  this.Table.bulkCreate(rows)
-    .success(function() {
-      console.log('Success!');
-    })
-    .error(function(err) {
-     throw err;
-    });
-
 };
 
 
