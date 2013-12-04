@@ -2,7 +2,7 @@
 # fin = open('rawcsv/stockdata/stockdata.csv')
 # fin.read()
 
-#clean and merge data in one csv 
+#clean and transport stock raw data from multiple csv into respective multiple csv files 
 from os import listdir
 from os.path import isfile, join
 mypath = './USstockHistory167Mb/'
