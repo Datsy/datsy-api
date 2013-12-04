@@ -6,22 +6,26 @@ var passwordHash = require('password-hash'),
     fs = require('fs'),
     csv = require('csv'),
     csvToDatabase = require('../helpers/csvToDatabase.js'),
+    csvLoader = require('../helpers/csvLoader.js'),
     hat = require('hat'),
     mailer = require('../helpers/sendEmail.js'),
     middleware = require('../middleware/middleware.js'),
+    binaryCSV = require('binary-csv'),
 
     User,
     Metadata,
     EmailToken,
+    schema,
 
     frontendControllers;
 
 
 frontendControllers = {
-  'init': function(Models) {
+  'init': function(Models, dataSchema) {
     User = Models.User;
     Metadata = Models.Metadata;
     EmailToken = Models.EmailToken;
+    schema = dataSchema;
   },
 
   'index': function(req, res) {
@@ -57,6 +61,7 @@ frontendControllers = {
   'newdataset': function(req, res) {
     res.render('newdataset', {
       isAuthenticated: true,
+      haveFile: false,
       user: {
         username: req.user.name
       }
@@ -105,6 +110,7 @@ frontendControllers = {
         }
 
         if (result === null){ //no email token found
+          console.log("ERROR - no email token found!!");
           res.writeHead(404);
           res.end();
         } else{
@@ -223,6 +229,35 @@ frontendControllers = {
   },
 
   'uploadFile': function(req, res) {
+    var csvPath = req.files.uploadFile.path,
+        parser = binaryCSV(),
+        count = 0,
+        columns;
+
+    var stream = fs.createReadStream(csvPath).pipe(parser)
+      .on('data', function(line) {
+        if (count === 0) {
+          columns = line.toString().split(',');
+          count++;
+        } else {
+          count++
+        }
+      })
+      .on('close', function() {
+        res.render('newdataset', {
+          isAuthenticated: true,
+          columns: columns,
+          path: csvPath,
+          count: count,
+          file: req.files.uploadFile.name,
+          user: {
+            username: req.user.name
+          }
+        });
+      });
+  },
+
+  'saveDataset': function(req, res) {
 
     // Construct metadata JSON object
 
@@ -232,9 +267,11 @@ frontendControllers = {
       description: req.body.dataset_description,
       author: req.body.dataset_author,
       url: req.body.dataset_url,
-      row_count: 0, // hardcoded for now
-      col_count: 0, //hardcoded for now
-      created_at: (new Date()).toUTCString()
+      created_at: (new Date()).toUTCString(),
+      last_accessed: (new Date()).toUTCString(),
+      row_count: req.body.count,
+      view_count: 0,
+      stars: 0
     };
 
     tableMetaData.table_name = tableMetaData.title.replace(/ /g, '_').toLowerCase();
@@ -242,72 +279,51 @@ frontendControllers = {
 
     // Save the selected CSV file to the server
 
-    var csvPath = req.files.uploadFile.path;
+    var csvPath = req.body.uploadFile;
 
-    var readFile = function(){
-      var deferred = q.defer();
-      fs.readFile(req.files.uploadFile.path, function (err, data) {
-        fs.writeFile(csvPath, data, function (err) {
-          deferred.resolve('deferred resolved!!');
+    tableMetaData.columns = [];
+    for (key in req.body) {
+      if (req.body.hasOwnProperty(key) && key.match('column_')) {
+        tableMetaData.columns.push({
+          name: key.split('column_')[1],
+          description: key.split('column_')[1],
+          datatype: req.body[key]
         });
-      });
-      return deferred.promise;
-    };
+      }
+    }
 
-    readFile()
-    .then(function() {
-      // Parse csv file
+    // Set the col_count
 
-      csv()
-      .from.path(csvPath, { delimiter: ',', escape: '"' })
-      .on('record', function(row, index) {
-        if (index === 1) {
-          tableMetaData.columns = [];
-          for(var i = 0; i < row.length; i++) {
-            tableMetaData.columns.push({
-              name: row[i],
-              description: row[i]
-            });
-          }
-        } else if (index === 2) {
-          for(var j = 0; j < row.length; j++) {
-            tableMetaData.columns[j].datatype = row[j];
-          }
-        }
-      })
-      .on('end', function(count) {
-    console.log('PASSING THE FILE TO CSVTODATABASE');
-        csvToDatabase(csvPath);
-    console.log('PASSING THE FILE TO METADATA MODEL');
-        Metadata.saveDataset(tableMetaData);
+    tableMetaData.col_count = tableMetaData.columns.length;
 
+    // Save to the datastore
 
-        // Read table meta data
+    csvLoader.saveDataset(csvPath, schema, tableMetaData);
 
-        Metadata.Dataset.all({where:{user_id: req.user.id}}, function(err, datasets) {
-          if (err) {
-            res.writeHead(500);
-            res.end("500 Internal Server Error error:", err);
-          } else {
-            if (!middleware.isAuth(req)) {
-              res.render('index');
-            } else {
-              res.render('profile', {
-                datasets: datasets,
-                isAuthenticated: true,
-                apiKey: req.user.apikey,
-                user: {
-                  username: req.user.name
-                }
-              });
+    // Save the metadata
+
+    Metadata.saveDataset(tableMetaData);
+
+    // Read table meta data
+
+    Metadata.Dataset.all({where:{user_id: req.user.id}}, function(err, datasets) {
+      if (err) {
+        res.writeHead(500);
+        res.end("500 Internal Server Error error:", err);
+      } else {
+        if (!middleware.isAuth(req)) {
+          res.render('index');
+        } else {
+          res.render('profile', {
+            datasets: datasets,
+            isAuthenticated: true,
+            apiKey: req.user.apikey,
+            user: {
+              username: req.user.name
             }
-          }
-        });
-      })
-      .on('error', function(error){
-        console.log(error.message);
-      });
-
+          });
+        }
+      }
     });
  },
 
@@ -341,19 +357,112 @@ frontendControllers = {
     res.end();
   },
 
-  'getAllTags': function(req, res) {
+  'apiSearchMeta': function(req, res){
+    console.log("In apiSearchMeta");
+    console.log("Query String parameters:", req.query.tag);
+     
+    if(req.query.tag === undefined){
+      // 2) GET search/meta
+      // - return all tables meta data
+      Metadata.Dataset.all(function(err, data){
+        if(err) {
+          res.send("500 Internal Server Error error:", err);
+        } else {
+          console.log("Successfully retrieved all table meta.");
+          res.send(data);
+        }
+      });
+    } else {
+      // 3) GET search/meta?tag=<tagname>&tag=<tagname>
+      // - return meta data of tables associated with these <tagname>s.
+
+      // dataset associated with each tag
+      taggedData = [];
+      // copy req.query.tag into queryTag
+      var queryTag = [];
+      if ( Array.isArray(req.query.tag) ){
+        for (var i = 0; i < req.query.tag.length; i++){
+          queryTag[i] = req.query.tag[i];
+        }
+      } else {
+        queryTag.push(req.query.tag);
+      }
+     
+      console.log("queryTag:", queryTag);
+      for (var i = 0; i < queryTag.length; i++){
+        Metadata.Tag.all({where: {label: queryTag[i]}},
+          function(err, data){
+            console.log("Tag info:", data);
+            if (data.length !== 0){
+              var thisTag = new Metadata.Tag({id:data[0].id});
+              thisTag.dataset(function(err, data){
+                console.log("Dataset Found:", data);
+                taggedData.push(data);
+              });
+            } else {
+              // to facilitate the return of an empty array 
+              // in the following code
+              taggedData.push([]);
+            }
+          }
+        );
+      }
+   
+      var doneId = setInterval(function(){
+            console.log("taggedData.length:", taggedData.length);
+            if (taggedData.length === queryTag.length){
+              console.log("****Done:", taggedData);
+              clearInterval(doneId);
+              var result = filterTaggedData();
+              res.send(result);
+            }
+          }
+          ,500
+      );
+
+      var filterTaggedData = function(){
+        var counter = {};
+        var tableMeta = {};
+        var result = [];
+        for (var i = 0; i < taggedData.length; i++){
+          for (var j = 0; j < taggedData[i].length; j++){
+            if (taggedData[i][j] !== null){
+              if (counter.hasOwnProperty(taggedData[i][j].id)){
+                counter[taggedData[i][j].id] += 1;
+              } else {
+                tableMeta[taggedData[i][j].id] = taggedData[i][j];
+                counter[taggedData[i][j].id] = 1;
+              }
+            }
+          }        
+        }
+        console.log("counter:", counter);  
+        for(var key in counter){
+          if (counter[key] === taggedData.length){
+            result.push(tableMeta[key]);
+          }
+        }
+        console.log("result:", result);
+        return result;
+      };
+    }
+  },
+
+  'apiSearchTags': function(req, res){
     console.log("Retrieving all tags...");
-    Metadata.Tags.all(function(err, result){
+    var result = [];
+    Metadata.Tag.all(function(err, data){
       if(err) {
-        res.writeHead(500);
-        res.end("500 Internal Server Error error:", err);
+        res.send("500 Internal Server Error error:", err);
       } else {
         console.log("Successfully retrieved all tags.");
-        res.writeHead(200);
-        res.render('', {}); // create new view?
+        for(var i = 0; i < data.length; i++){
+          result.push(data[i].label);
+        }
+        res.send(result);
       }
     });
-  }
+  } 
 };
 
 

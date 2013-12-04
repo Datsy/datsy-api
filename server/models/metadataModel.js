@@ -14,10 +14,15 @@ var metadataModel = function(schema) {
     description: {type: String},
     author: {type: String},
     created_at: {type: Date},
+    last_access: {type: Date},
+    view_count: {type: Number},
+    star_count: {type: Number},
     row_count: {type: Number},
     col_count: {type: Number}, 
     last_viewed:{type: Date},
-    view_count:{type: Number}
+    view_count:{type: Number},
+    token: {type: String}
+
   });
 
   Metadata.Tag = schema.define('datasettag', {
@@ -34,7 +39,7 @@ var metadataModel = function(schema) {
 
   Metadata.Dataset.hasAndBelongsToMany(Metadata.Tag, {as: 'datasettag', foreignKey: 'tag_id'});
   Metadata.Dataset.hasMany(Metadata.DataColumn, {as: 'datacolumnmeta', foreignKey: 'dataset_id'});
-
+  Metadata.Tag.hasAndBelongsToMany(Metadata.Dataset, {as: 'dataset', foreignKey: 'datasettag_id'});
 
   //
   // Define helper functions
@@ -47,14 +52,15 @@ var metadataModel = function(schema) {
 
     var dataset         = new this.Dataset();
     dataset.table_name  = jsonMetadata.table_name;
+    dataset.title       = jsonMetadata.title;
+    dataset.col_count   = jsonMetadata.col_count;
+    dataset.row_count   = jsonMetadata.row_count;
     dataset.user_id     = jsonMetadata.user_id;
     dataset.url         = jsonMetadata.url;
     dataset.name        = jsonMetadata.name;
     dataset.title       = jsonMetadata.title;
     dataset.description = this.transformForPostgres(jsonMetadata.description);
     dataset.author      = jsonMetadata.author;
-    dataset.col_count   = jsonMetadata.col_count;
-    dataset.row_count   = jsonMetadata.row_count;
     dataset.created_at  = jsonMetadata.created_at;
 
     var self = this;
@@ -62,7 +68,6 @@ var metadataModel = function(schema) {
       if(err) {
         console.log(err);
       } else {
-        console.log('successfully saved metadata into database!!!!!!');
         self.saveColumns(dataset, jsonMetadata);
       }
     });
@@ -98,22 +103,29 @@ var metadataModel = function(schema) {
       }, cb);
     }
 
+    console.log('inside save columns');
     this.saveTags(dataset, jsonMetadata);
   };
 
 
   // Save tag data to the database
 
-  Metadata.saveTags = function(dataset, jsonMetadata) {
+  Metadata.saveTags = function(dataset, jsonMetadata, i) {
+    if (i >= jsonMetadata.tags.length) {return;}
+
     var cb = function(err, data) {
       if (err) {
         console.log(err);
       } else {
+        i += 1;
+        self.saveTags(dataset,jsonMetadata,i);
+        // Tag.all({where: {label: jsonMetadata.tags[i]}}, createTag);
         return;
       }
     };
 
     var createTag = function(err, result) {
+      console.log(result);
       if (result.length === 0) {
        dataset.datasettag.create({
           label: tag
@@ -123,12 +135,12 @@ var metadataModel = function(schema) {
       }
     };
 
-    for(var i = 0; i < jsonMetadata.tags.length; i++) {
-      var self = this,
-          tag = jsonMetadata.tags[i];
+    i = i || 0;
+    var self = this,
+    tag = jsonMetadata.tags[i];
+    console.log('in metadatamodel file     ', tag);
 
-      this.Tag.all({where: {label: tag}}, createTag);
-    }
+    this.Tag.all({where: {label: tag}}, createTag);
   };
 
 

@@ -40,10 +40,8 @@ var onReadDir = function(err, files) {
 };
 
 var getTableAndQueries = function(client,file) {
-  console.log('the files is ', file);
   if (file.substring(file.length - 3) !== 'csv') {
     rowsLeft = 0;
-    console.log('HERE IS THE TABLELLLLL    ', table);
     return;
   }
   var table = getTableInfo(file);
@@ -68,7 +66,6 @@ var getTableInfo = function(file) {
   table.num_col = table.col_names.length;
   table.num_row = table.col_values.length;
   populatemetadatatable(table, extra);
-  console.log('HERE IS THE TABLELLLLL    ', table);
   return table;
 };
 
@@ -117,6 +114,7 @@ var getTableName = function(string) {
     }
   }
   obj.tableName = obj.tableName.replace(/\-/g, '_');
+
   return obj;
 };
 

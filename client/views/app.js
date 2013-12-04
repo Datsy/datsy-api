@@ -3,7 +3,7 @@ var Router = Backbone.Router.extend({
     "posts/:id": "getPost", // will match example: /#/posts/1
     "login": "login",
     "logout": "logout",
-//    "signup": "signup",
+    "signup": "signup",
     "verifyEmail": "verifyEmail",
     "": "signup",
 //    "aboutUs": "aboutUs",
@@ -51,7 +51,7 @@ Backbone.history.start();
 
 app_router.on('route:login', datsy.userLogin);
 app_router.on('route:logout', datsy.userLogout);
-//app_router.on('route:signup', datsy.userSignup);
+app_router.on('route:signup', datsy.userSignup);
 app_router.on('route:verifyEmail', datsy.userVerifyEmail);
 //app_router.on('route:aboutUs', datsy.aboutUs);
 

@@ -36,7 +36,7 @@ var csvToDatabase = function(filepath){
 
   var createQString = function() {
     console.log("creating string");
-    var createQS = 'CREATE TABLE IF NOT EXISTS '+ table.tablename +' (';//ID INT PRIMARY KEY NOT NULL
+    var createQS = 'CREATE TABLE IF NOT EXISTS '+ table.tablename +' ( id SERIAL PRIMARY KEY,';
     for (var i = 0; i < table.num_col; i++) {
       createQS += table.col_names[i] + ' ' + table.col_types[i];
       if (i < table.num_col - 1) {createQS += ',';}
