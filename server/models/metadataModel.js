@@ -14,8 +14,12 @@ var metadataModel = function(schema) {
     description: {type: String},
     author: {type: String},
     created_at: {type: Date},
+    last_access: {type: Date},
+    view_count: {type: Number},
+    star_count: {type: Number},
     row_count: {type: Number},
-    col_count: {type: Number}
+    col_count: {type: Number},
+    token: {type: String}
   });
 
   Metadata.Tag = schema.define('datasettag', {
