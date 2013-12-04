@@ -8,11 +8,17 @@ block content
       .well.hero-spacer.well-background
         h3 Please Login
       .row
-        form(method='post', action='/user-login')
-          .form-group
-            label Email
-            input.form-control(type='text', placeholder='Enter your email', name='email', size='30')
-          .form-group
-            label Password
-            input.form-control(type='password', placeholder='Enter your password', name='password')
-            button.btn.btn-default Sign In
+        div.span12
+          form.form-horizontal(method='post', action='/user-login')
+            div.control-group
+              label.control-label Email
+              div.controls
+                input.form-control(type='text', placeholder='Enter your email', name='email', size='30')
+            div.control-group
+              label Password
+              div.controls
+                input.control-label(type='password', placeholder='Enter your password', name='password')
+            div.control-group
+              label Sign In
+              div.controls
+                button.btn.btn-primary Sign In

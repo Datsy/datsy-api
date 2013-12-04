@@ -1,97 +1,140 @@
-/* GET home page */
+// Global require, module
 
-var index = function(Models){
-  var indexRoutes = {},
-      passwordHash = require('password-hash'),
-      crypto = require('crypto'),
-      q = require('q'),
-      fs = require('fs'),
-      csv = require('csv'),
-      csvToDatabase = require('../helpers/csvToDatabase.js'),
-      hat = require('hat'),
-      User = Models.User,
-      Metadata = Models.Metadata,
-      EmailToken = Models.EmailToken,
-      mailer = require('../helpers/sendEmail.js');
+var passwordHash = require('password-hash'),
+    crypto = require('crypto'),
+    q = require('q'),
+    fs = require('fs'),
+    csv = require('csv'),
+    csvToDatabase = require('../helpers/csvToDatabase.js'),
+    csvLoader = require('../helpers/csvLoader.js'),
+    hat = require('hat'),
+    mailer = require('../helpers/sendEmail.js'),
+    middleware = require('../middleware/middleware.js'),
+    binaryCSV = require('binary-csv'),
 
-  indexRoutes.index = function(req, res){
-    res.render('index', { title: 'Express' });
-  };
+    User,
+    Metadata,
+    EmailToken,
+    schema,
 
-  indexRoutes.loginSuccess = function(req, res){
-    req.session.passport.userType = "user";
-    // get apiKey
-    var apiKey;
-    var tableMetaData;
+    frontendControllers;
 
-    // read table meta data
-    Metadata.Dataset.all({where:{user_id:req.user.id}}, function(err,result){
-      if (err) {
-        console.log("ERROR in reading Metadata.Dataset!");
-        console.log(err);
-        res.writeHead(500);
-        res.end("500 Internal Server Error error:", err);
-      } else {
-        tableMetaData = result;
-        console.log("********Read tableMetaData:", tableMetaData);
-        User.findOne({where:{id:req.user.id}}, function(err, result){
-          if (err) {
-            console.log("ERROR in reading API key!");
-            res.writeHead(500);
-            res.end("500 Internal Server Error error:", err);
-          } else {
-            console.log('Success in finding a user', result);
-            apiKey = result.apikey;
-            console.log("*****tableMeta*****", tableMetaData);
-            res.render('loginSuccessful', {tableMetaData: tableMetaData,
-              apiKey: apiKey});
-          }
-        });
+
+frontendControllers = {
+  'init': function(Models, Schema) {
+    User = Models.User;
+    Metadata = Models.Metadata;
+    EmailToken = Models.EmailToken;
+    schema = Schema;
+  },
+
+  'index': function(req, res) {
+    if (!middleware.isAuth(req)) {
+      res.render('index');
+    } else {
+      res.render('index', {
+        isAuthenticated: true,
+        user: {
+          username: req.user.name
+        }
+      });
+    }
+  },
+
+  'login': function(req, res) {
+    res.render('login');
+  },
+
+  'about': function(req, res) {
+    if (!middleware.isAuth(req)) {
+      res.render('about');
+    } else {
+      res.render('about', {
+        isAuthenticated: true,
+        user: {
+          username: req.user.name
+        }
+      });
+    }
+  },
+
+  'newdataset': function(req, res) {
+    res.render('newdataset', {
+      isAuthenticated: true,
+      haveFile: false,
+      user: {
+        username: req.user.name
       }
     });
-  };
+  },
 
-  indexRoutes.loginFail = function(req, res){
+  'profile': function(req, res) {
+      req.session.passport.userType = "user";
+
+      Metadata.Dataset.all({where: {user_id: req.user.id}}, function(err, datasets) {
+        if (err) {
+          res.writeHead(500);
+          res.end("500 Internal Server Error error:", err);
+        } else {
+
+          User.all({where:{password: req.user.password}}, function(err, result) {
+            if (err) {
+              res.writeHead(500);
+              res.end("500 Internal Server Error error:", err);
+            } else {
+              res.render('profile', {
+                datasets: datasets,
+                apiKey: req.user.apikey,
+                isAuthenticated: true,
+                user: {
+                  username: req.user.name
+                }
+              });
+            }
+          });
+        }
+      });
+  },
+
+  'loginFail': function(req, res) {
     console.log('login fail route');
     res.writeHead(200);
     res.end('fail');
-  };
+  },
 
-  indexRoutes.userSignupVerify = function(req, res){
-    console.log("In SignupVerify");
+  'userSignupVerify': function(req, res) {
     EmailToken.findOne({where: {token: req.params.token}},
       function (err, result) {
         if (err) {
           console.log("ERROR - userSignupVerify aborted!!");
         }
-        console.log("in userSignupVerify");
+
         if (result === null){ //no email token found
           res.writeHead(404);
           res.end();
         } else{
+          var apiKey = hat(bits=128, base=16);
           var newUser = new User({
             name: result.name,
             email: result.email,
             password: result.password,
-            account: "user"
+            account: "user",
+            apikey: apiKey
           });
-          // console.log("RESULT***",result);
+
           User.findOne({where: {email: newUser.email}},
             function (err, result) {
               if (err) {
                 console.log("ERROR - creating (userSignupVerify) user aborted!!");
                 console.log("ERROR:",err);
               }
-                console.log("in User findOne");
+
               if (result === null) { // create user
-                console.log('result is null, we are creating a new user', newUser);
                 newUser.save(function (err, data) {
                   if (err) console.log("ERR!!! - ",err);
-                    console.log('** userSignupVerify is successful ** ');
-                    // console.log("Result Obj***", data);
-                    res.render('login');
+                  res.render('login');
                 });
-              } else{
+              } else {
                 console.log('That user exists: ', result);
                 res.writeHead(500);
                 res.end("500 Internal Server Error - user existed, could not create account");
@@ -99,11 +142,9 @@ var index = function(Models){
           });
         }
     });
-    // res.render('login');
-  };
+  },
 
-  indexRoutes.signup = function(req, res){
-    console.log("In signup");
+  'signup': function(req, res) {
     var newEmailToken = new EmailToken({
       name: req.body.name,
       email: req.body.email,
@@ -147,14 +188,13 @@ var index = function(Models){
           }
         });
 
-        res.render('verifyEmail', { title: 'Express' });
+        res.render('verifyEmail');
       });
     });
-  };
+  },
 
-  indexRoutes.checkEmailIfExists = function(req,res){
+  'checkEmailIfExists': function(req,res) {
 
-    // console.log("Email:",req.query.email);
     User.findOne({email: req.query.email}, 'email',
       function (err, result) {
         if (err) {
@@ -168,9 +208,9 @@ var index = function(Models){
           res.end("false");
         }
     });
-  };
+  },
 
-  indexRoutes.userReadInfo = function(req, res){
+  'userReadInfo': function(req, res) {
     var userModel = User;
     var newUser = new user(req.body);
 
@@ -185,150 +225,152 @@ var index = function(Models){
           res.end(result);
         }
     });
-  };
+  },
 
-  indexRoutes.uploadFile = function(req, res){
-    // construct table meta json
-    var d = new Date();
+  'uploadFile': function(req, res) {
+    var csvPath = req.files.uploadFile.path,
+        parser = binaryCSV(),
+        count = 0,
+        columns;
+
+    var stream = fs.createReadStream(csvPath).pipe(parser)
+      .on('data', function(line) {
+        if (count === 0) {
+          columns = line.toString().split(',');
+          count++;
+        } else {
+          count++
+        }
+      })
+      .on('close', function() {
+        res.render('newdataset', {
+          isAuthenticated: true,
+          columns: columns,
+          path: csvPath,
+          count: count,
+          file: req.files.uploadFile.name,
+          user: {
+            username: req.user.name
+          }
+        });
+      });
+  },
+
+  'saveDataset': function(req, res) {
+
+    // Construct metadata JSON object
+
     var tableMetaData = {
-      table_id: '',
       user_id: req.user.id,
-      title: req.body.table_title,
-      description: req.body.table_description,
-      author: req.body.table_author,
-      url: req.body.table_url,
-      row_count: 100000, // hardcoded for now
-      col_count: 6, //hardcoded for now
-      created_at: d.toUTCString(),
-      columns:[]
+      title: req.body.dataset_title,
+      description: req.body.dataset_description,
+      author: req.body.dataset_author,
+      url: req.body.dataset_url,
+      created_at: (new Date()).toUTCString(),
+      last_accessed: (new Date()).toUTCString(),
+      row_count: req.body.count,
+      view_count: 0,
+      stars: 0
     };
 
-    var newPath = __dirname + "/../helpers/uploads/file1.csv";
-    var readFile = function(){
-      var deferred = q.defer();
-      fs.readFile(req.files.csvFile.path, function (err, data) {
-        var newPath = __dirname + "/../helpers/uploads/file1.csv";
-        // console.log("**new path", newPath);
-        fs.writeFile(newPath, data, function (err) {
-          deferred.resolve('deferred resolved!!');
-          // res.render('login');
-        });
-      });
-      return deferred.promise;
-    };
+    tableMetaData.table_name = tableMetaData.title.replace(/ /g, '_').toLowerCase();
+    tableMetaData.tags = req.body.dataset_tags.split(',');
 
-    readFile()
-    .then(function(){
-      // parse csv file
-      csv()
-      .from.path(newPath, { delimiter: ',', escape: '"' })
-      .to.stream(fs.createWriteStream(__dirname+'/sample.out'))
-      .transform( function(row){
-        row.unshift(row.pop());
-        return row;
-      })
-      .on('record', function(row,index){
-        if(index===0){
-          console.log("****TABLE ID", row[0]);
-          tableMetaData.table_id = row[0];
-          console.log("****TABLE ID", tableMetaData.table_id);
-        }
-        if (index===1){
-          for(var i = 0; i < row.length; i++){
-            var colObj = {
-              "name": row[i],
-              "datatype": "String",
-              "description": row[i]
-            };
-            tableMetaData.columns.push(colObj);
-          }
-        }
-      })
-      .on('close', function(count){
-        // when writing to a file, use the 'close' event
-        // the 'end' event may fire before the file has been written
-        console.log("***********tableMetaData", tableMetaData);
-        csvToDatabase(newPath);
-        Metadata.saveDataset(tableMetaData);
-        console.log('Number of lines: '+count);
-/////////
-        var apiKey;
-        var userTableMetaData;
+    // Save the selected CSV file to the server
 
-        // read table meta data
-        Metadata.Dataset.all({where:{user_id:req.user.id}}, function(err,result){
-          if (err) {
-            console.log("ERROR in reading Metadata.Dataset!");
-            console.log(err);
-            res.writeHead(500);
-            res.end("500 Internal Server Error error:", err);
-          } else {
-            userTableMetaData = result;
-            User.findOne({where:{id:req.user.id}}, function(err, result){
-              if (err) {
-                console.log("ERROR in reading API key!");
-                res.writeHead(500);
-                res.end("500 Internal Server Error error:", err);
-              } else {
-                console.log('Success in finding a user', result);
-                apiKey = result.apikey;
-                res.render('loginSuccessful', {tableMetaData: userTableMetaData,
-                  apiKey: apiKey});
-              }
-            });
-          }
+    var csvPath = req.body.uploadFile;
+
+    tableMetaData.columns = [];
+    for (key in req.body) {
+      if (req.body.hasOwnProperty(key) && key.match('column_')) {
+        tableMetaData.columns.push({
+          name: key.split('column_')[1],
+          description: key.split('column_')[1],
+          datatype: req.body[key]
         });
-///////
-      })
-      .on('error', function(error){
-        console.log(error.message);
-      });
+      }
+    }
+
+    // Set the col_count
+
+    tableMetaData.col_count = tableMetaData.columns.length;
+
+    // Save to the datastore
+
+    csvLoader.saveDataset(csvPath, schema, tableMetaData);
+
+    // Save the metadata
+
+    Metadata.saveDataset(tableMetaData);
+
+    // Read table meta data
+
+    Metadata.Dataset.all({where:{user_id: req.user.id}}, function(err, datasets) {
+      if (err) {
+        res.writeHead(500);
+        res.end("500 Internal Server Error error:", err);
+      } else {
+        if (!middleware.isAuth(req)) {
+          res.render('index');
+        } else {
+          res.render('profile', {
+            datasets: datasets,
+            isAuthenticated: true,
+            apiKey: req.user.apikey,
+            user: {
+              username: req.user.name
+            }
+          });
+        }
+      }
     });
- };
+ },
 
-  indexRoutes.generateApiKey = function(req, res){
+ 'generateApiKey': function(req, res) {
     var apiKey = hat(bits=128, base=16);
 
-    console.log("In generateApiKey", apiKey);
-    console.log("User Session", req.session);
-    console.log("User object", req.user);
-
-    User.findOne({where:{id:req.user.id}}, function(err, result){
+    User.findOne({where:{password: req.user.password}}, function(err, user) {
         if (err) {
           console.log("ERROR in saving API key!");
           res.writeHead(500);
           res.end("500 Internal Server Error error:", err);
         } else {
-          console.log('Success in finding a user', result);
-          result.apikey = apiKey;
-          User.upsert(result, function (err, data) {
+          user.apikey = apiKey;
+          User.upsert(user, function (err, data) {
             if (err){
               console.log('** ERROR in updating user API key **');
               console.log("ERR!!! - ",err);
             } else{
               console.log('** user update with API key is successful ** ');
-              res.send(apiKey);
             }
+
+            return;
           });
         }
     });
-  };
+  },
 
-  indexRoutes.userTableMetaData = function(req, res){
+  'userTableMetaData': function(req, res) {
     console.log("In userTableMetaData");
     res.writeHead(200);
     res.end();
-  };
+  },
 
-  indexRoutes.apiDev = function(req, res){
-    console.log("In apiDev");
-    var mockData = require('../helpers/apiDevMock.json');
-    res.send(mockData);
+  'getAllTags': function(req, res) {
+    console.log("Retrieving all tags...");
+    Metadata.Tags.all(function(err, result){
+      if(err) {
+        res.writeHead(500);
+        res.end("500 Internal Server Error error:", err);
+      } else {
+        console.log("Successfully retrieved all tags.");
+        res.writeHead(200);
+        res.render('', {}); // create new view?
+      }
+    });
   }
-
-  return indexRoutes;
 };
 
-module.exports = index;
 
+module.exports = frontendControllers;
 
