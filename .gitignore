@@ -4,6 +4,7 @@
 dbconfig.json
 azurecloudconfig.json
 socrataAPI.json
+/dataScrapper/*.json
 
 /USstockHistory167Mb
 output.txt
