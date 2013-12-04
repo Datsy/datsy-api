@@ -14,10 +14,15 @@ var metadataModel = function(schema) {
     description: {type: String},
     author: {type: String},
     created_at: {type: Date},
+    last_access: {type: Date},
+    view_count: {type: Number},
+    star_count: {type: Number},
     row_count: {type: Number},
     col_count: {type: Number}, 
     last_viewed:{type: Date},
     view_count:{type: Number},
+    token: {type: String}
+
   });
 
   Metadata.Tag = schema.define('datasettag', {
@@ -34,7 +39,7 @@ var metadataModel = function(schema) {
 
   Metadata.Dataset.hasAndBelongsToMany(Metadata.Tag, {as: 'datasettag', foreignKey: 'tag_id'});
   Metadata.Dataset.hasMany(Metadata.DataColumn, {as: 'datacolumnmeta', foreignKey: 'dataset_id'});
-
+  Metadata.Tag.hasAndBelongsToMany(Metadata.Dataset, {as: 'dataset', foreignKey: 'datasettag_id'});
 
   //
   // Define helper functions
@@ -52,6 +57,8 @@ var metadataModel = function(schema) {
     dataset.row_count   = jsonMetadata.row_count;
     dataset.user_id     = jsonMetadata.user_id;
     dataset.url         = jsonMetadata.url;
+    dataset.name        = jsonMetadata.name;
+    dataset.title       = jsonMetadata.title;
     dataset.description = this.transformForPostgres(jsonMetadata.description);
     dataset.author      = jsonMetadata.author;
     dataset.created_at  = jsonMetadata.created_at;
@@ -61,7 +68,6 @@ var metadataModel = function(schema) {
       if(err) {
         console.log(err);
       } else {
-        console.log('successfully saved metadata into database!!!!!!');
         self.saveColumns(dataset, jsonMetadata);
       }
     });
