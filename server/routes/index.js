@@ -1,5 +1,7 @@
 var frontend = require('./frontend');
+var api = require('./api');
 
 module.exports = {
-  frontend: frontend
+  frontend: frontend,
+  api: api
 };

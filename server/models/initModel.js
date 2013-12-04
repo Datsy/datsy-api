@@ -1,7 +1,11 @@
 var initModel = function(app){
   var Models = {};
   var q = require('q');
-  var dbSetting = require('../../config.js')[app.get('env')].database;
+  var config = require('../../config.js');
+  var dbSetting = app? config[app.get('env')].database : config.production.database;
+  var dbStore = app? config[app.get('env')].datastore : config.production.datastore;
+
+  // console.log(dbSetting,'dbSetting');
   // var setting = require('setting');
   var Schema = require('jugglingdb').Schema;
   var schema = new Schema('postgres', {
@@ -11,22 +15,13 @@ var initModel = function(app){
     database: dbSetting.dbname
   });
 
-  //// Test
-  // var testTable = "apple";
-  // console.log(schema);
-  // var TestTable = schema.define(
-  // {
-  //   tableName: 'apple'
-  // });
-
-  // TestTable.findOne({where: {Date: "2013-11-27"}},
-  //   function (err, result) {
-  //     if (err) {
-  //       console.log("TestTable error:", TestTable);
-  //     } else {
-  //       console.log("Result:",result);
-  //     }
-  // });
+  // Datastore schema
+  var datastore = new Schema('postgres', {
+    username: dbStore.user,
+    password: dbStore.password,
+    host: dbStore.host,
+    database: dbStore.dbname
+  });
 
   var User = require('./userModel.js')(schema);
   var EmailToken = require('./emailTokenModel.js')(schema);
@@ -62,7 +57,10 @@ var initModel = function(app){
   updateSchema().then(function(){
   });
 
-  return Models;
+  return {
+    Models: Models,
+    schema: datastore
+  };
 };
 
 module.exports = initModel;

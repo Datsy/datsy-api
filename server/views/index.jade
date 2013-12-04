@@ -3,12 +3,41 @@ extend layout
 block head
 
 block content
-  .row
-    div.containerdiv
-      div.signupboxdiv
-        div.signupbuttondiv
-          a(href='#signup')
-            img(src='../imgs/signup.png')
-        div.textboxsignupdiv 
-          span.logodiv Datsy
-          span  is a service that allows you to easily explore and visualize data and the relationships between them
+  div.page-header
+    h1 Manage Data Better
+       br
+       small  Easily upload, share and explore data. Track versions, usage and relationsihps with other datasets. Datsy makes sharing and exploring data easy.
+    p
+     a.btn.btn-primary.btn-large(href='#/signup') Signup
+  div.row
+    div.span4
+      div.well
+        h1.text-center
+          a.splash(href='/signup') Click Here to Signup
+        hr
+        p.lead
+          strong Setup your profile
+        p Signup and access your profile in one quick step
+    div.span4
+     div.well
+       h1.text-center
+         a.splash(href='/') To Be Determined
+       hr
+       p.lead
+         strong Upload and share
+       p Load CSV or API data so others can access the dataset
+    div.span4
+     div.well
+       h1.text-center
+         a.splash(href='/') To Be Determined
+       hr
+       p.lead
+         strong Search datasets
+       p Find data based on tags, column names and descriptions
+
+    div.span12
+      br
+      br
+      br
+      legend Recently Created Datasets
+

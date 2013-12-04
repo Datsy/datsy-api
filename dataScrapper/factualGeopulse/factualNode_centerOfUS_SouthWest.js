@@ -3,9 +3,10 @@
 var Factual = require('factual-api');
 var fs = require('fs');
 // var csv = require('csv');
-var helper = require('../helper/MongoDB_CSV_helperFunctions.js');
+var helper = require('./MongoDB_CSV_helperFunctions.js');
 var getAllKeys = helper.getAllKeys;
 var checkCSVFolder = helper.checkCSVFolder;
+var checkKeys = helper.checkKeys;
 var factual = new Factual(process.env.FACTUAL_ACCESS_KEY, process.env.FACTUAL_SECRET_KEY);
 
 // setTimeout for each task per hour, create a csv file per hour
@@ -22,6 +23,9 @@ var fileName = csvFolder +  timeStamp + dataBaseName + '.csv';
 
 
 var factualReq = function(lat, longt, cb, msg) {
+  lat = +lat.toFixed(2);
+  longt = +longt.toFixed(2);
+
   factual.get('/places/geopulse', {geo:{"$point":[lat,longt]}},function(err, res) {
     if (err || !res || !res.data) {
       if (err) {console.log('error', err, msg);}
@@ -33,18 +37,38 @@ var factualReq = function(lat, longt, cb, msg) {
 };
 
 var initialize = function(latitude,longitude, step) {
+  var dataTypes = 'FLOAT8,FLOAT8,';
+  var floatType = 'FLOAT4,';
+  for (var i = 0; i < 100; i ++) {
+    dataTypes += floatType;
+  }
+  dataTypes +='FLOAT4';
+
   factualReq(latitude, longitude, function(res) {
-    var keys = 'latitude,longitude,' + getAllKeys(res.data.demographics)[0].join(',') + '\n';
-    writeIntoCSV(keys, latitude, longitude, step);
+    var retrievedKeys = getAllKeys(res.data.demographics)[0];
+    var keys = 'latitude,longitude,' + retrievedKeys.join(',');
+    if (retrievedKeys.length === 101) {totalKeys = retrievedKeys;}
+    else {
+
+      initialize(latitude + step, longitude, step);
+      console.log('the start point data is not complete,start at next latitude');
+      return;
+    }
+    var vals = getAllKeys(res.data.demographics)[1];
+    var data = latitude + ',' + longitude + ',' + vals.join(',') + '\n';
+    var toWrite = dataBaseName+'\n' + keys + '\n'+ dataTypes + '\n' + data;
+
+    writeIntoCSV(toWrite, latitude, longitude, step, vals[1]);
   }, 'in initialize');
 };
+
 
 var writeIntoCSV = function(datatobeWritten, latitude, longitude, step, prevData) {
   var finished;
   currentCSV.write(datatobeWritten, function() {
     setTimeout(function(){
       finished = retrieveDataAfterInitialize(latitude, longitude, step, prevData);
-    }, 500);
+    }, 10000);
   });
   return finished;
 };
@@ -64,21 +88,24 @@ var counter = 0;
 
 var retrieveDataAfterInitialize = function(latitude, longitude, step, prevData) {
   //if latitude exceed border, restart from center+step*count, and scan again
-  if (latitude > USborder.NorthLat) {
+  if (latitude < USborder.SouthLat) {
     counter ++;
     setTimeout(function() {
       retrieveDataAfterInitialize(midPoint.latitude, midPoint.longitude + counter*step, step, prevData);
-    }, 500);
+      // retrieveDataAfterInitialize(midPoint.latitude, -96.4 + counter*step, step, prevData);
+      console.log('hit the south latitude range');
+    }, 10000);
     return;
   }
   //stop this scan, ideally, should have set up the next scan!
-  if (longitude > USborder.EastLong) {
+  if (longitude < USborder.WestLong) {
     currentCSV.end();
+    console.log('hit the end');
     return;
   }
 
   factualReq(latitude, longitude, function(res) {
-    var vals = getAllKeys(res.data.demographics)[1];
+    var vals = checkKeys(getAllKeys(res.data.demographics), totalKeys);
     var currentCheck = vals[1];//a value to check if the nextScan is overlapping with previous coordination
     if (vals && prevData !== currentCheck) {
       var data = latitude + ',' + longitude + ',' + vals.join(',') + '\n';
@@ -86,13 +113,16 @@ var retrieveDataAfterInitialize = function(latitude, longitude, step, prevData) 
     } else {
       setTimeout(function() {
         retrieveDataAfterInitialize(latitude + step, longitude, step, currentCheck);
-      }, 500);
+        console.log(latitude + step, longitude,'duplicating previous data, skip');
+      }, 10000);
     }      
   }, 'in retrieveDataAfterInitialize, count = ' + counter +';latitude,' + latitude +'logitude:'+longitude+'step'+step+'prevData'+prevData);
-
 
 };
 
 checkCSVFolder(csvFolder);
 var currentCSV = fs.createWriteStream(fileName);
-initialize(midPoint.latitude, midPoint.longitude, 0.05);
+initialize(midPoint.latitude, midPoint.longitude, -0.05);
+// initialize(32.25, -96.4, -0.05);
+//CHANGE STEP HERE~ CHANGE LINE 95,LINE86
+

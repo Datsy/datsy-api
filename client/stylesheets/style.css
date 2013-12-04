@@ -1,167 +1,85 @@
-select {
-  -webkit-appearance: menulist-button;
-  select - menulist user agent stylesheet
-  -webkit-font-smoothing: auto;
-  -webkit-rtl-ordering: logical;
-  -webkit-writing-mode: horizontal-tb;
-  align-items: center;
+body {
+  margin-top: 0;
+}
+
+nav.navbar {
+  margin-bottom: 50px;
+}
+
+input.form-control {
+  background-color: rgb(250, 250, 250);
+}
+
+input.form-control:focus {
   background-color: rgb(255, 255, 255);
-  border-bottom-color: rgb(204, 204, 204);
-  border-bottom-left-radius: 5px;
-  border-bottom-right-radius: 5px;
-  border-bottom-style: solid;
-  border-bottom-width: 1px;
-  border-image-outset: 0px;
-  border-image-repeat: stretch;
-  border-image-slice: 100%;
-  border-image-source: none;
-  border-image-width: 1;
-  border-left-color: rgb(204, 204, 204);
-  border-left-style: solid;
-  border-left-width: 1px;
-  border-right-color: rgb(204, 204, 204);
-  border-right-style: solid;
-  border-right-width: 1px;
-  border-top-color: rgb(204, 204, 204);
-  border-top-left-radius: 5px;
-  border-top-right-radius: 5px;
-  border-top-style: solid;
-  border-top-width: 1px;
-  box-sizing: border-box;
-  color: rgb(85, 85, 85);
-  cursor: pointer;
-  display: block;
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  font-size: 14px;
-  font-style: normal;
-  font-variant: normal;
-  font-weight: normal;
-  height: 30px;
-  letter-spacing: normal;
-  line-height: normal;
-  margin-bottom: 10px;
-  margin-left: 0px;
-  margin-right: 0px;
-  margin-top: 0px;
-  padding-bottom: 0px;
-  padding-left: 0px;
-  padding-right: 0px;
-  padding-top: 0px;
-  text-align: start;
-  text-indent: 0px;
-  text-shadow: none;
-  text-transform: none;
-  vertical-align: middle;
-  white-space: pre;
-  width: 220px;
-  word-spacing: 0px;
-  writing-mode: lr-tb;
 }
 
-a, a:hover, a:focus {
-  text-decoration: none;
-}
-.containerdiv {
-/*  position:absolute;*/
-  width:1400px;
-  height:800px;
-  top: 20px;
-  left:50%;
-  /*overflow:hidden;*/
-  margin-left: -200px;
-  margin-top: -15px;
-  background-image: url('../imgs/stockholm1.jpg');
-  background-size: 100%;
-
-}
-.logodiv {
-	color:white;
-	font-family:'Verdana';
-  font-size: 40px;
-}
-.logotext {
-  color:#eeeeee;
-  font-family: 'Verdana';
-  font-size: 40px;
-}
-.signupbuttondiv {
-  position:absolute;
-  width:100px;
-  left:50%;
-  top: 75%;
-  margin-left: -50px;
-  font-size: 18px;
-
-}
-.signupboxdiv {
-  position:absolute;
-  top: 15%;
-  width: 400px;
-  height:400px;
-  left:50%;
-  margin-left: -200px;
-  border-width: 1px;
-  border-color:black;
-  border-style: solid;
-  border-radius: 5px;
-
-  background-color: rgba(200,200,200,0.6);
+div.hero-unit {
+  background-color: rgba(183, 175, 163, 0.4);
 }
 
-.textboxsignupdiv {
-  margin-top: 20%;
-  margin-left: 10%;
-  margin-right:10%;
-  font-family: 'Verdana';
-  font-size: 18px;
-  color: rgb(20,20,20)
-}
-
-.searchField{
-  display:inline;
-  width: 30%;
-}
-
-.searchInput{
-  margin-bottom: 10px;
-}
-
-.right{
-  float:right;
-}
-.frm_container {
-background: none repeat scroll 0 0 #FFFFFF;
-box-shadow: 0 12px 12px #B8B8B8;
-padding: 20px 30px;
-position:relative;
-}
-
-.frm_container h1 {
-  font-size: 20px;
-  font-weight: normal;
-  margin-bottom: 20px;
-  } 
-.frm_container .list {
-  margin: 15px;
-  }
-.frm_container .list li {
-  line-height: 25px;
-  }
-.frm li .helptext {
-  color: #DF0000;
-display: inline-block;
-font-size: 12px;
-font-style: italic;
-  } 
-.imgleft {
-  float: left;
-padding-bottom: 13px;
-padding-right: 20px;
-  }
-.employer-reg-desc{
-padding: 0px 18px;
-}
-.well-background{
-  background-color: #0b333f;
+div.well {
+  background-color: rgb(100, 100, 100);
+  border-color: rgba(100, 100, 100, 0.8);
+  border-width: 2px;
+  border-style: dotted;
+  box-shadow: 2px 2px 2px rgba(183, 175, 163, 0.4);
   color: white;
+}
+
+div.well:hover {
+  background-color: rgba(100, 100, 100, 0.7);
+}
+
+div.well hr {
+  border-color: rgba(200, 200, 200, 0.5);
+  border-width: 1px;
+}
+
+div.well p.lead {
+  margin-bottom: 0;
+}
+
+.splash, .splash:hover {
+  color: rgb(255, 255, 255);
+  font-weight: 800;
+  text-decoration: none;
+  text-shadow: 2px 2px 2px rgb(0, 0, 0);
+}
+
+#datsy {
+  color: rgb(255, 153, 0);
+  font-weight: 400;
+}
+
+.btn-primary {
+  background: rgb(255, 153, 0);
+}
+
+.btn-primary:hover {
+  background: rgb(255, 153, 0);
+}
+
+#footerhr {
+  width: 90%;
+  margin-left: 5%;
+  margin-right: 5%;
+  border-color: rgba(51, 51, 51, 0.8);
+}
+
+span.badge {
+  font-size: 18px;
+  line-height: 18px;
+  font-weight: 200;
+}
+
+p select {
+  font-size: 14px;
+  line-height: 20px;
+  height: 20px;
+  float: right;
+}
+
+#columnSelect {
+  background-color: rgb(250, 250, 250);
 }

@@ -2,10 +2,11 @@ var Router = Backbone.Router.extend({
   routes: {
     "posts/:id": "getPost", // will match example: /#/posts/1
     "login": "login",
-    "signup": "signup",
+    "logout": "logout",
+//    "signup": "signup",
     "verifyEmail": "verifyEmail",
     "": "signup",
-    "aboutUs": "aboutUs",
+//    "aboutUs": "aboutUs",
   },
 
   defaultPage: function(){
@@ -19,6 +20,11 @@ var Datsy = Backbone.View.extend({
   },
 
   userLogin: function(className){
+    this.pageView = new LoginView();
+    $('.container .section1').html(this.pageView.render().el);
+  },
+
+  userLogout: function(className){
     this.pageView = new LoginView();
     $('.container .section1').html(this.pageView.render().el);
   },
@@ -44,12 +50,8 @@ var datsy = new Datsy();
 Backbone.history.start();
 
 app_router.on('route:login', datsy.userLogin);
-app_router.on('route:signup', datsy.userSignup);
+app_router.on('route:logout', datsy.userLogout);
+//app_router.on('route:signup', datsy.userSignup);
 app_router.on('route:verifyEmail', datsy.userVerifyEmail);
-app_router.on('route:aboutUs', datsy.aboutUs);
-app_router.on('route:getPost', function (id) {
-    // Note the variable in the route definition being passed in here
-    alert( "Get post number " + id );
-});
-
+//app_router.on('route:aboutUs', datsy.aboutUs);
 

@@ -1,61 +1,43 @@
-module.exports = function(app, passport, Models){
-  var user = Models.User;
-  var home = require('../controllers/frontend.js')(Models);
-  var ensureUserAuthenticated = require('../middleware/auth/middleware.js').ensureUserAuthenticated;
+module.exports = function(app, passport, Models, schema){
+  var user = Models.User,
+      frontend = require('../controllers/frontend.js'),
+      middleware = require('../middleware/middleware.js');
 
-  //***************************************************
-  // Configure to ensure authentication on this route
-  //***************************************************
-  // app.all('/user/*',ensureUserAuthenticated,function(req,res,next){
-  //   next();
-  // });
-  // app.all('/employer/*',ensureEmployerAuthenticated,function(req,res,next){
-  //   next();
-  // });
+  // Initializes the models
 
-  //**********************************
-  // define general routes that are accessible
-  // by both user and employer
-  // (no authentication is required)
-  //**********************************
-  // app.all('*', function(req, res, next) {
-  //   res.header("Access-Control-Allow-Origin", "*");
-  //   res.header("Access-Control-Allow-Headers", "X-Requested-With");
-  //   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-  //   res.header('access-control-max-age', '100');
-  //   next();
-  // });
+  frontend.init(Models, schema);
 
-  app.get('/', home.index);
 
-  app.post("/user-login",
+  // Defines the frontend routes
+
+  app.get('/', frontend.index);
+
+  app.get('/login',
     passport.authenticate('user', {failureRedirect : "#/user-login-fail"}),
-    home.loginSuccess
-  );
-
-  app.get('/logout', function(req, res){
-    console.log("Before Logout Session:", req.session);
-    req.logout();
-    // Also destroy the req.session.passport.userType
-    delete req.session.passport.userType;
-    console.log("After Logout Session:", req.session);
-    res.writeHead(200);
-    res.end();
+    function(req, res) {
+      res.redirect('/profile');
   });
 
-  app.get('/', home.index);
-  app.post('/signup', home.signup);
-  app.get('/user-sign-up/checkEmail', home.checkEmailIfExists);
-  app.get('/signup/:token', home.userSignupVerify);
-  app.post('/uploadFile', home.uploadFile);
+  app.get('/profile', middleware.auth, frontend.profile);
 
-  app.get('/userTableMetaData', home.userTableMetaData);
-  app.get('/generateApiKey', home.generateApiKey);
-  app.get('/dev', home.apiDev);
-  //**********************************
-  // define admin routes
-  //**********************************
-  // app.get('/adminPanel', admin.allInfo)
-  // app.post('/deleteEntry', admin.deleteEntry);
+  app.get('/logout', function(req, res){
+    req.logout();
 
+    // Also, destroy the req.session.passport.userType
+
+    delete req.session.passport.userType;
+
+    frontend.index(req, res);
+
+  });
+
+  app.get('/newdataset', middleware.auth, frontend.newdataset);
+  app.post('/uploadFile', middleware.auth, frontend.uploadFile);
+  app.post('/saveDataset', middleware.auth, frontend.saveDataset);
+  app.get('/about', frontend.about);
+  app.post('/signup', frontend.signup);
+  app.get('/user-sign-up/checkEmail', frontend.checkEmailIfExists);
+  app.get('/signup/:token', frontend.userSignupVerify);
+  app.get('/userTableMetaData', frontend.userTableMetaData);
+  app.get('/tags', frontend.getAllTags);
 };

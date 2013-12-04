@@ -1,6 +1,7 @@
 !!! 5
 html(lang='en')
   head
+    title Datsy
     meta(charset='utf-8')
     meta(name='viewport', content='width=device-width, initial-scale=1.0')
     meta(name='description', content='')
@@ -8,69 +9,44 @@ html(lang='en')
     script(src='/javascripts/jquery/jquery-2.0.3.min.js')
     script(src='/javascripts/underscore/underscore-1.5.2.min.js')
     script(src='/javascripts/backbone/backbone-1.1.0.min.js')
-    script(src='/javascripts/bootstrap/bootstrap.js')
-    link(href='/stylesheets/bootstrap/css/bootstrap.css', rel='stylesheet')
-    link(href='/stylesheets/bootstrap/css/heroic-features.css', rel='stylesheet')
+    link(href='/stylesheets/bootstrap-2.3.2.css', rel='stylesheet')
     link(href='/stylesheets/style.css', rel='stylesheet')
   body
-    nav.navbar-inverse.navbar-fixed-top.navbar(role='navigation')
-      .container
-        .navbar-header
-          button.navbar-toggle(type='button', data-toggle='collapse', data-target='.navbar-ex1-collapse')
-            span.sr-only Toggle navigation
-            span.icon-bar
-            span.icon-bar
-            span.icon-bar
-          a.logodiv(href='/') Datsy
-        .collapse.navbar-collapse.navbar-ex1-collapse
-          ul.nav.navbar-nav.right
+    nav.navbar.navbar-default.navbar-static-top
+      div.navbar-inner
+        a.brand(href='/' id='datsy') Datsy
+        ul.nav.navbar-nav(style='float:right')
+          li
+            input.form-control(type='text', placeholder='Search for a dataset', style='margin: 5px')
+          - if (!isAuthenticated) {
             li
-              a(href='#/aboutUs')
-                span.glyphicon.glyphicon-question-sign
-                | About
+              a(href='#/login') Login
+          - } else {
             li
-              a(href='#/login')
-                span.glyphicon.glyphicon-play
-                | Login
-
-            //li
-            //  a(href='#/myPortal')
-            //    span.glyphicon.glyphicon-home
-            //    | My Portal
-            //li
-            //  a(href='#/logout')
-            //    span.glyphicon.glyphicon-home
-            //    | Sign Out
+              a(href='/profile')
+                strong
+                  =user.username
+            li
+              a(href='/newdataset') Create Dataset
+            li
+              a(href='/logout') Logout
+          - }
+          li
+            a(href='/about') About
 
   .container
     .section1
       block content
-      //.well.hero-spacer.well-background
-      //  h3 Please Login
-      //.row
-      //  form(method='post', action='/user-login')
-      //    .form-group
-      //      label Email
-      //      input.form-control(type='text', placeholder='Enter your email', name='email', size='30')
-      //    .form-group
-      //      label Password
-      //      input.form-control(type='password', placeholder='Enter your password', name='password')
-      //      button.btn.btn-default Sign In
 
-    footer
-      .row
-        .col-lg-12
+  br
+  br
+  br
+  br
+  footer
+    .row
 
-    //.script#loginView
-    //  div
-    //    p In login page
-
-    //script(src='/views/clientRoutes.js')
     script(src='/views/loginView.js')
     script(src='/views/signupView.js')
     script(src='/views/verifyEmailView.js')
     script(src='/views/aboutUsView.js')
     script(src='/views/app.js')
-
-    //script.
-    //  new Datsy();

@@ -14,8 +14,12 @@ var metadataModel = function(schema) {
     description: {type: String},
     author: {type: String},
     created_at: {type: Date},
+    last_access: {type: Date},
+    view_count: {type: Number},
+    star_count: {type: Number},
     row_count: {type: Number},
-    col_count: {type: Number}
+    col_count: {type: Number},
+    token: {type: String}
   });
 
   Metadata.Tag = schema.define('datasettag', {
@@ -44,8 +48,8 @@ var metadataModel = function(schema) {
   Metadata.saveDataset = function(jsonMetadata) {
 
     var dataset         = new this.Dataset();
-    dataset.table_id    = jsonMetadata.tableID;
-    dataset.user_id     = jsonMetadata.userID;
+    dataset.table_name  = jsonMetadata.table_name;
+    dataset.user_id     = jsonMetadata.user_id;
     dataset.url         = jsonMetadata.url;
     dataset.name        = jsonMetadata.name;
     dataset.title       = jsonMetadata.title;
@@ -77,11 +81,12 @@ var metadataModel = function(schema) {
   // Saves column data to the database
 
   Metadata.saveColumns = function(dataset, jsonMetadata) {
+    var self = this;
     var cb = function(err, data) {
       if (err) {
         console.log(err);
       } else {
-        return data;
+        return;
       }
     };
 
@@ -93,7 +98,40 @@ var metadataModel = function(schema) {
         description: column.description
       }, cb);
     }
+
+    this.saveTags(dataset, jsonMetadata);
   };
+
+
+  // Save tag data to the database
+
+  Metadata.saveTags = function(dataset, jsonMetadata) {
+    var cb = function(err, data) {
+      if (err) {
+        console.log(err);
+      } else {
+        return;
+      }
+    };
+
+    var createTag = function(err, result) {
+      if (result.length === 0) {
+       dataset.datasettag.create({
+          label: tag
+        }, cb);
+      } else {
+        dataset.datasettag.add(result[0], cb);
+      }
+    };
+
+    for(var i = 0; i < jsonMetadata.tags.length; i++) {
+      var self = this,
+          tag = jsonMetadata.tags[i];
+
+      this.Tag.all({where: {label: tag}}, createTag);
+    }
+  };
+
 
 
   // Return new lines from string
