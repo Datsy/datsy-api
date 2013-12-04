@@ -53,6 +53,8 @@ module.exports = function(app, passport, Models){
   app.get('/generateApiKey', home.generateApiKey);
   app.get('/dev', home.apiDev);
   app.get('/search', home.apiSearch);
+  app.get('/search/meta', home.apiSearchMeta);
+  app.get('/search/column', home.apiSearchColumn);
   //**********************************
   // define admin routes
   //**********************************

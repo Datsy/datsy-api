@@ -32,8 +32,7 @@ var metadataModel = function(schema) {
 
   Metadata.Dataset.hasAndBelongsToMany(Metadata.Tag, {as: 'datasettag', foreignKey: 'tag_id'});
   Metadata.Dataset.hasMany(Metadata.DataColumn, {as: 'datacolumnmeta', foreignKey: 'dataset_id'});
-
-
+  Metadata.Tag.hasAndBelongsToMany(Metadata.Dataset, {as: 'dataset', foreignKey: 'datasettag_id'});
   //
   // Define helper functions
   //

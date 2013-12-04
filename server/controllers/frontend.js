@@ -324,12 +324,14 @@ var index = function(Models){
     console.log("In apiDev");
     var mockData = require('../helpers/apiDevMock.json');
     res.send(mockData);
-  }
+  };
 
   indexRoutes.apiSearch = function(req, res){
     var metaDataResult = {};
     var resultLength = 0;
     var expectedResultLength = undefined;
+    console.log("Test message:", req.query.type);
+
     if (req.query.type === "title"){
       var result = Metadata.Dataset.all({where:{title: req.query.term}}, function(err, data){
         console.log("Here1");
@@ -365,7 +367,6 @@ var index = function(Models){
                 console.log("---->>>JJJJ", j);
                 metaDataResult[data[j].id]["row"] = data;
                 console.log("Final metaDataResult:", metaDataResult);
-                res.send(metaDataResult);
                 });                
               });
             })
@@ -379,12 +380,99 @@ var index = function(Models){
           if (resultLength === expectedResultLength){
             console.log("****Done");
             clearInterval(doneId);
+            res.send(metaDataResult);
           }
         }
         ,3000
       );
     }
-  }
+  };
+
+  indexRoutes.apiSearchColumn = function(req, res){
+    console.log("In apiSearchColumn");
+  };
+
+  indexRoutes.apiSearchMeta = function(req, res){
+    // 3) GET search/meta?tag=<tagname>&tag=<tagname>
+    // - return meta data of tables associated with these <tagname>s.
+    console.log("In apiSearchMeta");
+    console.log("Query String parameters:", req.query.tag);
+    
+    // dataset associated with each tag
+    taggedData = [];
+    // copy req.query.tag into queryTag
+    var queryTag = [];
+    if ( Array.isArray(req.query.tag) ){
+      for (var i = 0; i < req.query.tag.length; i++){
+        queryTag[i] = req.query.tag[i];
+      }
+    } else {
+      queryTag.push(req.query.tag);
+    }
+    
+    console.log("queryTag:", queryTag);
+    for (var i = 0; i < queryTag.length; i++){
+      Metadata.Tag.all({where: {label: queryTag[i]}},
+        function(err, data){
+          console.log("Tag info:", data);
+          var thisTag = new Metadata.Tag({id:data[0].id});
+          thisTag.dataset(function(err, data){
+            console.log("Dataset Found:", data);
+            taggedData.push(data);
+          });
+        }
+      );
+    }
+
+    var doneId = setInterval(function(){
+          console.log("taggedData.length:", taggedData.length);
+          if (taggedData.length === queryTag.length){
+            console.log("****Done:", taggedData);
+            clearInterval(doneId);
+            var result = filterTaggedData();
+            res.send(result);
+          }
+        }
+        ,1000
+    );
+
+    var filterTaggedData = function(){
+      var counter = {};
+      var tableMeta = {};
+      var result = [];
+      for (var i = 0; i < taggedData.length; i++){
+        for (var j = 0; j < taggedData[i].length; j++){
+          if (counter.hasOwnProperty(taggedData[i][j].id)){
+            counter[taggedData[i][j].id] += 1;
+          } else {
+            tableMeta[taggedData[i][j].id] = taggedData[i][j];
+            counter[taggedData[i][j].id] = 1;
+          }
+        }
+      }
+      console.log("counter:", counter);
+
+      for(var key in counter){
+        if (counter[key] === taggedData.length){
+          result.push(tableMeta[key]);
+        }
+      }
+      console.log("result:", result);
+      return result;
+    }
+
+    
+    // var Dataset = Metadata.Dataset;
+    // var Tag = Metadata.Tag;
+    // var thisTag = new Tag({id:1});
+    // var thisDataset = new Dataset({id:1});
+    // thisDataset.datasettag(function(err, data){
+    //   console.log("Dataset:", data);
+    // });
+    // thisTag.dataset(function(err, data){
+    //   console.log("Dataset2:", data);
+    // });
+  };
 
   var updateSchema = function(){
     var deferred = q.defer();
@@ -397,9 +485,6 @@ var index = function(Models){
 
     return deferred.promise;
   };
-
-  updateSchema().then(function(){
-  });
 
 
   return indexRoutes;
