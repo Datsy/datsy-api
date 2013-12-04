@@ -356,97 +356,112 @@ frontendControllers = {
     res.end();
   },
 
-  'getAllTags': function(req, res) {
-    console.log("Retrieving all tags...");
-    Metadata.Tags.all(function(err, result){
-      if(err) {
-        res.writeHead(500);
-        res.end("500 Internal Server Error error:", err);
-      } else {
-        console.log("Successfully retrieved all tags.");
-        res.writeHead(200);
-        res.render('', {}); // create new view?
-      }
-    });
-  },
-
   'apiSearchMeta': function(req, res){
-    // 3) GET search/meta?tag=<tagname>&tag=<tagname>
-    // - return meta data of tables associated with these <tagname>s.
     console.log("In apiSearchMeta");
     console.log("Query String parameters:", req.query.tag);
      
-    // dataset associated with each tag
-    taggedData = [];
-    // copy req.query.tag into queryTag
-    var queryTag = [];
-    if ( Array.isArray(req.query.tag) ){
-      for (var i = 0; i < req.query.tag.length; i++){
-        queryTag[i] = req.query.tag[i];
-      }
+    if(req.query.tag === undefined){
+      // 2) GET search/meta
+      // - return all tables meta data
+      Metadata.Dataset.all(function(err, data){
+        if(err) {
+          res.send("500 Internal Server Error error:", err);
+        } else {
+          console.log("Successfully retrieved all table meta.");
+          res.send(data);
+        }
+      });
     } else {
-      queryTag.push(req.query.tag);
-    }
-     
-    console.log("queryTag:", queryTag);
-    for (var i = 0; i < queryTag.length; i++){
-      Metadata.Tag.all({where: {label: queryTag[i]}},
-        function(err, data){
-          console.log("Tag info:", data);
-          if (data.length !== 0){
-            var thisTag = new Metadata.Tag({id:data[0].id});
-            thisTag.dataset(function(err, data){
-              console.log("Dataset Found:", data);
-              taggedData.push(data);
-            });
-          } else {
-            // to facilitate the return of an empty array 
-            // in the following code
-            taggedData.push([]);
-          }
-        }
-      );
-    }
- 
-    var doneId = setInterval(function(){
-          console.log("taggedData.length:", taggedData.length);
-          if (taggedData.length === queryTag.length){
-            console.log("****Done:", taggedData);
-            clearInterval(doneId);
-            var result = filterTaggedData();
-            res.send(result);
-          }
-        }
-        ,500
-    );
+      // 3) GET search/meta?tag=<tagname>&tag=<tagname>
+      // - return meta data of tables associated with these <tagname>s.
 
-    var filterTaggedData = function(){
-      var counter = {};
-      var tableMeta = {};
-      var result = [];
-      for (var i = 0; i < taggedData.length; i++){
-        for (var j = 0; j < taggedData[i].length; j++){
-          if (taggedData[i][j] !== null){
-            if (counter.hasOwnProperty(taggedData[i][j].id)){
-              counter[taggedData[i][j].id] += 1;
+      // dataset associated with each tag
+      taggedData = [];
+      // copy req.query.tag into queryTag
+      var queryTag = [];
+      if ( Array.isArray(req.query.tag) ){
+        for (var i = 0; i < req.query.tag.length; i++){
+          queryTag[i] = req.query.tag[i];
+        }
+      } else {
+        queryTag.push(req.query.tag);
+      }
+     
+      console.log("queryTag:", queryTag);
+      for (var i = 0; i < queryTag.length; i++){
+        Metadata.Tag.all({where: {label: queryTag[i]}},
+          function(err, data){
+            console.log("Tag info:", data);
+            if (data.length !== 0){
+              var thisTag = new Metadata.Tag({id:data[0].id});
+              thisTag.dataset(function(err, data){
+                console.log("Dataset Found:", data);
+                taggedData.push(data);
+              });
             } else {
-              tableMeta[taggedData[i][j].id] = taggedData[i][j];
-              counter[taggedData[i][j].id] = 1;
+              // to facilitate the return of an empty array 
+              // in the following code
+              taggedData.push([]);
             }
           }
-        }        
+        );
       }
-      console.log("counter:", counter);  
-      for(var key in counter){
-        if (counter[key] === taggedData.length){
-          result.push(tableMeta[key]);
-        }
-      }
-      console.log("result:", result);
-      return result;
-    };
-  }
+   
+      var doneId = setInterval(function(){
+            console.log("taggedData.length:", taggedData.length);
+            if (taggedData.length === queryTag.length){
+              console.log("****Done:", taggedData);
+              clearInterval(doneId);
+              var result = filterTaggedData();
+              res.send(result);
+            }
+          }
+          ,500
+      );
 
+      var filterTaggedData = function(){
+        var counter = {};
+        var tableMeta = {};
+        var result = [];
+        for (var i = 0; i < taggedData.length; i++){
+          for (var j = 0; j < taggedData[i].length; j++){
+            if (taggedData[i][j] !== null){
+              if (counter.hasOwnProperty(taggedData[i][j].id)){
+                counter[taggedData[i][j].id] += 1;
+              } else {
+                tableMeta[taggedData[i][j].id] = taggedData[i][j];
+                counter[taggedData[i][j].id] = 1;
+              }
+            }
+          }        
+        }
+        console.log("counter:", counter);  
+        for(var key in counter){
+          if (counter[key] === taggedData.length){
+            result.push(tableMeta[key]);
+          }
+        }
+        console.log("result:", result);
+        return result;
+      };
+    }
+  },
+
+  'apiSearchTags': function(req, res){
+    console.log("Retrieving all tags...");
+    var result = [];
+    Metadata.Tag.all(function(err, data){
+      if(err) {
+        res.send("500 Internal Server Error error:", err);
+      } else {
+        console.log("Successfully retrieved all tags.");
+        for(var i = 0; i < data.length; i++){
+          result.push(data[i].label);
+        }
+        res.send(result);
+      }
+    });
+  } 
 };
 
 
