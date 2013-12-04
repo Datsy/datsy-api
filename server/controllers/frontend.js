@@ -238,6 +238,8 @@ frontendControllers = {
         if (count === 0) {
           columns = line.toString().split(',');
           count++;
+        } else {
+          count++
         }
       })
       .on('close', function() {
@@ -245,6 +247,7 @@ frontendControllers = {
           isAuthenticated: true,
           columns: columns,
           path: csvPath,
+          count: count,
           file: req.files.uploadFile.name,
           user: {
             username: req.user.name
@@ -256,7 +259,6 @@ frontendControllers = {
   'saveDataset': function(req, res) {
 
     // Construct metadata JSON object
-    console.log(req.body);
 
     var tableMetaData = {
       user_id: req.user.id,
@@ -264,9 +266,11 @@ frontendControllers = {
       description: req.body.dataset_description,
       author: req.body.dataset_author,
       url: req.body.dataset_url,
-      row_count: 0, // hardcoded for now
-      col_count: 0, //hardcoded for now
-      created_at: (new Date()).toUTCString()
+      created_at: (new Date()).toUTCString(),
+      last_accessed: (new Date()).toUTCString(),
+      row_count: req.body.count,
+      view_count: 0,
+      stars: 0
     };
 
     tableMetaData.table_name = tableMetaData.title.replace(/ /g, '_').toLowerCase();
@@ -287,9 +291,17 @@ frontendControllers = {
       }
     }
 
-    csvLoader.saveDataset(csvPath, schema, tableMetaData);
-    Metadata.saveDataset(tableMetaData);
+    // Set the col_count
 
+    tableMetaData.col_count = tableMetaData.columns.length;
+
+    // Save to the datastore
+
+    csvLoader.saveDataset(csvPath, schema, tableMetaData);
+
+    // Save the metadata
+
+    Metadata.saveDataset(tableMetaData);
 
     // Read table meta data
 
