@@ -17,7 +17,6 @@ csv.metadata = '';
 csv.columnNames = [];
 csv.model = {};
 csv.schema;
-csv.row_count;
 
 csv.saveDataset = function(path, schema, metadata) {
   if (!path) {
@@ -37,12 +36,12 @@ csv.saveDataset = function(path, schema, metadata) {
  */
 
 csv.saveData = function() {
-  this.row_count = 0;
+  var self = this,
+      count = 0;
 
-  var self = this;
   fs.createReadStream(this.path).pipe(parser)
     .on('data', function(line) {
-      if (self.count > 0) {
+      if (count > 0) {
         line = line.toString().split(',');
 
         var obj = {};
@@ -50,11 +49,11 @@ csv.saveData = function() {
           obj[self.columnNames[i]] = line[i];
         }
 
-        self.row_count++;
-
         self.Table.create(obj);
+        count++;
+
       } else {
-        self.row_count++;
+        count++;
       }
     });
 };
@@ -118,7 +117,7 @@ csv.createModel = function() {
   var self = this;
   var createTable = function() {
     var deferred = q.defer();
-    self.schema.autoupdate(function(err) {
+    self.schema.autoupdate(function() {
       deferred.resolve();
     });
 

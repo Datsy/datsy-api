@@ -21,11 +21,11 @@ var passwordHash = require('password-hash'),
 
 
 frontendControllers = {
-  'init': function(Models, Schema) {
+  'init': function(Models, dataSchema) {
     User = Models.User;
     Metadata = Models.Metadata;
     EmailToken = Models.EmailToken;
-    schema = Schema;
+    schema = dataSchema;
   },
 
   'index': function(req, res) {
