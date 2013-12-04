@@ -47,10 +47,9 @@ var metadataModel = function(schema) {
 
     var dataset         = new this.Dataset();
     dataset.table_name  = jsonMetadata.table_name;
+    dataset.title       = jsonMetadata.title;
     dataset.user_id     = jsonMetadata.user_id;
     dataset.url         = jsonMetadata.url;
-    dataset.name        = jsonMetadata.name;
-    dataset.title       = jsonMetadata.title;
     dataset.description = this.transformForPostgres(jsonMetadata.description);
     dataset.author      = jsonMetadata.author;
     dataset.col_count   = jsonMetadata.col_count;
