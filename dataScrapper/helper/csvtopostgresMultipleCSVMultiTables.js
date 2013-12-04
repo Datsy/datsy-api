@@ -1,29 +1,19 @@
 var pg = require('pg');
 var fs = require('fs');
-var saveMetadata = require('../../server/models/metadataModel.js')().saveDataset;
+var saveMetadata = require('../../server/models/initModel.js')().Metadata;
 // var generateMetadata = require('');
 var credentials = require('./dbconfig.json').db;
 var EventEmitter = require('events').EventEmitter;
 
 // modify this only!!edit this to change file
-var dir = '../USstock/'; 
-
-console.log(dir,'dir');
-console.log(__dirname + '../..');
-console.log(saveMetadata,'function');
-// var dir = '../USstock/USstockHistory167Mb_output_diffTableName/'; 
+var dir = '../USstock/sampledata/'; 
+var tableMetaData={};
 var rowsLeft;
-var table;
 
 var onReadDir = function(err, files) {
   var conString = "postgres://"+credentials.user+":" +credentials.password+ "@" + credentials.localhost + "/" + credentials.dbname;
   var client = new pg.Client(conString);
   var controller = new EventEmitter();
-
-  controller.on('writeIntoMetaData',function(table){
-    console.log(table,'table');
-    // model.saveDataset(table);
-  });
 
   var fIndx = 0;
   client.connect(function(err) {
@@ -31,13 +21,18 @@ var onReadDir = function(err, files) {
       return console.error('could not connect to postgres', err);
     }
     getTableAndQueries(client, files[fIndx]);
+    console.log('get table and queries!!!!');
     var intervalID = setInterval(function(){
       if (rowsLeft === 0) {
         fIndx += 1;
-        getTableAndQueries(client, files[fIndx]);
+        console.log('the are xxx in the directory! ', fIndx);
+        if (fIndx < files.length) {
+          getTableAndQueries(client, files[fIndx]);
+        }
       }
       if (fIndx === files.length) {
         client.end();
+        console.log('end client');
         clearInterval(intervalID);
       }
     }, 100);
@@ -45,38 +40,75 @@ var onReadDir = function(err, files) {
 };
 
 var getTableAndQueries = function(client,file) {
+  console.log('the files is ', file);
+  if (file.substring(file.length - 3) !== 'csv') {
+    rowsLeft = 0;
+    console.log('HERE IS THE TABLELLLLL    ', table);
+    return;
+  }
   var table = getTableInfo(file);
+
   rowsLeft = table.num_row;
   insertIntoPSQL(client, table);
-  // metadata = 3;
+
   // generateMetadata(table);
-  // controller.emit('writeIntoMetaData', metadata);
 };
 
 var getTableInfo = function(file) {
-  if (file.substring(file.length - 3) !== 'csv') {return;}
   filepath = dir + file;
   console.log('reading this file into postgres: ', filepath);
   var data = fs.readFileSync(filepath, 'utf8');
-  var array = data.split('\n');
+  var array = data.split('\r\n');
   var table = {};
-  table.tablename = getTableName(array[0]).tableName;
-  table.tablename = getTableName(array[0]).stockName;
+  var extra = getTableName(array[0]);
+  table.tablename = extra.tableName;
   table.col_names = array[1].split(',');
   table.col_types = array[2].split(',');
   table.col_values = array.slice(3);
   table.num_col = table.col_names.length;
   table.num_row = table.col_values.length;
+  populatemetadatatable(table, extra);
+  console.log('HERE IS THE TABLELLLLL    ', table);
   return table;
 };
 
+// //  "columns": [
+//     {
+//       "name": "magnitude",
+//       "description": "Magnitude of earthquake",
+//       "datatype": "number",//s,n,d
+//     },
+var populatemetadatatable = function(table, extra) {
+  tableMetaData = {
+    user_id: 1,
+    title: extra.stockName,
+    description: extra.tableName.replace(/_/g, ' ') + ' ' + extra.stockName,
+    author: 'NYSE',
+    url: 'www.google.com/finance',
+    row_count: table.num_row, 
+    col_count: table.num_col, //hardcoded for now
+    created_at: (new Date()).toUTCString(),
+    table_name: extra.tableName,
+    tags: extra.tags,
+    columns:[]
+  };
+  var col_data = {};
+  for (var i = 0; i < table.num_col; i++) {
+    col_data.name = table.col_names[i];
+    col_data.description = table.col_names[i];
+    col_data.datatype = table.col_types[i];
+    tableMetaData.columns.push(col_data);
+  }
+};
+
+//StockName_Agilent Technologies Inc.__ticker_A__startDate_1999-11-18__endDate_2006-12-29__eod
 var getTableName = function(string) {
   var sep = string.indexOf('ticker');
   var obj = {
-    tableName: string.slice(sep),
+    tableName: string.replace(/\-/g, '_').slice(sep),
     stockName: string.slice(0, sep-2).split('_')[1]
   };
-  obj.tags = obj.stockName.split(' ');
+  obj.tags = [obj.stockName, obj.tableName.split('_')[1]];
   return obj;
 };
 
@@ -107,6 +139,8 @@ var insertDB = function (startRow, table, client) {
 
   if (startRow >= table.num_row) {
     console.log('end of insertDB recursion');
+
+    saveMetadata.saveDataset(tableMetaData);
     rowsLeft = 0;
     return;
   }
@@ -127,7 +161,7 @@ var insertDB = function (startRow, table, client) {
 
   // fs.writeFile('./output.txt', insertQS, function() {});
   client.query(insertQS, function(err, result) {
-    if (err) { return console.error('error with insertion', err);}
+    if (err) { return console.error('error with   insertion', err);}
     console.log('inserted data into starting from ' + startRow);
     return insertDB(startRow + rowlimit, table, client);
   });
