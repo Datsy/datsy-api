@@ -35,10 +35,10 @@ module.exports = function(app, passport, Models, schema){
   app.post('/uploadFile', middleware.auth, frontend.uploadFile);
   app.post('/saveDataset', middleware.auth, frontend.saveDataset);
   app.get('/about', frontend.about);
-
   app.post('/signup', frontend.signup);
   app.get('/user-sign-up/checkEmail', frontend.checkEmailIfExists);
   app.get('/signup/:token', frontend.userSignupVerify);
   app.get('/userTableMetaData', frontend.userTableMetaData);
   app.get('/tags', frontend.getAllTags);
+  app.get('/search/meta', frontend.apiSearchMeta)
 };
