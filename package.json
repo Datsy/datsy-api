@@ -14,7 +14,6 @@
     "node-fs": "~0.1.7",
     "csv": "~0.3.6",
     "jade": "*",
-    "jquery":"1.8.3",
     "passport": "*",
     "passport-local": "*",
     "connect-flash": "*",
