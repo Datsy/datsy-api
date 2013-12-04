@@ -6,38 +6,69 @@ block content
   .container
     .row
      div.panel.panel-default
-        form(action='/uploadFile', method='post', enctype='multipart/form-data')
-          legend Create a New Dataset
+     - if (!columns) {
+       form(action='/uploadFile', method='post', enctype='multipart/form-data')
+         legend Create a New Dataset
 
-          div.span6
-            p.lead 1) Pick the dataset to upload
-            input(type='file', name='uploadFile')
+         div.span6
+           p.lead 1) Pick the dataset to upload
+           input(type='file', name='uploadFile')
+           br
+           br
+           input.btn.btn-primary(type='submit', value='Next')
 
-          div.span6
-            p.lead 2) Describe the dataset and attach tags to it
-            label
-              strong Dataset name
-            input.form-control.span4(type='text', name='dataset_title')
+     - } else {
+       form(action='/saveDataset', method='post', enctype='multipart/form-data')
+         legend Create a New Dataset
 
-            label
-              strong Description (optional)
-            input.form-control.span4(type='text', name='dataset_description')
+         div.span6
+           p.lead 1) Pick the dataset to upload
+             p
+               strong= file
 
-            label
-              strong Author
-            input.form-control.span4(type='text', name='dataset_author')
+         - if (columns) {
+           div.span6
+             p.lead 2) Describe the dataset and attach tags to it
+             label
+               strong Dataset name
+             input.form-control.span4(type='text', name='dataset_title')
 
-            label
-              strong URL
-            input.form-control.span4(type='text', name='dataset_url')
+             label
+               strong Description (optional)
+             input.form-control.span4(type='text', name='dataset_description')
 
-            label
-              strong Tags (comma separated)
-            input.form-control.span4(type='text', name='dataset_tags')
+             label
+               strong Author
+             input.form-control.span4(type='text', name='dataset_author')
 
-            br
-            br
+             label
+               strong URL
+             input.form-control.span4(type='text', name='dataset_url')
 
-            input#signup-submit.btn.btn-success.btn-large(type='submit', name='submit')
+             label
+               strong Tags (comma separated)
+             input.form-control.span4(type='text', name='dataset_tags')
+
+             input(type='hidden', name='uploadFile', value='#{path}')
+             input(type='hidden', name='count', value='#{count}')
+
+             label
+               strong Column datatypes
+             section.well(id='columnSelect')
+               - for (var i = 0; i < columns.length; i++) {
+                 p= columns[i]
+                   &nbsp;
+                   select(name='column_#{columns[i]}')
+                     option String
+                     option Number
+                     option Date
+               - }
+
+             input#signup-submit.btn.btn-success.btn-large(type='submit', name='submit')
+
+             br
+             br
+         - }
+     - }
 
 script(src='/app.js')

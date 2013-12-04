@@ -19,6 +19,7 @@ module.exports = function(grunt) {
         options: {
           file: 'server.js',
           nodeArgs: ['--debug'],
+          watchedExtensions: ['js', 'jade']
         }
       }
     },
@@ -63,6 +64,10 @@ module.exports = function(grunt) {
       server: {
         files: 'server/**/*.js',
         tasks: 'jshint:server'
+      },
+      jade: {
+        files: 'server/views/*.jade',
+        tasks: 'nodemon'
       }
     }
   });
