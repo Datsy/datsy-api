@@ -110,6 +110,7 @@ frontendControllers = {
         }
 
         if (result === null){ //no email token found
+          console.log("ERROR - no email token found!!");
           res.writeHead(404);
           res.end();
         } else{
