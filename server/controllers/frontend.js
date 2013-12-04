@@ -356,20 +356,6 @@ frontendControllers = {
     res.end();
   },
 
-  'getAllTags': function(req, res) {
-    console.log("Retrieving all tags...");
-    Metadata.Tags.all(function(err, result){
-      if(err) {
-        res.writeHead(500);
-        res.end("500 Internal Server Error error:", err);
-      } else {
-        console.log("Successfully retrieved all tags.");
-        res.writeHead(200);
-        res.render('', {}); // create new view?
-      }
-    });
-  },
-
   'apiSearchMeta': function(req, res){
     // 3) GET search/meta?tag=<tagname>&tag=<tagname>
     // - return meta data of tables associated with these <tagname>s.
@@ -445,7 +431,24 @@ frontendControllers = {
       console.log("result:", result);
       return result;
     };
+  },
+
+  'apiSearchTags': function(req, res){
+    console.log("Retrieving all tags...");
+    var result = [];
+    Metadata.Tag.all(function(err, data){
+      if(err) {
+        res.send("500 Internal Server Error error:", err);
+      } else {
+        console.log("Successfully retrieved all tags.");
+        for(var i = 0; i < data.length; i++){
+          result.push(data[i].label);
+        }
+        res.send(result);
+      }
+    });
   }
+  
 
 };
 
