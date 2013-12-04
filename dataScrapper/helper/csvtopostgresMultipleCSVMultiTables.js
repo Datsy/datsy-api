@@ -6,7 +6,7 @@ var credentials = require('./dbconfig.json').db;
 var EventEmitter = require('events').EventEmitter;
 
 // modify this only!!edit this to change file
-var dir = '../USstock/sampledata/'; 
+var dir = '../USstock/sampledata/';
 var tableMetaData={};
 var rowsLeft;
 
@@ -84,7 +84,7 @@ var populatemetadatatable = function(table, extra) {
     title: extra.stockName,
     description: extra.tableName.replace(/_/g, ' ') + ' ' + extra.stockName,
     author: 'NYSE',
-    url: 'www.google.com/finance',
+    url: 'http://cs.brown.edu/~pavlo/stocks/history.tar.gz',
     row_count: table.num_row, 
     col_count: table.num_col, //hardcoded for now
     created_at: (new Date()).toUTCString(),
@@ -105,10 +105,18 @@ var populatemetadatatable = function(table, extra) {
 var getTableName = function(string) {
   var sep = string.indexOf('ticker');
   var obj = {
-    tableName: string.replace(/\-/g, '_').slice(sep),
-    stockName: string.slice(0, sep-2).split('_')[1]
+    tableName: string.slice(sep),
+    stockName: JSON.stringify(string.slice(0, sep-2).split('_')[1])
   };
-  obj.tags = [obj.stockName, obj.tableName.split('_')[1]];
+  obj.tags = [obj.stockName.replace(/ /g,'_')];
+  var tagsArr = obj.tableName.split('__');
+  for (var i = 0; i < tagsArr.length; i ++) {
+    var subTag = tagsArr[i].split('_');
+    for (var j = 0; j < subTag.length; j ++) {
+      obj.tags.push(subTag[j]);
+    }
+  }
+  obj.tableName = obj.tableName.replace(/\-/g, '_');
   return obj;
 };
 
