@@ -72,3 +72,14 @@ span.badge {
   line-height: 18px;
   font-weight: 200;
 }
+
+p select {
+  font-size: 14px;
+  line-height: 20px;
+  height: 20px;
+  float: right;
+}
+
+#columnSelect {
+  background-color: rgb(250, 250, 250);
+}
