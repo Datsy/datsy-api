@@ -380,7 +380,6 @@ frontendControllers = {
           res.send("(custom message) - 500 Internal Server Error error:", err);
         } else {
           console.log("Successfully retrieved all table meta.");
-          schema.disconnect();
           res.send(data);
         }
       });
@@ -472,7 +471,6 @@ frontendControllers = {
           for(var i = 0; i < data.length; i++){
             result.push(data[i].label);
           }
-          schema.disconnect();
           res.send(result);
         }
       });
