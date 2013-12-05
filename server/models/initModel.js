@@ -12,7 +12,8 @@ var initModel = function(app){
     username: dbSetting.user,
     password: dbSetting.password,
     host: dbSetting.host,
-    database: dbSetting.dbname
+    database: dbSetting.dbname,
+    debug: true
   });
 
   // Datastore schema
