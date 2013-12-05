@@ -670,8 +670,8 @@ frontendControllers = {
         for (var j = 0; j < filter.length; j++){
             console.log("** current filter:", filter);
             console.log("** current row:", rowResult[i]);
-            console.log("** current match:", rowResult[i].hasOwnProperty(filter[j]));
-          if (rowResult[i].hasOwnProperty(filter[j])){
+            console.log("** current match:", Object.prototype.hasOwnProperty.call(rowResult[i], 'category'));
+          if (rowResult[i][filter[j]] !== undefined){
             console.log("** matched:", filter[j]);
             tempRow[filter[j]] = rowResult[i][filter[j]];
           }
