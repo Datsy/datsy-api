@@ -18,17 +18,17 @@ var passwordHash = require('password-hash'),
     frontendControllers;
 var Schema = require('jugglingdb').Schema;
 
-// var updateSchema = function(){
-//     var deferred = q.defer();
-//     console.log("updating schema");
+var updateSchema = function(){
+    var deferred = q.defer();
+    console.log("updating schema");
 
-//     schema.autoupdate(function(msg){
-//       console.log("*** db schema update completed");
-//       deferred.resolve('deferred resolved!!');
-//     });
+    schema.autoupdate(function(msg){
+      console.log("*** db schema update completed");
+      deferred.resolve('deferred resolved!!');
+    });
 
-//     return deferred.promise;
-// };
+    return deferred.promise;
+};
 
 frontendControllers = {
   'init': function(Models, dataSchema) {
@@ -519,33 +519,68 @@ frontendControllers = {
     // });
   },
 
-  'apiSearchTags2': function(req, res){
-    console.log("(instant connected database) Retrieving all tags...");
-    // updateSchema().then(function(){
-      var schema2 = new Schema('postgres', {
-        username: "masterofdata",
-        password: "gj1h23gnbfsjdhfg234234kjhskdfjhsdfKJHsdf234",
-        host: "137.135.14.92",
-        database: "datsydata"
-      });
+  'apiSearchTable': function(req, res){
+    var metaDataResult = {};
+    var resultLength = 0;
+    var expectedResultLength = undefined;
+    if (req.query.name !== undefined){
+      var result = Metadata.Dataset.all({where:{table_name: req.query.name}}, function(err, data){
+        console.log("Here1");
+        expectedResultLength = data.length;
+        resultLength = data.length;
+        console.log("*****Search Result:", data);
+        console.log("Here2");
+        for (var i = 0; i < data.length; i++){
+          metaDataResult[data[i].id] = {tableMeta: data[i]};
+          // metaDataResult.push(metaData);
+          console.log("metaDataResult:", metaDataResult);
+          console.log("Metadata.Dataset start searching");
+          var j = i;
+          (function(j){
+              console.log("---->>>before JJJJ", j);
 
-      instantConnectedTag = schema2.define('datasettag', {
-        label: {type: String, unique: true}
-      });
+            Metadata.DataColumn.all({where:{dataset_id:data[0].id}}, function(err, data){
+              console.log("Here3");
+              console.log("---->>>JJJJ", j);
+              console.log("*****Data column:", data);
+              var columnDefines = {};
+              for(var i = 0; i < data.length; i++){
+                columnDefines[data[i].name.toLowerCase()] = {type: data[i].datatype};
+              }
+              console.log("---Column Defines:", columnDefines);
+              console.log("metaDataResult[data[j].dataset_id]:",metaDataResult[data[j].dataset_id]["tableMeta"]);
+              console.log("---table name:", metaDataResult[data[j].dataset_id]["tableMeta"]["table_name"]);
+              var thisTable = schema.define(metaDataResult[data[j].dataset_id]["tableMeta"]["table_name"],columnDefines);
 
-      var result = [];
-      instantConnectedTag.all(function(err, data){
-        if(err) {
-          res.send("(custom message) - 500 Internal Server Error error:", err);
-        } else {
-          console.log("Successfully retrieved all tags.");
-          for(var i = 0; i < data.length; i++){
-            result.push(data[i].label);
-          }
-          res.send(result);
+              updateSchema().then(function(){
+                thisTable.all({limit:10}, function(err, data){
+                console.log("--->Table SEARCHED!!", data);
+                console.log("---->>>JJJJ", j);
+                console.log("----->>>>>data[j].id", data[j].id);
+                metaDataResult[data[j].id]["row"] = data;
+                console.log("Final metaDataResult:", metaDataResult);
+                res.send(metaDataResult);
+                });                
+              });
+            })
+          })(j);
         }
       });
-    // });
+
+      var doneId = setInterval(function(){
+          console.log("resultLength", resultLength);
+          console.log("dataFoundLength", expectedResultLength);
+          if (resultLength === expectedResultLength){
+            console.log("****Done");
+            clearInterval(doneId);
+          }
+        }
+        ,3000
+      );
+    } else {
+      var message = "ERROR: the query string, 'name' is not found in the endpoint request";
+      res.send(message); 
+    }
   }
 };
 
