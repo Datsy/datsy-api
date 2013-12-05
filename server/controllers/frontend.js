@@ -11,25 +11,24 @@ var passwordHash = require('password-hash'),
     mailer = require('../helpers/sendEmail.js'),
     middleware = require('../middleware/middleware.js'),
     binaryCSV = require('binary-csv'),
-
     User,
     Metadata,
     EmailToken,
     schema,
-
     frontendControllers;
+var Schema = require('jugglingdb').Schema;
 
-var updateSchema = function(){
-    var deferred = q.defer();
-    console.log("updating schema");
+// var updateSchema = function(){
+//     var deferred = q.defer();
+//     console.log("updating schema");
 
-    schema.autoupdate(function(msg){
-      console.log("*** db schema update completed");
-      deferred.resolve('deferred resolved!!');
-    });
+//     schema.autoupdate(function(msg){
+//       console.log("*** db schema update completed");
+//       deferred.resolve('deferred resolved!!');
+//     });
 
-    return deferred.promise;
-};
+//     return deferred.promise;
+// };
 
 frontendControllers = {
   'init': function(Models, dataSchema) {
@@ -464,6 +463,35 @@ frontendControllers = {
     // updateSchema().then(function(){
       var result = [];
       Metadata.Tag.all(function(err, data){
+        if(err) {
+          res.send("(custom message) - 500 Internal Server Error error:", err);
+        } else {
+          console.log("Successfully retrieved all tags.");
+          for(var i = 0; i < data.length; i++){
+            result.push(data[i].label);
+          }
+          res.send(result);
+        }
+      });
+    // });
+  },
+
+  'apiSearchTags2': function(req, res){
+    console.log("(instant connected database) Retrieving all tags...");
+    // updateSchema().then(function(){
+      var schema2 = new Schema('postgres', {
+        username: "masterofdata",
+        password: "gj1h23gnbfsjdhfg234234kjhskdfjhsdfKJHsdf234",
+        host: "137.135.14.92",
+        database: "datsydata"
+      });
+
+      instantConnectedTag = schema2.define('datasettag', {
+        label: {type: String, unique: true}
+      });
+
+      var result = [];
+      instantConnectedTag.all(function(err, data){
         if(err) {
           res.send("(custom message) - 500 Internal Server Error error:", err);
         } else {
