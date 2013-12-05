@@ -397,8 +397,9 @@ frontendControllers = {
       token: {type: String}
     });
 
+    Dataset.hasAndBelongsToMany(Tag, {as: 'datasettag', foreignKey: 'tag_id'});
     Tag.hasAndBelongsToMany(Dataset, {as: 'dataset', foreignKey: 'datasettag_id'});
-    
+
     console.log("In apiSearchMeta");
     console.log("Query String parameters:", req.query.tag);
 
