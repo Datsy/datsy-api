@@ -41,4 +41,5 @@ module.exports = function(app, passport, Models, schema){
   app.get('/userTableMetaData', frontend.userTableMetaData);
   app.get('/search/meta', frontend.apiSearchMeta);
   app.get('/search/tag', frontend.apiSearchTags);
+  app.get('/search/table', frontend.apiSearchTable);
 };
