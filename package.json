@@ -47,7 +47,8 @@
     "superagent": "*",
     "expect.js": "*",
     "phantom": "0.5.4",
-    "should": "*"
+    "should": "*",
+    "grunt-contrib-jade": "~0.8.0"
   },
   "scripts": {
     "test": "grunt travis"
