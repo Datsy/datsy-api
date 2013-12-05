@@ -12,7 +12,7 @@ module.exports = function(app, passport, Models, schema){
 
   app.get('/', frontend.index);
 
-  app.get('/login',
+  app.post("/login",
     passport.authenticate('user', {failureRedirect : "#/user-login-fail"}),
     function(req, res) {
       res.redirect('/profile');

@@ -1,94 +1,97 @@
 
 var dataDownloader = require('../helper/dataDownloader.js').dataDownloader;
 var $ = require('jquery');
-var phantom = require('phantom');
-
-console.log(phantom.create);
-
+var scraper = require('scraper');
 var EventEmitter = require('events').EventEmitter;
-var controller = new EventEmitter();
+var fs = require('fs');
+// var phantom = require('node-phantom');
+// var casper = require("casper").create();
+// var casper = require('casper').create();
 
-var url = "http://data.sfgov.org/browse?limitTo=datasets&utf8=%E2%9C%93";
-var url2 = "https://data.sfgov.org/browse?limitTo=datasets&utf8=%E2%9C%93&page=2";
+var startUrl = "http://data.sfgov.org/browse?limitTo=datasets&utf8=%E2%9C%93";
 var pageCount = 0;
 
-var urlLeft;
-
-var phantomScrape = function(urls){
-  var i = 0;
-  phantom.create(function(ph) {
-     ph.createPage(function(page) {
-      openPageGetUrl(page, urls[i]);
-      var intervalID = setInterval(function(){
-        if (urlLeft === 0) {
-          i += 1;
-          openPageGetUrl(page, urls[i]);
-        }
-        if (index === urls.length) {
-          ph.exit();
-          clearInterval(intervalID);
-        }
-      }, 100);
+var scrapeUrls = function(urls,pageTotal) {
+  var i, options, dbUrls=[];
+  var controller = new EventEmitter();
+  console.log(urls);
+  options = {'reqPerSec': 0.2}; // Wait 5sec between each external request
+  i = 0;
+    scraper(urls, function(err, $, options) {
+      if (err) {throw err;}
+      console.log('downloading url from',urls[i]);
+      $('[itemprop="url"]').each(function() {
+        dbUrls.push([$(this).attr('href'), $(this).text().trim().replace(/[^A-Za-z\d\_]/g, '_')]);
+      });
+      i ++;
+      controller.emit('urlDownload', i);
     });
+  controller.on('urlDownload', function(i){
+    console.log(i, 'pages downloaded');
+    if (i >= urls.length) {
+      console.log('download',dbUrls.length, 'urls from all pages');
+//      fs.writeFileSync('dataUrl.txt',dbUrls.join('\n'), function(err){
+//        if(err) throw err;
+//      });
+      downLoadCsv(dbUrls);
+    }
   });
 };
 
-
-       page.open(url, function(status) {
-        console.log("opening webpage", url, status);
-          page.render('./screenshot/temp.jpg',function(a,b,c) { //the first variable saves an screenshot to the file specified.
-            onPageLoad();
-            page.open(url2, function(status) {
-              console.log("opening webpage", url, status);
-                page.render('./screenshot/temp2.jpg',function(a,b,c) { //the first variable saves an screenshot to the file specified.
-                  console.log('2nd page');
-                });
-
-            });
-            // controller.on('urlDownlad', function(){
-            //   ph.exit();
-            // });
-          });
+var downLoadCsv = function(urls) {
+  var controller = new EventEmitter();
+  var download = function(i){
+    console.log('csvUrl', urls[i][0]);
+    sfGovDownLoad(csvUrl(urls[i][0]), urls[i][1], '.csv', function() {
+      sfGovDownLoad(jsonUrl(urls[i][0]), urls[i][1], '.json', function(){
+        controller.emit('downloadNext', i);
       });
     });
+  };
 
+  download(0);
+
+  controller.on('downloadNext',function(i){
+
+    console.log('start downloading the ?th url', i);
+    i += 1;
+    if (i < urls.length) {
+      download(i);
+    }
   });
 };
 
-
-
-
-var onPageLoad = function() {
-  console.log('page loaded');
+var csvUrl = function(url){
+  var arr = url.split('/');
+  return '/api/views/' + arr[arr.length-1] +'/rows.csv';
 };
 
-phantomScrape(url);
-
-var getURL = function (tag, pageUrl) {
-  $('.sidebarOptionsContainer').find('a.export').trigger('click');//this must be triggered in domReady.
-  $cellInner = $('.cellInner');
-  return $cellInner.length <= 1? '' : $cellInner.find("[data-type=" + tag + "]").attr('href');
+var jsonUrl = function(url){
+  var arr = url.split('/');
+  return '/api/views/' + arr[arr.length-1] +'/rows.json';
 };
 
-var downLoad = function() {
-  var title = $('#infoBox').find('.clipText').attr('title');
-  title = title.replace(/[^A-Za-z\d/_]/g, '_');
-  
-  //csv for original formated file, json for metadata(raw);
-  sfGovDownLoad(getURL('CSV'), title, '.csv', function(){
-    sfGovDownLoad(getURL('CSV'), title, '.json');
-  });
+
+var generateUrls = function(baseUrl, start, end) {
+  var arr = [];
+  for (var i = start; i <= end; i ++) {
+    arr.push(baseUrl + '&page=' + i);
+  }
+
+  return arr;
 };
 
 var sfGovDownLoad = function(path, title, filetype, cb) {
   var url = 'http://data.sfgov.org' + path;
-  var filepath = '../sfGov/'+ title + filetype;
+  var filepath = '../sfGov/data/'+ title + filetype;
+  console.log(url);
   dataDownloader(url, filepath, cb);
 };
+// downLoadCsv([[ 'https://data.sfgov.org/Transportation/Bicycle-Parking-Public-/w969-5mn4',
+    // 'Bicycle_Parking__Public_' ]] );
 
 
-description = $('#infoBox').find('.currentViewName').text();
+// description = $('#infoBox').find('.currentViewName').text();
 
-// sfGovDownLoad("/api/search/views.json?accessType=WEBSITE&limit=10&page=1&limitTo=tables&datasetView=dataset&row_count=3&_=1386106144950",'webpage','.json');
-// var data = require('webpage.json');
-// console.log(data.)
+scrapeUrls(generateUrls(startUrl,2,15));
+
