@@ -7,39 +7,42 @@ var initModel = function(app){
 
   // console.log(dbSetting,'dbSetting');
   // var setting = require('setting');
+
   var Schema = require('jugglingdb').Schema;
   var schema = new Schema('postgres', {
     username: dbSetting.user,
     password: dbSetting.password,
     host: dbSetting.host,
-    database: dbSetting.dbname
+    database: dbSetting.dbname,
+    debug: true
+  });
+
+
+  var Sequelize = require('sequelize');
+  var sequelize = new Sequelize(dbSetting.dbname, dbSetting.user, dbSetting.password, {
+    host: dbSetting.host,
+    dialect: 'postgres'
   });
 
   // Datastore schema
+/*
   var datastore = new Schema('postgres', {
     username: dbStore.user,
     password: dbStore.password,
     host: dbStore.host,
-    database: dbStore.dbname
+    database: dbStore.dbname,
+    debug: true
   });
+*/
 
   var User = require('./userModel.js')(schema);
   var EmailToken = require('./emailTokenModel.js')(schema);
-
-  // var Tablecolumnmeta = require('./userTableMeta/tablecolumnmeta.js')(schema);
-  // var Tablemeta = require('./userTableMeta/tablemeta.js')(schema);
-  // var Tabletag = require('./userTableMeta/tabletag.js')(schema);
-
-  // Create the table relationships
-  // Tablemeta.hasAndBelongsToMany(Tabletag, {as: 'tag', foreignKey: 'dataset_id'});
-  // Tablemeta.hasMany(Tablecolumn, {as: 'datacolumn', foreignKey: 'dataset_id'});
-
-  var Metadata = require('./metadataModel.js')(schema);
+  //var Metadata = require('./metadataModel.js')(schema);
 
   Models = {
     User: User,
     EmailToken: EmailToken,
-    Metadata: Metadata
+   // Metadata: Metadata
   };
 
   var updateSchema = function(){
@@ -59,7 +62,7 @@ var initModel = function(app){
 
   return {
     Models: Models,
-    schema: datastore
+    schema: schema
   };
 };
 

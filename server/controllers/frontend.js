@@ -297,6 +297,7 @@ frontendControllers = {
 
     // Save to the datastore
 
+console.log(tableMetaData);
     csvLoader.saveDataset(csvPath, schema, tableMetaData);
 
     // Save the metadata
@@ -359,7 +360,7 @@ frontendControllers = {
   'apiSearchMeta': function(req, res){
     console.log("In apiSearchMeta");
     console.log("Query String parameters:", req.query.tag);
-     
+
     if(req.query.tag === undefined){
       // 2) GET search/meta
       // - return all tables meta data
@@ -386,7 +387,7 @@ frontendControllers = {
       } else {
         queryTag.push(req.query.tag);
       }
-     
+
       console.log("queryTag:", queryTag);
       for (var i = 0; i < queryTag.length; i++){
         Metadata.Tag.all({where: {label: queryTag[i]}},
@@ -399,14 +400,14 @@ frontendControllers = {
                 taggedData.push(data);
               });
             } else {
-              // to facilitate the return of an empty array 
+              // to facilitate the return of an empty array
               // in the following code
               taggedData.push([]);
             }
           }
         );
       }
-   
+
       var doneId = setInterval(function(){
             console.log("taggedData.length:", taggedData.length);
             if (taggedData.length === queryTag.length){
@@ -433,9 +434,9 @@ frontendControllers = {
                 counter[taggedData[i][j].id] = 1;
               }
             }
-          }        
+          }
         }
-        console.log("counter:", counter);  
+        console.log("counter:", counter);
         for(var key in counter){
           if (counter[key] === taggedData.length){
             result.push(tableMeta[key]);
@@ -461,7 +462,7 @@ frontendControllers = {
         res.send(result);
       }
     });
-  } 
+  }
 };
 
 

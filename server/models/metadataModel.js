@@ -1,159 +1,103 @@
-var metadataModel = function(schema) {
-
-  // Namespace for the Metadata tables / relationships
-
-  var Metadata = {};
-
-  //  Define the table schemas
-
-  Metadata.Dataset = schema.define('datasetmeta', {
-    table_name: {type: String, unique: true},
-    user_id: {type: Number},
-    url: {type: String},
-    title: {type: String},
-    description: {type: String},
-    author: {type: String},
-    created_at: {type: Date},
-    last_access: {type: Date},
-    view_count: {type: Number},
-    star_count: {type: Number},
-    row_count: {type: Number},
-    col_count: {type: Number}, 
-    last_viewed:{type: Date},
-    view_count:{type: Number},
-    token: {type: String}
-
-  });
-
-  Metadata.Tag = schema.define('datasettag', {
-    label: {type: String, unique: true}
-  });
-
-  Metadata.DataColumn = schema.define('datacolumnmeta', {
-    name: {type: String},
-    datatype: {type: String},
-    description: {type: String}
-  });
-
-  // Create the table relationships
-
-  Metadata.Dataset.hasAndBelongsToMany(Metadata.Tag, {as: 'datasettag', foreignKey: 'tag_id'});
-  Metadata.Dataset.hasMany(Metadata.DataColumn, {as: 'datacolumnmeta', foreignKey: 'dataset_id'});
-  Metadata.Tag.hasAndBelongsToMany(Metadata.Dataset, {as: 'dataset', foreignKey: 'datasettag_id'});
-
-  //
-  // Define helper functions
-  //
+var Sequelize = require('sequelize');
+var sequelize = new Sequelize('datsydb', 'bhc', '123', {
+  dialect: 'postgres',
+  omitNull: true
+});
 
 
-  // Saves a JSON object into the database
-
-  Metadata.saveDataset = function(jsonMetadata) {
-
-    var dataset         = new this.Dataset();
-    dataset.table_name  = jsonMetadata.table_name;
-    dataset.title       = jsonMetadata.title;
-    dataset.col_count   = jsonMetadata.col_count;
-    dataset.row_count   = jsonMetadata.row_count;
-    dataset.user_id     = jsonMetadata.user_id;
-    dataset.url         = jsonMetadata.url;
-    dataset.name        = jsonMetadata.name;
-    dataset.title       = jsonMetadata.title;
-    dataset.description = this.transformForPostgres(jsonMetadata.description);
-    dataset.author      = jsonMetadata.author;
-    dataset.created_at  = jsonMetadata.created_at;
-
-    var self = this;
-    dataset.save(function(err, dataset) {
-      if(err) {
-        console.log(err);
-      } else {
-        self.saveColumns(dataset, jsonMetadata);
-      }
-    });
-  };
+var Metadata = {};
 
 
-  // Reads a JSON file from the disk
+/**
+ *  Define the table schemas
+ */
 
-  Metadata.readJSONFile = function(filepath) {
-    var json = require(filepath);
-    this.saveDataset(json);
-  };
+Metadata.Dataset = sequelize.define('Dataset', {
+  table_name: {type: Sequelize.STRING, unique: true},
+  url: {type: Sequelize.STRING},
+  title: {type: Sequelize.STRING},
+  description: {type: Sequelize.STRING},
+  author: {type: Sequelize.STRING},
+  created_at: {type: Sequelize.DATE},
+  view_count: {type: Sequelize.INTEGER, defaultValue: 0},
+  star_count: {type: Sequelize.INTEGER, defaultValue: 0},
+  row_count: {type: Sequelize.INTEGER},
+  col_count: {type: Sequelize.INTEGER},
+  view_count:{type: Sequelize.INTEGER, defaultValue: 0},
+  user_id: {type: Sequelize.STRING}
 
+});
 
-  // Saves column data to the database
+Metadata.Tag = sequelize.define('Tag', {
+  label: {type: Sequelize.STRING, unique: true}
+});
 
-  Metadata.saveColumns = function(dataset, jsonMetadata) {
-    var self = this;
-    var cb = function(err, data) {
-      if (err) {
-        console.log(err);
-      } else {
-        return;
-      }
-    };
+Metadata.Column = sequelize.define('Column', {
+  name: {type: Sequelize.STRING},
+  datatype: {type: Sequelize.STRING},
+  description: {type: Sequelize.STRING}
+});
 
-    for(var i = 0; i < jsonMetadata.columns.length; i++) {
-      var column = jsonMetadata.columns[i];
-      dataset.datacolumnmeta.create({
-        name: column.name,
-        datatype: column.datatype,
-        description: column.description
-      }, cb);
-    }
+Metadata.Dataset.hasMany(Metadata.Column);
 
-    console.log('inside save columns');
-    this.saveTags(dataset, jsonMetadata);
-  };
+Metadata.Dataset.hasMany(Metadata.Tag);
+Metadata.Tag.hasMany(Metadata.Dataset);
 
+sequelize.sync({force: true});
 
-  // Save tag data to the database
+/**
+ * Define helper functions
+ */
 
-  Metadata.saveTags = function(dataset, jsonMetadata, i) {
-    if (i >= jsonMetadata.tags.length) {return;}
+Metadata.saveDataset = function(json) {
+  var self = this;
 
-    var cb = function(err, data) {
-      if (err) {
-        console.log(err);
-      } else {
-        i += 1;
-        self.saveTags(dataset,jsonMetadata,i);
-        // Tag.all({where: {label: jsonMetadata.tags[i]}}, createTag);
-        return;
-      }
-    };
+  this.Dataset.create({
+    table_name: json.table_name,
+    title: json.title,
+    col_count: json.col_count,
+    row_count: json.row_count,
+    user_id: json.user_id,
+    url: json.url,
+    title: json.title,
+    description: json.description,
+    author: json.author,
+    created_at: json.created_at
+  })
+  .success(function(dataset) {
 
-    var createTag = function(err, result) {
-      console.log(result);
-      if (result.length === 0) {
-       dataset.datasettag.create({
-          label: tag
-        }, cb);
-      } else {
-        dataset.datasettag.add(result[0], cb);
-      }
-    };
+    // Bulk create columns
 
-    i = i || 0;
-    var self = this,
-    tag = jsonMetadata.tags[i];
-    console.log('in metadatamodel file     ', tag);
+    self.Column.bulkCreate(json.columns).success(function(columns) {
+      dataset.setColumns(columns).success(function() {
 
-    this.Tag.all({where: {label: tag}}, createTag);
-  };
+        // Turn tags into {label: ___} objects
 
+        var tagArray = self.tagObjects(json.tags);
 
-
-  // Return new lines from string
-
-  Metadata.transformForPostgres = function(string) {
-    return string.replace("\n", " ");
-  };
-
-
-  return Metadata;
+        self.Tag.bulkCreate(tagArray).success(function(tags) {
+          dataset.setTags(tags).success(function() {
+            console.log('All Done!');
+          }).error(function(err) {console.log(err);});
+        }).error(function(err) {console.log(err);});
+      }).error(function(err) {console.log(err);});
+    }).error(function(err) {console.log(err);});
+  }).error(function(err) {console.log(err);});;
 };
 
-module.exports = metadataModel;
+
+Metadata.tagObjects = function(tags) {
+  var obj = [];
+  for (var i = 0; i < tags.length; i++) {
+    obj.push({
+      label: tags[i]
+    });
+  }
+
+  return obj;
+};
+
+
+
+module.exports = Metadata;
 

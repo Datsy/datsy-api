@@ -10,7 +10,6 @@
     "express": "~3.4.x",
     "request": "~2.27.0",
     "factual-api": "~1.0.6",
-    "pg": "~2.8.3",
     "node-fs": "~0.1.7",
     "csv": "~0.3.6",
     "jade": "*",
@@ -29,7 +28,9 @@
     "knex": "~0.4.13",
     "azure": "~0.7.17",
     "binary-csv": "~0.1.6",
-    "hat": "0.0.x"
+    "hat": "0.0.x",
+    "pg": "~2.0.0",
+    "sequelize": "~2.0.0"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
