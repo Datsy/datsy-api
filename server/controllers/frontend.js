@@ -19,6 +19,17 @@ var passwordHash = require('password-hash'),
 
     frontendControllers;
 
+var updateSchema = function(){
+    var deferred = q.defer();
+    console.log("updating schema");
+
+    schema.autoupdate(function(msg){
+      console.log("*** db schema update completed");
+      deferred.resolve('deferred resolved!!');
+    });
+
+    return deferred.promise;
+};
 
 frontendControllers = {
   'init': function(Models, dataSchema) {
@@ -366,9 +377,10 @@ frontendControllers = {
       // - return all tables meta data
       Metadata.Dataset.all(function(err, data){
         if(err) {
-          res.send("500 Internal Server Error error:", err);
+          res.send("(custom message) - 500 Internal Server Error error:", err);
         } else {
           console.log("Successfully retrieved all table meta.");
+          schema.disconnect();
           res.send(data);
         }
       });
@@ -450,19 +462,22 @@ frontendControllers = {
 
   'apiSearchTags': function(req, res){
     console.log("Retrieving all tags...");
-    var result = [];
-    Metadata.Tag.all(function(err, data){
-      if(err) {
-        res.send("500 Internal Server Error error:", err);
-      } else {
-        console.log("Successfully retrieved all tags.");
-        for(var i = 0; i < data.length; i++){
-          result.push(data[i].label);
+    // updateSchema().then(function(){
+      var result = [];
+      Metadata.Tag.all(function(err, data){
+        if(err) {
+          res.send("(custom message) - 500 Internal Server Error error:", err);
+        } else {
+          console.log("Successfully retrieved all tags.");
+          for(var i = 0; i < data.length; i++){
+            result.push(data[i].label);
+          }
+          schema.disconnect();
+          res.send(result);
         }
-        res.send(result);
-      }
-    });
-  } 
+      });
+    // });
+  }
 };
 
 
