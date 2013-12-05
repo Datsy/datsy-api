@@ -561,9 +561,38 @@ frontendControllers = {
 
   'apiSearchTable': function(req, res){
     var metaDataResult = {};
+    var finalMetaDataResult = {};
     var resultLength = 0;
     var expectedResultLength = undefined;
+    var rowNumber;
+    var filterColumn = [];
+
     if (req.query.name !== undefined){
+      // setup number of row to return
+      if (req.query.row === undefined){
+        // if row is not specified, default to this
+        rowNumber = 5;    
+      } else if (req.query.row === "ALL"){
+        // this will read all rows
+        rowNumber = '';
+      } else {
+        rowNumber = req.query.row;
+      }
+
+      // set up column type to return
+      if (req.query.column === undefined){
+        // if column is not specified, default to an empty array
+        filterColumn = [];
+      } else {
+        if (typeof req.query.column === "string"){
+          console.log("******Is STRING!!!!!");
+          filterColumn.push(req.query.column);
+        } else {
+          console.log("******Is NOT STRING!!!!!");
+          filterColumn = req.query.column;
+        }
+      }
+
       var result = Metadata.Dataset.all({where:{table_name: req.query.name}}, function(err, data){
         console.log("Here1");
         expectedResultLength = data.length;
@@ -576,6 +605,7 @@ frontendControllers = {
           console.log("metaDataResult:", metaDataResult);
           console.log("Metadata.Dataset start searching");
           var j = i;
+
           (function(j){
               console.log("---->>>before JJJJ", j);
 
@@ -584,23 +614,28 @@ frontendControllers = {
               console.log("---->>>JJJJ", j);
               console.log("*****Data column:", data);
               var columnDefines = {};
+              var currentDatasetId = data[j].dataset_id;
               for(var i = 0; i < data.length; i++){
                 columnDefines[data[i].name.toLowerCase()] = {type: data[i].datatype};
               }
               console.log("---Column Defines:", columnDefines);
-              console.log("metaDataResult[data[j].dataset_id]:",metaDataResult[data[j].dataset_id]["tableMeta"]);
-              console.log("---table name:", metaDataResult[data[j].dataset_id]["tableMeta"]["table_name"]);
-              var thisTable = schema.define(metaDataResult[data[j].dataset_id]["tableMeta"]["table_name"],columnDefines);
+              console.log("metaDataResult[data[j].dataset_id]:",metaDataResult[currentDatasetId]["tableMeta"]);
+              console.log("---table name:", metaDataResult[currentDatasetId]["tableMeta"]["table_name"]);
+              var thisTable = schema.define(metaDataResult[currentDatasetId]["tableMeta"]["table_name"],columnDefines);
 
               updateSchema().then(function(){
-                thisTable.all({limit:10}, function(err, data){
-                console.log("--->Table SEARCHED!!", data);
-                console.log("---->>>JJJJ", j);
-                console.log("----->>>>>data[j].id", data[j].id);
-                metaDataResult[data[j].id]["row"] = data;
-                console.log("Final metaDataResult:", metaDataResult);
-                res.send(metaDataResult);
-                });                
+                thisTable.all({limit:rowNumber}, function(err, data){
+                  console.log("--->Table SEARCHED!!", data);
+                  console.log("---->>>JJJJ", j);
+                  console.log("----->>>>>data[j].id", data[j].id);
+                  metaDataResult[currentDatasetId]["row"] = data;
+                  if (filterColumn.length != 0){
+                    metaDataResult[currentDatasetId]["row"] = filterDatabaseColumn(metaDataResult[currentDatasetId]["row"], filterColumn);
+                  };
+                  finalMetaDataResult["Result"] = metaDataResult[currentDatasetId];
+                  console.log("Final metaDataResult:", finalMetaDataResult);
+                  res.send(finalMetaDataResult);
+                });
               });
             })
           })(j);
@@ -620,6 +655,26 @@ frontendControllers = {
     } else {
       var message = "ERROR: the query string, 'name' is not found in the endpoint request";
       res.send(message); 
+    }
+
+    var filterDatabaseColumn = function(rowResult, filter){
+      console.log("** Filter Column filter:", filter);
+      var newRowResult = [];
+      var tempRow = {};
+      for (var i = 0; i < rowResult.length; i++){
+        for (var j = 0; j < filter.length; j++){
+            console.log("** current filter:", filter);
+            console.log("** current row:", rowResult[i]);
+            console.log("** current match:", rowResult[i].hasOwnProperty(filter[j]));
+          if (rowResult[i].hasOwnProperty(filter[j])){
+            console.log("** matched:", filter[j]);
+            tempRow[filter[j]] = rowResult[i][filter[j]];
+          }
+        }
+        newRowResult.push(tempRow);
+        tempRow = {};
+      }
+      return newRowResult;
     }
   }
 };
