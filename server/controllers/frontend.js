@@ -92,8 +92,13 @@ frontendControllers = {
               res.writeHead(500);
               res.end("500 Internal Server Error error:", err);
             } else {
+              var view_count = 0;
+              for (var i = 0; i < datasets.length; i++) {
+                view_count += +datasets[i].view_count;
+              }
               res.render('profile', {
                 datasets: datasets,
+                view_count: view_count,
                 apiKey: req.user.apikey,
                 isAuthenticated: true,
                 user: {
