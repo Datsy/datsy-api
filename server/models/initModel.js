@@ -15,13 +15,13 @@ var initModel = function(app){
     database: dbSetting.dbname
   });
 
-  // Datastore schema
-  // var datastore = new Schema('postgres', {
-  //   username: dbStore.user,
-  //   password: dbStore.password,
-  //   host: dbStore.host,
-  //   database: dbStore.dbname
-  // });
+  //Datastore schema
+  var datastore = new Schema('postgres', {
+    username: dbStore.user,
+    password: dbStore.password,
+    host: dbStore.host,
+    database: dbStore.dbname
+  });
 
   var User = require('./userModel.js')(schema);
   var EmailToken = require('./emailTokenModel.js')(schema);
@@ -59,7 +59,7 @@ var initModel = function(app){
 
   return {
     Models: Models,
-    schema: schema
+    schema: datastore
   };
 };
 
