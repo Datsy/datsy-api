@@ -368,13 +368,42 @@ frontendControllers = {
   },
 
   'apiSearchMeta': function(req, res){
+    var schema2 = new Schema('postgres', {
+      username: "masterofdata",
+      password: "gj1h23gnbfsjdhfg234234kjhskdfjhsdfKJHsdf234",
+      host: "137.135.14.92",
+      database: "datsydata"
+    });
+
+    Tag = schema2.define('datasettag', {
+      label: {type: String, unique: true}
+    });
+
+    Dataset = schema2.define('datasetmeta', {
+      table_name: {type: String, unique: true},
+      user_id: {type: Number},
+      url: {type: String},
+      title: {type: String},
+      description: {type: String},
+      author: {type: String},
+      created_at: {type: Date},
+      last_access: {type: Date},
+      view_count: {type: Number},
+      star_count: {type: Number},
+      row_count: {type: Number},
+      col_count: {type: Number}, 
+      last_viewed:{type: Date},
+      view_count:{type: Number},
+      token: {type: String}
+    });
+
     console.log("In apiSearchMeta");
     console.log("Query String parameters:", req.query.tag);
-     
+
     if(req.query.tag === undefined){
       // 2) GET search/meta
       // - return all tables meta data
-      Metadata.Dataset.all(function(err, data){
+      Dataset.all(function(err, data){
         if(err) {
           res.send("(custom message) - 500 Internal Server Error error:", err);
         } else {
@@ -400,11 +429,11 @@ frontendControllers = {
      
       console.log("queryTag:", queryTag);
       for (var i = 0; i < queryTag.length; i++){
-        Metadata.Tag.all({where: {label: queryTag[i]}},
+        Tag.all({where: {label: queryTag[i]}},
           function(err, data){
             console.log("Tag info:", data);
             if (data.length !== 0){
-              var thisTag = new Metadata.Tag({id:data[0].id});
+              var thisTag = new Tag({id:data[0].id});
               thisTag.dataset(function(err, data){
                 console.log("Dataset Found:", data);
                 taggedData.push(data);
@@ -459,10 +488,21 @@ frontendControllers = {
   },
 
   'apiSearchTags': function(req, res){
+    var schema2 = new Schema('postgres', {
+      username: "masterofdata",
+      password: "gj1h23gnbfsjdhfg234234kjhskdfjhsdfKJHsdf234",
+      host: "137.135.14.92",
+      database: "datsydata"
+    });
+
+    Tag = schema2.define('datasettag', {
+      label: {type: String, unique: true}
+    });
+
     console.log("Retrieving all tags...");
     // updateSchema().then(function(){
       var result = [];
-      Metadata.Tag.all(function(err, data){
+      Tag.all(function(err, data){
         if(err) {
           res.send("(custom message) - 500 Internal Server Error error:", err);
         } else {
