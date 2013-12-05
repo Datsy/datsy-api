@@ -2,7 +2,7 @@ var LoginView = Backbone.View.extend({
 
   template: _.template('\
     <div class="row">\
-      <form class="form-horizontal" method="get" action="/login">\
+      <form class="form-horizontal" method="post" action="/login">\
         <div class="control-group">\
           <label class="control-label">Email</label>\
           <div class="controls">\
