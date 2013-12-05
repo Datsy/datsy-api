@@ -15,7 +15,7 @@ var initModel = function(app){
     database: dbSetting.dbname
   });
 
-  // Datastore schema
+  //Datastore schema
   var datastore = new Schema('postgres', {
     username: dbStore.user,
     password: dbStore.password,

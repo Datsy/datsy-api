@@ -50,6 +50,7 @@
     "phantom": "0.5.4",
     "scraper": "0.0.9",
     "should": "*"
+
   },
   "scripts": {
     "test": "grunt travis"

@@ -11,14 +11,24 @@ var passwordHash = require('password-hash'),
     mailer = require('../helpers/sendEmail.js'),
     middleware = require('../middleware/middleware.js'),
     binaryCSV = require('binary-csv'),
-
     User,
     Metadata,
     EmailToken,
     schema,
-
     frontendControllers;
+var Schema = require('jugglingdb').Schema;
 
+var updateSchema = function(){
+    var deferred = q.defer();
+    console.log("updating schema");
+
+    schema.autoupdate(function(msg){
+      console.log("*** db schema update completed");
+      deferred.resolve('deferred resolved!!');
+    });
+
+    return deferred.promise;
+};
 
 frontendControllers = {
   'init': function(Models, dataSchema) {
@@ -358,15 +368,47 @@ frontendControllers = {
   },
 
   'apiSearchMeta': function(req, res){
+    var schema2 = new Schema('postgres', {
+      username: "masterofdata",
+      password: "gj1h23gnbfsjdhfg234234kjhskdfjhsdfKJHsdf234",
+      host: "137.135.14.92",
+      database: "datsydata"
+    });
+
+    Tag = schema2.define('datasettag', {
+      label: {type: String, unique: true}
+    });
+
+    Dataset = schema2.define('datasetmeta', {
+      table_name: {type: String, unique: true},
+      user_id: {type: Number},
+      url: {type: String},
+      title: {type: String},
+      description: {type: String},
+      author: {type: String},
+      created_at: {type: Date},
+      last_access: {type: Date},
+      view_count: {type: Number},
+      star_count: {type: Number},
+      row_count: {type: Number},
+      col_count: {type: Number}, 
+      last_viewed:{type: Date},
+      view_count:{type: Number},
+      token: {type: String}
+    });
+
+    Dataset.hasAndBelongsToMany(Tag, {as: 'datasettag', foreignKey: 'tag_id'});
+    Tag.hasAndBelongsToMany(Dataset, {as: 'dataset', foreignKey: 'datasettag_id'});
+
     console.log("In apiSearchMeta");
     console.log("Query String parameters:", req.query.tag);
-     
+
     if(req.query.tag === undefined){
       // 2) GET search/meta
       // - return all tables meta data
-      Metadata.Dataset.all(function(err, data){
+      Dataset.all(function(err, data){
         if(err) {
-          res.send("500 Internal Server Error error:", err);
+          res.send("(custom message) - 500 Internal Server Error error:", err);
         } else {
           console.log("Successfully retrieved all table meta.");
           res.send(data);
@@ -390,11 +432,11 @@ frontendControllers = {
      
       console.log("queryTag:", queryTag);
       for (var i = 0; i < queryTag.length; i++){
-        Metadata.Tag.all({where: {label: queryTag[i]}},
+        Tag.all({where: {label: queryTag[i]}},
           function(err, data){
             console.log("Tag info:", data);
             if (data.length !== 0){
-              var thisTag = new Metadata.Tag({id:data[0].id});
+              var thisTag = new Tag({id:data[0].id});
               thisTag.dataset(function(err, data){
                 console.log("Dataset Found:", data);
                 taggedData.push(data);
@@ -449,12 +491,44 @@ frontendControllers = {
   },
 
   'apiSearchTags': function(req, res){
+    var schema2 = new Schema('postgres', {
+      username: "masterofdata",
+      password: "gj1h23gnbfsjdhfg234234kjhskdfjhsdfKJHsdf234",
+      host: "137.135.14.92",
+      database: "datsydata"
+    });
+
+    Tag = schema2.define('datasettag', {
+      label: {type: String, unique: true}
+    });
+
+    Dataset = schema2.define('datasetmeta', {
+      table_name: {type: String, unique: true},
+      user_id: {type: Number},
+      url: {type: String},
+      title: {type: String},
+      description: {type: String},
+      author: {type: String},
+      created_at: {type: Date},
+      last_access: {type: Date},
+      view_count: {type: Number},
+      star_count: {type: Number},
+      row_count: {type: Number},
+      col_count: {type: Number}, 
+      last_viewed:{type: Date},
+      view_count:{type: Number},
+      token: {type: String}
+    });
+
+    Dataset.hasAndBelongsToMany(Tag, {as: 'datasettag', foreignKey: 'tag_id'});
+    Tag.hasAndBelongsToMany(Dataset, {as: 'dataset', foreignKey: 'datasettag_id'});
+
     console.log("Retrieving all tags...");
     var result = {
       tag: [],
       total: 0
     };
-    Metadata.Tag.all(function(err, data){
+    Tag.all(function(err, data){
       if(err) {
         res.send("500 Internal Server Error error:", err);
       } else {
@@ -463,7 +537,7 @@ frontendControllers = {
 
         for(i = 0; i < data.length; i++) {
           result.tag.push(data[i].label);
-          tag = new Metadata.Tag({id:data[i].id});
+          tag = new Tag({id:data[i].id});
           tag.dataset(function(err,dataset) {
             for(j = 0; j < dataset.length; j ++) {
               seenId = dataset[j].id;
@@ -483,7 +557,71 @@ frontendControllers = {
         }, 100);
       }
     });
-  } 
+  }, 
+
+  'apiSearchTable': function(req, res){
+    var metaDataResult = {};
+    var resultLength = 0;
+    var expectedResultLength = undefined;
+    if (req.query.name !== undefined){
+      var result = Metadata.Dataset.all({where:{table_name: req.query.name}}, function(err, data){
+        console.log("Here1");
+        expectedResultLength = data.length;
+        resultLength = data.length;
+        console.log("*****Search Result:", data);
+        console.log("Here2");
+        for (var i = 0; i < data.length; i++){
+          metaDataResult[data[i].id] = {tableMeta: data[i]};
+          // metaDataResult.push(metaData);
+          console.log("metaDataResult:", metaDataResult);
+          console.log("Metadata.Dataset start searching");
+          var j = i;
+          (function(j){
+              console.log("---->>>before JJJJ", j);
+
+            Metadata.DataColumn.all({where:{dataset_id:data[0].id}}, function(err, data){
+              console.log("Here3");
+              console.log("---->>>JJJJ", j);
+              console.log("*****Data column:", data);
+              var columnDefines = {};
+              for(var i = 0; i < data.length; i++){
+                columnDefines[data[i].name.toLowerCase()] = {type: data[i].datatype};
+              }
+              console.log("---Column Defines:", columnDefines);
+              console.log("metaDataResult[data[j].dataset_id]:",metaDataResult[data[j].dataset_id]["tableMeta"]);
+              console.log("---table name:", metaDataResult[data[j].dataset_id]["tableMeta"]["table_name"]);
+              var thisTable = schema.define(metaDataResult[data[j].dataset_id]["tableMeta"]["table_name"],columnDefines);
+
+              updateSchema().then(function(){
+                thisTable.all({limit:10}, function(err, data){
+                console.log("--->Table SEARCHED!!", data);
+                console.log("---->>>JJJJ", j);
+                console.log("----->>>>>data[j].id", data[j].id);
+                metaDataResult[data[j].id]["row"] = data;
+                console.log("Final metaDataResult:", metaDataResult);
+                res.send(metaDataResult);
+                });                
+              });
+            })
+          })(j);
+        }
+      });
+
+      var doneId = setInterval(function(){
+          console.log("resultLength", resultLength);
+          console.log("dataFoundLength", expectedResultLength);
+          if (resultLength === expectedResultLength){
+            console.log("****Done");
+            clearInterval(doneId);
+          }
+        }
+        ,3000
+      );
+    } else {
+      var message = "ERROR: the query string, 'name' is not found in the endpoint request";
+      res.send(message); 
+    }
+  }
 };
 
 
