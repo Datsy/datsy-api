@@ -646,6 +646,10 @@ frontendControllers = {
       }
 
       var result = Metadata.Dataset.all({where:{table_name: req.query.name}}, function(err, data){
+        if (err) {
+          console.log("Error in reading Metadata.Dataset:", err);
+        }
+          console.log("Data in reading Metadata.Dataset:", data);
         expectedResultLength = data.length;
         resultLength = data.length;
         for (var i = 0; i < data.length; i++){
@@ -656,6 +660,10 @@ frontendControllers = {
           (function(j){
 
             Metadata.DataColumn.all({where:{dataset_id:data[0].id}}, function(err, data){
+              if (err) {
+                console.log("Error in reading Metadata.DataColumn:", err);
+              }
+              console.log("Data in reading Metadata.DataColumn:", data);
               var columnDefines = {};
               var currentDatasetId = data[j].dataset_id;
               for(var i = 0; i < data.length; i++){
@@ -665,11 +673,17 @@ frontendControllers = {
 
               updateSchema().then(function(){
                 thisTable.all({limit:rowNumber}, function(err, data){
+                  if (err) {
+                    console.log("Error in reading thisTable.all:", err);
+                  }
+                  console.log("Data in reading thisTable.all:", data);
+
                   metaDataResult[currentDatasetId]["row"] = data;
                   if (filterColumn.length != 0){
                     metaDataResult[currentDatasetId]["row"] = filterDatabaseColumn(metaDataResult[currentDatasetId]["row"], filterColumn);
                   };
                   finalMetaDataResult["Result"] = metaDataResult[currentDatasetId];
+                  console.log("Final Meta Data Result:", finalMetaDataResult["Result"]);
                   res.send(finalMetaDataResult);
                 });
               });
