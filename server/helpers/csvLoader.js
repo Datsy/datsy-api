@@ -113,6 +113,7 @@ csv.createModel = function() {
   }
 
   this.Table = this.schema.define(this.metadata.table_name, model);
+  console.log("Woon Ket - after create table schema");
 
   var self = this;
   var createTable = function() {
