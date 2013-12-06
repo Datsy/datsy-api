@@ -40,6 +40,6 @@ module.exports = function(app, passport, Models, schema){
   app.get('/signup/:token', frontend.userSignupVerify);
   app.get('/userTableMetaData', frontend.userTableMetaData);
   app.get('/search/meta', frontend.apiSearchMeta);
-  app.get('/search/tag', frontend.apiSearchTags);
+  app.get('/search/tags', frontend.apiSearchTags);
   app.get('/search/table', frontend.apiSearchTable);
 };
