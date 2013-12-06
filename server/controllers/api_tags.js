@@ -4,7 +4,7 @@ var Schema = require('jugglingdb').Schema,
     EmailToken,
     schema,
     Tag,
-    Dataset;
+    Dataset,
     EventEmitter = require('events').EventEmitter;
 var apiControllers = {
   'init': function(Models) {
