@@ -93,8 +93,13 @@ frontendControllers = {
               res.writeHead(500);
               res.end("500 Internal Server Error error:", err);
             } else {
+              var view_count = 0;
+              for (var i = 0; i < datasets.length; i++) {
+                view_count += +datasets[i].view_count;
+              }
               res.render('profile', {
                 datasets: datasets,
+                view_count: view_count,
                 apiKey: req.user.apikey,
                 isAuthenticated: true,
                 user: {
@@ -491,6 +496,43 @@ frontendControllers = {
     }
   },
 
+  'apiSearchTags2': function(req, res){
+    console.log("Retrieving all tags...");
+    var result = {
+      tag: [],
+      total: 0
+    };
+    Metadata.Tag.all(function(err, data){
+      if(err) {
+        res.send("500 Internal Server Error error:", err);
+      } else {
+        console.log("Successfully retrieved all tags.");
+        var i,j,tag, dataLeft = data.length, obj = {};
+
+        for(i = 0; i < data.length; i++) {
+          result.tag.push(data[i].label);
+          tag = new Metadata.Tag({id:data[i].id});
+          tag.dataset(function(err,dataset) {
+            for(j = 0; j < dataset.length; j ++) {
+              seenId = dataset[j].id;
+              if (!obj[seenId]) {
+                obj[seenId] = true;
+              }
+            }
+            dataLeft --;
+          });
+        }
+        var intervalID = setInterval(function(){
+          if (dataLeft === 0) {
+            result.total = Object.keys(obj).length;
+            res.send(result);
+            clearInterval(intervalID);
+          }
+        }, 100);
+      }
+    });
+  },
+
   'apiSearchTags': function(req, res){
     tagSearch.init({
       User: User,
@@ -513,46 +555,63 @@ frontendControllers = {
 
   'apiSearchTable': function(req, res){
     var metaDataResult = {};
+    var finalMetaDataResult = {};
     var resultLength = 0;
     var expectedResultLength = undefined;
+    var rowNumber;
+    var filterColumn = [];
+
     if (req.query.name !== undefined){
+      // setup number of row to return
+      if (req.query.row === undefined){
+        // if row is not specified, default to this
+        rowNumber = 5;    
+      } else if (req.query.row === "ALL"){
+        // this will read all rows
+        rowNumber = '';
+      } else {
+        rowNumber = req.query.row;
+      }
+
+      // set up column type to return
+      if (req.query.column === undefined){
+        // if column is not specified, default to an empty array
+        filterColumn = [];
+      } else {
+        if (typeof req.query.column === "string"){
+          filterColumn.push(req.query.column);
+        } else {
+          filterColumn = req.query.column;
+        }
+      }
+
       var result = Metadata.Dataset.all({where:{table_name: req.query.name}}, function(err, data){
-        console.log("Here1");
         expectedResultLength = data.length;
         resultLength = data.length;
-        console.log("*****Search Result:", data);
-        console.log("Here2");
         for (var i = 0; i < data.length; i++){
           metaDataResult[data[i].id] = {tableMeta: data[i]};
           // metaDataResult.push(metaData);
-          console.log("metaDataResult:", metaDataResult);
-          console.log("Metadata.Dataset start searching");
           var j = i;
+
           (function(j){
-              console.log("---->>>before JJJJ", j);
 
             Metadata.DataColumn.all({where:{dataset_id:data[0].id}}, function(err, data){
-              console.log("Here3");
-              console.log("---->>>JJJJ", j);
-              console.log("*****Data column:", data);
               var columnDefines = {};
+              var currentDatasetId = data[j].dataset_id;
               for(var i = 0; i < data.length; i++){
                 columnDefines[data[i].name.toLowerCase()] = {type: data[i].datatype};
               }
-              console.log("---Column Defines:", columnDefines);
-              console.log("metaDataResult[data[j].dataset_id]:",metaDataResult[data[j].dataset_id]["tableMeta"]);
-              console.log("---table name:", metaDataResult[data[j].dataset_id]["tableMeta"]["table_name"]);
-              var thisTable = schema.define(metaDataResult[data[j].dataset_id]["tableMeta"]["table_name"],columnDefines);
+              var thisTable = schema.define(metaDataResult[currentDatasetId]["tableMeta"]["table_name"],columnDefines);
 
               updateSchema().then(function(){
-                thisTable.all({limit:10}, function(err, data){
-                console.log("--->Table SEARCHED!!", data);
-                console.log("---->>>JJJJ", j);
-                console.log("----->>>>>data[j].id", data[j].id);
-                metaDataResult[data[j].id]["row"] = data;
-                console.log("Final metaDataResult:", metaDataResult);
-                res.send(metaDataResult);
-                });                
+                thisTable.all({limit:rowNumber}, function(err, data){
+                  metaDataResult[currentDatasetId]["row"] = data;
+                  if (filterColumn.length != 0){
+                    metaDataResult[currentDatasetId]["row"] = filterDatabaseColumn(metaDataResult[currentDatasetId]["row"], filterColumn);
+                  };
+                  finalMetaDataResult["Result"] = metaDataResult[currentDatasetId];
+                  res.send(finalMetaDataResult);
+                });
               });
             })
           })(j);
@@ -560,10 +619,7 @@ frontendControllers = {
       });
 
       var doneId = setInterval(function(){
-          console.log("resultLength", resultLength);
-          console.log("dataFoundLength", expectedResultLength);
           if (resultLength === expectedResultLength){
-            console.log("****Done");
             clearInterval(doneId);
           }
         }
@@ -572,6 +628,21 @@ frontendControllers = {
     } else {
       var message = "ERROR: the query string, 'name' is not found in the endpoint request";
       res.send(message); 
+    }
+
+    var filterDatabaseColumn = function(rowResult, filter){
+      var newRowResult = [];
+      var tempRow = {};
+      for (var i = 0; i < rowResult.length; i++){
+        for (var j = 0; j < filter.length; j++){
+          if (rowResult[i][filter[j]] !== undefined){
+            tempRow[filter[j]] = rowResult[i][filter[j]];
+          }
+        }
+        newRowResult.push(tempRow);
+        tempRow = {};
+      }
+      return newRowResult;
     }
   }
 };
