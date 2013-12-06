@@ -59,49 +59,57 @@ var apiControllers = {
   },
 
   getAllMeta: function(req, res) {
+    var controller = new EventEmitter();
+
     Dataset.all(function(err, data){
       if(err) {
         res.send("(custom message) - 500 Internal Server Error error:", err);
       } else {
         console.log("Successfully retrieved all table meta.");
-        res.send(data);
+        apiControllers.addColumn(data, controller);
       }
+    });
+
+    controller.on('addColumn',function(result){
+      res.send(result);
     });
   },
 
   getSomeMeta: function(queryTag,req,res) {
     var taggedData = [];
+    var tagsLeft = queryTag.length;
     var controller = new EventEmitter();
     for (var i = 0; i < queryTag.length; i++){
       Tag.all({where: {label: queryTag[i]}},
         function(err, data){
           console.log("Tag info:", data);
-          if (data.length !== 0){
-            var thisTag = new Tag({id:data[0].id});
-            thisTag.dataset(function(err, data){
-              console.log("Dataset Found:", data);
-              taggedData.push(data);
-            });
-          } else {
-            // to facilitate the return of an empty array 
-            // in the following code
-            taggedData.push([]);
+          if (data.length === 0) {
+            res.send(taggedData);
+            return;
           }
+          var thisTag = new Tag({id:data[0].id});
+          thisTag.dataset(function(err, data){
+            console.log("Dataset Found:", data);
+            taggedData.push(data);
+            tagsLeft --;
+
+            var doneId = setInterval(function(){
+              console.log("taggedData.length:", taggedData.length);
+              if (tagsLeft === 0){
+                console.log("****Done:", taggedData);
+                clearInterval(doneId);
+                var result = filterTaggedData();
+                apiControllers.addColumn(result, controller);
+              }
+            },500);
+          });
+
         }
       );
     }
  
-    var doneId = setInterval(function(){
-      console.log("taggedData.length:", taggedData.length);
-      if (taggedData.length === queryTag.length){
-        console.log("****Done:", taggedData);
-        clearInterval(doneId);
-        var result = filterTaggedData();
-        apiControllers.addColumn(result, controller);
-      }
-    },500);
-
     controller.on('addColumn',function(result){
+      console.log('column added, ready to send result');
       res.send(result);
     });
 
@@ -133,6 +141,10 @@ var apiControllers = {
   },
 
   addColumn: function(rawMetas, controller) {
+    console.log('in add Column**************');
+    if (rawMetas.length === 0) {
+       controller.emit("addColumn",rawMetas);
+    }
     var j = 0;
     for (var i = 0; i < rawMetas.length; i ++) {
       DataColumn.all({where:{dataset_id: rawMetas[i].id}}, function(err,data) {

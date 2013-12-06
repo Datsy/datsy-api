@@ -105,16 +105,16 @@ var apiControllers = {
             tagIDs.push(data[j].id);
           }
           tagsLeft --;
+          
+          var intervalID = setInterval(function(){
+            if (tagsLeft === 0) {
+              apiControllers.getMetaTableIDwithSearchTagID(tagIDs,controller);
+              clearInterval(intervalID);
+            }
+          }, 100);
         }
       });
     }
-
-    var intervalID = setInterval(function(){
-      if (tagsLeft === 0) {
-        apiControllers.getMetaTableIDwithSearchTagID(tagIDs,controller);
-        clearInterval(intervalID);
-      }
-    }, 100);
 
     controller.on('getMetaTableId',function(metaTablsIds){
       result.total = metaTablsIds.length;
