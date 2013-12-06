@@ -42,7 +42,10 @@ frontendControllers = {
     schema = dataSchema;
   },
 
-  'index': indexController.init,
+  'index': function(req, res) {
+    indexController.init0(User, Metadata, EmailToken, schema);
+    indexController.init(req, res);
+  },
 
   'login': function(req, res) {
     res.render('login');
