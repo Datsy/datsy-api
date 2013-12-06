@@ -93,6 +93,7 @@ app.listen(port, function(){
         console.log(msg);
     });
   };
+  
   setInterval(useDatabaseReqToPing, 60000);
 
   //ping virtual macihne not working at this time
