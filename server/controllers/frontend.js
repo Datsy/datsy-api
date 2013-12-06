@@ -17,8 +17,11 @@ var passwordHash = require('password-hash'),
     Metadata,
     EmailToken,
     schema,
-    frontendControllers;
+    frontendControllers,
+    indexController = require('./index_controller.js');
+
 var Schema = require('jugglingdb').Schema;
+var _ = require("underscore");
 
 var updateSchema = function(){
     var deferred = q.defer();
@@ -40,18 +43,7 @@ frontendControllers = {
     schema = dataSchema;
   },
 
-  'index': function(req, res) {
-    if (!middleware.isAuth(req)) {
-      res.render('index');
-    } else {
-      res.render('index', {
-        isAuthenticated: true,
-        user: {
-          username: req.user.name
-        }
-      });
-    }
-  },
+  'index': indexController.init,
 
   'login': function(req, res) {
     res.render('login');
@@ -286,14 +278,13 @@ frontendControllers = {
       url: req.body.dataset_url,
       created_at: (new Date()).toUTCString(),
       last_accessed: (new Date()).toUTCString(),
-      row_count: req.body.count,
+      row_count: req.body.count-1,
       view_count: 0,
       stars: 0
     };
 
     tableMetaData.table_name = tableMetaData.title.replace(/ /g, '_').toLowerCase();
-    tableMetaData.tags = req.body.dataset_tags.split(',');
-
+    tableMetaData.tags = req.body.dataset_tags.toLowerCase().split(',');
     // Save the selected CSV file to the server
 
     var csvPath = req.body.uploadFile;
@@ -391,10 +382,18 @@ frontendControllers = {
     if(tag === undefined) {
       metaSearch.getAllMeta(req,res);
     } else if (typeof tag === 'string') {
-      metaSearch.getSomeMeta([tag],req,res);
+      metaSearch.getSomeMeta(frontendControllers.cleanTags([tag]),req,res);
     } else if (Array.isArray(tag)){
-      metaSearch.getSomeMeta(tag,req,res);
+      metaSearch.getSomeMeta(frontendControllers.cleanTags(tag),req,res);
     }
+  },
+
+  cleanTags: function(tags){
+    var filtered = [];
+    for (var i = 0; i < tags.length; i ++) {
+      filtered.push(tags[i].replace(/[^a-zA-Z0-9 ]|^\s*|\s*$/g, '').toLowerCase());
+    }
+    return filtered;
   },
 
   'apiSearchTags2': function(req, res){
@@ -448,9 +447,9 @@ frontendControllers = {
     if(tag === undefined) {
       tagSearch.getAllTags(req,res);
     } else if (typeof tag === 'string') {
-      tagSearch.getSomeTags([tag],req,res);
+      tagSearch.getSomeTags(frontendControllers.cleanTags([tag]),req,res);
     } else if (Array.isArray(tag)){
-      tagSearch.getSomeTags(tag,req,res);
+      tagSearch.getSomeTags(frontendControllers.cleanTags(tag),req,res);
     }
   }, 
 
