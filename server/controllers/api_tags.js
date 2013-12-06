@@ -110,7 +110,6 @@ var apiControllers = {
 
     controller.on('getMetaTableId',function(metaTablsIds){
       result.total = metaTablsIds.length;
-      console.log(metaTablsIds,'met')
       apiControllers.getTagsWithMetaTableID(metaTablsIds,controller);
     });
 
@@ -133,7 +132,7 @@ var apiControllers = {
         if(err) {
           res.send("500 Internal Server Error error:", err);
         } else {
-          console.log("Successfully retrieved tags", data);
+          console.log("Successfully retrieved tags in the pool");
           for (var j = 0; j < data.length; j ++) {
             tagLabels.push(data[j].label);
           }
