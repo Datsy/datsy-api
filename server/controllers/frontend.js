@@ -460,10 +460,10 @@ frontendControllers = {
       var queryTag = [];
       if ( Array.isArray(req.query.tag) ){
         for (var i = 0; i < req.query.tag.length; i++){
-          queryTag[i] = req.query.tag[i];
+          queryTag[i] = req.query.tag[i].toLowerCase();
         }
       } else {
-        queryTag.push(req.query.tag);
+        queryTag.push(req.query.tag.toLowerCase());
       }
      
       console.log("queryTag:", queryTag);
