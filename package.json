@@ -30,7 +30,8 @@
     "azure": "~0.7.17",
     "binary-csv": "~0.1.6",
     "hat": "0.0.x",
-    "jQuery": "1.7.4"
+    "jQuery": "1.7.4",
+    "ping": "0.1.x"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
