@@ -36,12 +36,9 @@ block content
          strong Search datasets
        p Find data based on tags, column names and descriptions
 
-    div.span12
-      br
-      br
-      br
-      legend Recently Created Datasets
-        table.table.table-hover
+    div.user-table
+      table.table.table-hover
+        legend(style='border: none') Recently Created Datasets
           tr
             th Title
             th Description
@@ -50,7 +47,10 @@ block content
             th Created At
             th Views
             - var userTableMetaData = datasets || []
-            - for (var i =0; i < userTableMetaData.length; i++){
+            - userTableMetaData.sort(function(a,b) {
+            -    return b.created_at - a.created_at
+            - });
+            - for (var i =0; i < 5; i++){
             - total_views += userTableMetaData[i].view_count;
             tr
               td= userTableMetaData[i].title
@@ -58,7 +58,7 @@ block content
               td= userTableMetaData[i].row_count
               td= userTableMetaData[i].col_count
               td= userTableMetaData[i].created_at.toUTCString()
-              td= userTableMetaData[i].view_count
+              td= +(userTableMetaData[i].view_count)
             -};
 
 
