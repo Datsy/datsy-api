@@ -16,7 +16,9 @@ var passwordHash = require('password-hash'),
     Metadata,
     EmailToken,
     schema,
-    frontendControllers;
+    frontendControllers,
+    indexController = require('./index_controller.js');
+
 var Schema = require('jugglingdb').Schema;
 
 var updateSchema = function(){
@@ -39,18 +41,7 @@ frontendControllers = {
     schema = dataSchema;
   },
 
-  'index': function(req, res) {
-    if (!middleware.isAuth(req)) {
-      res.render('index');
-    } else {
-      res.render('index', {
-        isAuthenticated: true,
-        user: {
-          username: req.user.name
-        }
-      });
-    }
-  },
+  'index': indexController.init,
 
   'login': function(req, res) {
     res.render('login');
