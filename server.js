@@ -84,12 +84,17 @@ app.use(function(req, res, next){
 
 app.listen(port, function(){
   // make database query to make database connection alive
-  var User = Models.User;
-  User.findOne({where: {id: 1}},
-    function (err, result) {
-      var msg = err ? 'ERROR: azure database is DEAD!!!' + err : 'azure database is alive'; 
-      console.log(msg);
-  });
+  
+  var useDatabaseReqToPing = function(){
+    var User = Models.User;
+    User.findOne({where: {id: 1}},
+      function (err, result) {
+        var msg = err ? 'ERROR: azure database is DEAD!!!' + err : 'azure database is alive'; 
+        console.log(msg);
+    });
+  };
+  
+  setInterval(useDatabaseReqToPing, 60000);
 
   //ping virtual macihne not working at this time
   //pingHost([config[app.get('env')].database.host]);
