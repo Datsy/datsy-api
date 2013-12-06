@@ -277,14 +277,13 @@ frontendControllers = {
       url: req.body.dataset_url,
       created_at: (new Date()).toUTCString(),
       last_accessed: (new Date()).toUTCString(),
-      row_count: req.body.count,
+      row_count: req.body.count-1,
       view_count: 0,
       stars: 0
     };
 
     tableMetaData.table_name = tableMetaData.title.replace(/ /g, '_').toLowerCase();
-    tableMetaData.tags = req.body.dataset_tags.split(',');
-
+    tableMetaData.tags = req.body.dataset_tags.toLowerCase().split(',');
     // Save the selected CSV file to the server
 
     var csvPath = req.body.uploadFile;
