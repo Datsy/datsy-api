@@ -269,7 +269,7 @@ frontendControllers = {
   'saveDataset': function(req, res) {
 
     // Construct metadata JSON object
-
+    console.log("****req.body:", req.body);
     var tableMetaData = {
       user_id: req.user.id,
       title: req.body.dataset_title,
@@ -287,6 +287,8 @@ frontendControllers = {
     tableMetaData.tags = req.body.dataset_tags.toLowerCase().split(',');
     // Save the selected CSV file to the server
 
+    console.log("tableMetaData.table_name:", tableMetaData.table_name);
+    console.log("tableMetaData.tags:", tableMetaData.tags);
     var csvPath = req.body.uploadFile;
 
     tableMetaData.columns = [];
@@ -507,7 +509,7 @@ frontendControllers = {
               var columnDefines = {};
               var currentDatasetId = data[j].dataset_id;
               for(var i = 0; i < data.length; i++){
-                columnDefines[data[i].name.toLowerCase()] = {type: data[i].datatype};
+                columnDefines[data[i].name] = {type: data[i].datatype};
               }
               var thisTable = schema.define(metaDataResult[currentDatasetId]["tableMeta"]["table_name"],columnDefines);
 
