@@ -81,12 +81,10 @@ app.use(function(req, res, next){
   res.type('txt').send('Not found');
 });
 
-
 app.listen(port, function(){
   // make database query to make database connection alive
   
   var useDatabaseReqToPing = function(){
-    console.log("in useDatabaseReqToPing");
     var User = Models.User;
     User.findOne({where: {id: 1}},
       function (err, result) {
@@ -94,7 +92,7 @@ app.listen(port, function(){
         console.log(msg);
     });
   };
-  
+
   setInterval(useDatabaseReqToPing, 60000);
 
   //ping virtual macihne not working at this time

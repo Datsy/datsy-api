@@ -18,6 +18,7 @@ var passwordHash = require('password-hash'),
     schema,
     frontendControllers;
 var Schema = require('jugglingdb').Schema;
+var _ = require("underscore");
 
 var updateSchema = function(){
     var deferred = q.defer();
@@ -374,6 +375,8 @@ frontendControllers = {
   },
 
   'apiSearchMeta': function(req, res){
+    var datasetResult = [];
+
     var schema2 = new Schema('postgres', {
       username: "masterofdata",
       password: "gj1h23gnbfsjdhfg234234kjhskdfjhsdfKJHsdf234",
@@ -403,7 +406,14 @@ frontendControllers = {
       token: {type: String}
     });
 
+    DataColumn = schema2.define('datacolumnmeta', {
+      name: {type: String},
+      datatype: {type: String},
+      description: {type: String}
+    });
+
     Dataset.hasAndBelongsToMany(Tag, {as: 'datasettag', foreignKey: 'tag_id'});
+    Dataset.hasMany(DataColumn, {as: 'datacolumnmeta', foreignKey: 'dataset_id'});
     Tag.hasAndBelongsToMany(Dataset, {as: 'dataset', foreignKey: 'datasettag_id'});
 
     console.log("In apiSearchMeta");
@@ -412,12 +422,42 @@ frontendControllers = {
     if(req.query.tag === undefined){
       // 2) GET search/meta
       // - return all tables meta data
+      var counter;
       Dataset.all(function(err, data){
         if(err) {
           res.send("(custom message) - 500 Internal Server Error error:", err);
         } else {
-          console.log("Successfully retrieved all table meta.");
-          res.send(data);
+          // var datasetResult = _.extend({}, data);
+          datasetResult = data.slice(0); 
+          console.log("Successfully retrieved all table meta:", datasetResult);
+          counter = datasetResult.length;
+          for (var i = 0; i < datasetResult.length; i++){
+            var thisDataset = new Dataset({id: data[i].id});
+            console.log("thisDataset:", thisDataset);
+            var j = i;
+
+            (function(j){
+              thisDataset.datacolumnmeta(function(err, data){
+                if (err) {
+                  console.log("Error in thisDataset.datacolumnmeta:", err);
+                }
+                console.log("*****Entire dataset result:", datasetResult[i]);
+                console.log("dataset result:", datasetResult[i]);
+                console.log("dataset result j:", j);
+                datasetResult[j].column = data;
+                counter--;
+              });
+            })(j);
+          };
+
+          var doneReadDataColumn = setInterval(function(){
+            console.log("Checking counter:", counter);
+            if (counter === 0) {
+              res.send(datasetResult);
+              clearInterval(doneReadDataColumn);
+            }
+          }, 100);
+
         }
       });
     } else {
@@ -444,6 +484,9 @@ frontendControllers = {
             if (data.length !== 0){
               var thisTag = new Tag({id:data[0].id});
               thisTag.dataset(function(err, data){
+                if (err) {
+                  console.log("Error in thisTag.dataset:", err);
+                }
                 console.log("Dataset Found:", data);
                 taggedData.push(data);
               });
@@ -461,14 +504,41 @@ frontendControllers = {
             if (taggedData.length === queryTag.length){
               console.log("****Done:", taggedData);
               clearInterval(doneId);
-              var result = filterTaggedData();
-              res.send(result);
+              var filteredDataResult = filteredTaggedData();
+              var filteredDataColumnCounter = filteredDataResult.length;
+              // read column info
+              for (var i = 0; i < filteredDataResult.length; i++){
+                var thisDataset = new Dataset({id: filteredDataResult[i].id});
+                console.log("thisFilteredDataset:", thisDataset);
+                var j = i;
+
+                (function(j){
+                  thisDataset.datacolumnmeta(function(err, data){
+                    if (err) {
+                      console.log("Error in thisFilteredDataset.datacolumnmeta:", err);
+                    }
+                    console.log("*****Entire dataset result:", datasetResult[i]);
+                    console.log("dataset result:", datasetResult[i]);
+                    console.log("dataset result j:", j);
+                    filteredDataResult[j].column = data;
+                    filteredDataColumnCounter--;
+                  });
+                })(j);
+              };
+
+              var doneReadFilteredDataColumn = setInterval(function(){
+                console.log("Checking counter:", counter);
+                if (filteredDataColumnCounter === 0) {
+                  clearInterval(doneReadFilteredDataColumn);
+                  res.send(filteredDataResult);
+                }
+              }, 100);
             }
           }
           ,500
       );
 
-      var filterTaggedData = function(){
+      var filteredTaggedData = function(){
         var counter = {};//object that track how many meta
         var tableMeta = {};
         var result = [];
