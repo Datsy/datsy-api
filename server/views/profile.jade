@@ -31,7 +31,7 @@ block content
           th Created At
           th Views
           - var userTableMetaData = datasets || []
-          - for (var i =0; i < userTableMetaData.length; i++){
+          - for (var i = 0; i < userTableMetaData.length; i++){
           - total_views += userTableMetaData[i].view_count;
           tr
             td= userTableMetaData[i].title
@@ -39,7 +39,7 @@ block content
             td= userTableMetaData[i].row_count
             td= userTableMetaData[i].col_count
             td= userTableMetaData[i].created_at.toUTCString()
-            td= userTableMetaData[i].view_count
+            td= +(userTableMetaData[i].view_count)
           -};
 
     script(src='/app.js')
