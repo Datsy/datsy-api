@@ -1,55 +1,81 @@
 var Sequelize = require('sequelize');
 var sequelize = new Sequelize('datsydb', 'bhc', '123', {
-  dialect: 'postgres',
-  omitNull: true
+    dialect: 'postgres'
 });
-
-
-var Metadata = {};
 
 
 /**
  *  Define the table schemas
  */
 
-Metadata.Dataset = sequelize.define('Dataset', {
-  table_name: {type: Sequelize.STRING, unique: true},
-  url: {type: Sequelize.STRING},
-  title: {type: Sequelize.STRING},
-  description: {type: Sequelize.STRING},
-  author: {type: Sequelize.STRING},
-  created_at: {type: Sequelize.DATE},
-  view_count: {type: Sequelize.INTEGER, defaultValue: 0},
-  star_count: {type: Sequelize.INTEGER, defaultValue: 0},
-  row_count: {type: Sequelize.INTEGER},
-  col_count: {type: Sequelize.INTEGER},
-  view_count:{type: Sequelize.INTEGER, defaultValue: 0},
-  user_id: {type: Sequelize.STRING}
+var Models = {
 
-});
+ Dataset: sequelize.define('Dataset', {
+    table_name: {type: Sequelize.STRING, unique: true},
+    url: {type: Sequelize.STRING},
+    title: {type: Sequelize.STRING},
+    description: {type: Sequelize.STRING},
+    author: {type: Sequelize.STRING},
+    created_at: {type: Sequelize.DATE},
+    view_count: {type: Sequelize.INTEGER, defaultValue: 0},
+    star_count: {type: Sequelize.INTEGER, defaultValue: 0},
+    row_count: {type: Sequelize.INTEGER},
+    col_count: {type: Sequelize.INTEGER},
+    user_id: {type: Sequelize.INTEGER}
+  }),
 
-Metadata.Tag = sequelize.define('Tag', {
-  label: {type: Sequelize.STRING, unique: true}
-});
 
-Metadata.Column = sequelize.define('Column', {
-  name: {type: Sequelize.STRING},
-  datatype: {type: Sequelize.STRING},
-  description: {type: Sequelize.STRING}
-});
+  Tag: sequelize.define('Tag', {
+    label: {type: Sequelize.STRING, unique: true}
+  }),
 
-Metadata.Dataset.hasMany(Metadata.Column);
 
-Metadata.Dataset.hasMany(Metadata.Tag);
-Metadata.Tag.hasMany(Metadata.Dataset);
+  Column: sequelize.define('Column', {
+    name: {type: Sequelize.STRING},
+    datatype: {type: Sequelize.STRING},
+    description: {type: Sequelize.STRING}
+  }),
 
-sequelize.sync({force: true});
+
+  User: sequelize.define('User', {
+    name: {type: Sequelize.STRING},
+    email: {type: Sequelize.STRING},
+    password: {type: Sequelize.STRING},
+    api_key: {type: Sequelize.STRING},
+    account: {type: Sequelize.STRING}
+  }),
+
+
+  EmailToken: sequelize.define('EmailToken', {
+    name: {type: Sequelize.STRING},
+    email: {type: Sequelize.STRING},
+    password: {type: Sequelize.STRING},
+    token: {type: Sequelize.STRING}
+  })
+};
+
+
+/**
+ *  Define the model relationships
+ */
+
+Models.Dataset.hasMany(Models.Column);
+Models.Dataset.hasMany(Models.Tag);
+Models.Tag.hasMany(Models.Dataset);
+
+
+/**
+ *  Create all of the models defined above
+ */
+
+sequelize.sync();
+
 
 /**
  * Define helper functions
  */
 
-Metadata.saveDataset = function(json) {
+Models.saveDataset = function(json) {
   var self = this;
 
   this.Dataset.create({
@@ -86,7 +112,7 @@ Metadata.saveDataset = function(json) {
 };
 
 
-Metadata.tagObjects = function(tags) {
+Models.tagObjects = function(tags) {
   var obj = [];
   for (var i = 0; i < tags.length; i++) {
     obj.push({
@@ -98,6 +124,9 @@ Metadata.tagObjects = function(tags) {
 };
 
 
+Models.sequelize = sequelize;
 
-module.exports = Metadata;
+
+
+module.exports = Models;
 

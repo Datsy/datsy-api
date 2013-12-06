@@ -18,9 +18,7 @@ console.log("****************************");
 
 // Initialize database models
 
-var ORM = require("./server/models/initModel.js")(app),
-    Models = ORM.Models,
-    schema = ORM.schema;
+var Models = require('./server/models/metadataModel.js');
 
 
 // Initialize passport
@@ -50,7 +48,7 @@ app.configure(function () {
 
 // Initialize routing
 
-routes.frontend(app, passport, Models, schema);
+routes.frontend(app, passport, Models);
 
 // TODO: add api routes
 
