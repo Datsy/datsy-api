@@ -12,6 +12,7 @@ var passwordHash = require('password-hash'),
     middleware = require('../middleware/middleware.js'),
     binaryCSV = require('binary-csv'),
     tagSearch = require('./api_tags.js'),
+    metaSearch = require('./api_meta.js'),
     User,
     Metadata,
     EmailToken,
@@ -374,125 +375,25 @@ frontendControllers = {
   },
 
   'apiSearchMeta': function(req, res){
-    var schema2 = new Schema('postgres', {
-      username: "masterofdata",
-      password: "gj1h23gnbfsjdhfg234234kjhskdfjhsdfKJHsdf234",
-      host: "137.135.14.92",
-      database: "datsydata"
-    });
+    metaSearch.init({
+      User: User,
+      Metadata: Metadata,
+      EmailToken: EmailToken});
 
-    Tag = schema2.define('datasettag', {
-      label: {type: String, unique: true}
-    });
-
-    Dataset = schema2.define('datasetmeta', {
-      table_name: {type: String, unique: true},
-      user_id: {type: Number},
-      url: {type: String},
-      title: {type: String},
-      description: {type: String},
-      author: {type: String},
-      created_at: {type: Date},
-      last_access: {type: Date},
-      view_count: {type: Number},
-      star_count: {type: Number},
-      row_count: {type: Number},
-      col_count: {type: Number}, 
-      last_viewed:{type: Date},
-      view_count:{type: Number},
-      token: {type: String}
-    });
-
-    Dataset.hasAndBelongsToMany(Tag, {as: 'datasettag', foreignKey: 'tag_id'});
-    Tag.hasAndBelongsToMany(Dataset, {as: 'dataset', foreignKey: 'datasettag_id'});
+    metaSearch.restartSchema();
 
     console.log("In apiSearchMeta");
     console.log("Query String parameters:", req.query.tag);
-
-    if(req.query.tag === undefined){
-      // 2) GET search/meta
-      // - return all tables meta data
-      Dataset.all(function(err, data){
-        if(err) {
-          res.send("(custom message) - 500 Internal Server Error error:", err);
-        } else {
-          console.log("Successfully retrieved all table meta.");
-          res.send(data);
-        }
-      });
-    } else {
+      // 1) GET search/meta
+      // 2) GET search/meta?tag=<tagname>
       // 3) GET search/meta?tag=<tagname>&tag=<tagname>
-      // - return meta data of tables associated with these <tagname>s.
-
-      // dataset associated with each tag
-      taggedData = [];
-      // copy req.query.tag into queryTag
-      var queryTag = [];
-      if ( Array.isArray(req.query.tag) ){
-        for (var i = 0; i < req.query.tag.length; i++){
-          queryTag[i] = req.query.tag[i];
-        }
-      } else {
-        queryTag.push(req.query.tag);
-      }
-     
-      console.log("queryTag:", queryTag);
-      for (var i = 0; i < queryTag.length; i++){
-        Tag.all({where: {label: queryTag[i]}},
-          function(err, data){
-            console.log("Tag info:", data);
-            if (data.length !== 0){
-              var thisTag = new Tag({id:data[0].id});
-              thisTag.dataset(function(err, data){
-                console.log("Dataset Found:", data);
-                taggedData.push(data);
-              });
-            } else {
-              // to facilitate the return of an empty array 
-              // in the following code
-              taggedData.push([]);
-            }
-          }
-        );
-      }
-   
-      var doneId = setInterval(function(){
-            console.log("taggedData.length:", taggedData.length);
-            if (taggedData.length === queryTag.length){
-              console.log("****Done:", taggedData);
-              clearInterval(doneId);
-              var result = filterTaggedData();
-              res.send(result);
-            }
-          }
-          ,500
-      );
-
-      var filterTaggedData = function(){
-        var counter = {};//object that track how many meta
-        var tableMeta = {};
-        var result = [];
-        for (var i = 0; i < taggedData.length; i++){
-          for (var j = 0; j < taggedData[i].length; j++){
-            if (taggedData[i][j] !== null){
-              if (counter.hasOwnProperty(taggedData[i][j].id)){
-                counter[taggedData[i][j].id] += 1;
-              } else {
-                tableMeta[taggedData[i][j].id] = taggedData[i][j];
-                counter[taggedData[i][j].id] = 1;
-              }
-            }
-          }        
-        }
-        console.log("counter:", counter);  
-        for(var key in counter){
-          if (counter[key] === taggedData.length){
-            result.push(tableMeta[key]);
-          }
-        }
-        console.log("result:", result);
-        return result;
-      };
+    var tag = req.query.tag;
+    if(tag === undefined) {
+      metaSearch.getAllMeta(req,res);
+    } else if (typeof tag === 'string') {
+      metaSearch.getSomeMeta([tag],req,res);
+    } else if (Array.isArray(tag)){
+      metaSearch.getSomeMeta(tag,req,res);
     }
   },
 
@@ -541,8 +442,8 @@ frontendControllers = {
     tagSearch.restartSchema();
     console.log(typeof req.query.tag,'tag');
       // 1) GET search/tag
-      // 2) GET search/meta?tag=<tagname>
-      // 3) GET search/meta?tag=<tagname>&tag=<tagname>
+      // 2) GET search/tag?tag=<tagname>
+      // 3) GET search/tag?tag=<tagname>&tag=<tagname>
     var tag = req.query.tag;
     if(tag === undefined) {
       tagSearch.getAllTags(req,res);
