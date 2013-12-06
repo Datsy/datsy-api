@@ -86,6 +86,7 @@ app.listen(port, function(){
   // make database query to make database connection alive
   
   var useDatabaseReqToPing = function(){
+    console.log("in useDatabaseReqToPing");
     var User = Models.User;
     User.findOne({where: {id: 1}},
       function (err, result) {
