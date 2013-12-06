@@ -41,5 +41,24 @@ block content
       br
       br
       legend Recently Created Datasets
+        table.table.table-hover
+          tr
+            th Title
+            th Description
+            th Rows
+            th Columns
+            th Created At
+            th Views
+            - var userTableMetaData = datasets || []
+            - for (var i =0; i < userTableMetaData.length; i++){
+            - total_views += userTableMetaData[i].view_count;
+            tr
+              td= userTableMetaData[i].title
+              td= userTableMetaData[i].description
+              td= userTableMetaData[i].row_count
+              td= userTableMetaData[i].col_count
+              td= userTableMetaData[i].created_at.toUTCString()
+              td= userTableMetaData[i].view_count
+            -};
 
 
