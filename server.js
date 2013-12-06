@@ -93,7 +93,7 @@ app.listen(port, function(){
     });
   };
 
-  setInterval(useDatabaseReqToPing, 60000);
+  // setInterval(useDatabaseReqToPing, 60000);
 
   //ping virtual macihne not working at this time
   //pingHost([config[app.get('env')].database.host]);
