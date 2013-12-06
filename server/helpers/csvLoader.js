@@ -38,10 +38,11 @@ csv.saveDataset = function(path, schema, metadata) {
 csv.saveData = function() {
   var self = this,
       count = 0;
-
+  console.log("In saveData");
   fs.createReadStream(this.path).pipe(parser)
     .on('data', function(line) {
       if (count > 0) {
+        console.log("Debuggged:", line);
         line = line.toString().split(',');
 
         var obj = {};
