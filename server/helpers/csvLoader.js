@@ -42,7 +42,6 @@ csv.saveData = function() {
   fs.createReadStream(this.path).pipe(parser)
     .on('data', function(line) {
       if (count > 0) {
-        console.log("Debuggged:", line);
         line = line.toString().split(',');
 
         var obj = {};
