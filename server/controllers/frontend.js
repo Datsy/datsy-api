@@ -12,6 +12,7 @@ var passwordHash = require('password-hash'),
     middleware = require('../middleware/middleware.js'),
     binaryCSV = require('binary-csv'),
     tagSearch = require('./api_tags.js'),
+    metaSearch = require('./api_meta.js'),
     User,
     Metadata,
     EmailToken,
@@ -368,195 +369,34 @@ frontendControllers = {
   },
 
   'apiSearchMeta': function(req, res){
-    var datasetResult = [];
+    metaSearch.init({
+      User: User,
+      Metadata: Metadata,
+      EmailToken: EmailToken});
 
-    var schema2 = new Schema('postgres', {
-      username: "masterofdata",
-      password: "gj1h23gnbfsjdhfg234234kjhskdfjhsdfKJHsdf234",
-      host: "137.135.14.92",
-      database: "datsydata"
-    });
-
-    Tag = schema2.define('datasettag', {
-      label: {type: String, unique: true}
-    });
-
-    Dataset = schema2.define('datasetmeta', {
-      table_name: {type: String, unique: true},
-      user_id: {type: Number},
-      url: {type: String},
-      title: {type: String},
-      description: {type: String},
-      author: {type: String},
-      created_at: {type: Date},
-      last_access: {type: Date},
-      view_count: {type: Number},
-      star_count: {type: Number},
-      row_count: {type: Number},
-      col_count: {type: Number}, 
-      last_viewed:{type: Date},
-      view_count:{type: Number},
-      token: {type: String}
-    });
-
-    DataColumn = schema2.define('datacolumnmeta', {
-      name: {type: String},
-      datatype: {type: String},
-      description: {type: String}
-    });
-
-    Dataset.hasAndBelongsToMany(Tag, {as: 'datasettag', foreignKey: 'tag_id'});
-    Dataset.hasMany(DataColumn, {as: 'datacolumnmeta', foreignKey: 'dataset_id'});
-    Tag.hasAndBelongsToMany(Dataset, {as: 'dataset', foreignKey: 'datasettag_id'});
+    metaSearch.restartSchema();
 
     console.log("In apiSearchMeta");
     console.log("Query String parameters:", req.query.tag);
-
-    if(req.query.tag === undefined){
-      // 2) GET search/meta
-      // - return all tables meta data
-      var counter;
-      Dataset.all(function(err, data){
-        if(err) {
-          res.send("(custom message) - 500 Internal Server Error error:", err);
-        } else {
-          // var datasetResult = _.extend({}, data);
-          datasetResult = data.slice(0); 
-          console.log("Successfully retrieved all table meta:", datasetResult);
-          counter = datasetResult.length;
-          for (var i = 0; i < datasetResult.length; i++){
-            var thisDataset = new Dataset({id: data[i].id});
-            console.log("thisDataset:", thisDataset);
-            var j = i;
-
-            (function(j){
-              thisDataset.datacolumnmeta(function(err, data){
-                if (err) {
-                  console.log("Error in thisDataset.datacolumnmeta:", err);
-                }
-                console.log("*****Entire dataset result:", datasetResult[i]);
-                console.log("dataset result:", datasetResult[i]);
-                console.log("dataset result j:", j);
-                datasetResult[j].column = data;
-                counter--;
-              });
-            })(j);
-          };
-
-          var doneReadDataColumn = setInterval(function(){
-            console.log("Checking counter:", counter);
-            if (counter === 0) {
-              res.send(datasetResult);
-              clearInterval(doneReadDataColumn);
-            }
-          }, 100);
-
-        }
-      });
-    } else {
+      // 1) GET search/meta
+      // 2) GET search/meta?tag=<tagname>
       // 3) GET search/meta?tag=<tagname>&tag=<tagname>
-      // - return meta data of tables associated with these <tagname>s.
-
-      // dataset associated with each tag
-      taggedData = [];
-      // copy req.query.tag into queryTag
-      var queryTag = [];
-      if ( Array.isArray(req.query.tag) ){
-        for (var i = 0; i < req.query.tag.length; i++){
-          queryTag[i] = req.query.tag[i].toLowerCase();
-        }
-      } else {
-        queryTag.push(req.query.tag.toLowerCase());
-      }
-     
-      console.log("queryTag:", queryTag);
-      for (var i = 0; i < queryTag.length; i++){
-        Tag.all({where: {label: queryTag[i]}},
-          function(err, data){
-            console.log("Tag info:", data);
-            if (data.length !== 0){
-              var thisTag = new Tag({id:data[0].id});
-              thisTag.dataset(function(err, data){
-                if (err) {
-                  console.log("Error in thisTag.dataset:", err);
-                }
-                console.log("Dataset Found:", data);
-                taggedData.push(data);
-              });
-            } else {
-              // to facilitate the return of an empty array 
-              // in the following code
-              taggedData.push([]);
-            }
-          }
-        );
-      }
-   
-      var doneId = setInterval(function(){
-            console.log("taggedData.length:", taggedData.length);
-            if (taggedData.length === queryTag.length){
-              console.log("****Done:", taggedData);
-              clearInterval(doneId);
-              var filteredDataResult = filteredTaggedData();
-              var filteredDataColumnCounter = filteredDataResult.length;
-              // read column info
-              for (var i = 0; i < filteredDataResult.length; i++){
-                var thisDataset = new Dataset({id: filteredDataResult[i].id});
-                console.log("thisFilteredDataset:", thisDataset);
-                var j = i;
-
-                (function(j){
-                  thisDataset.datacolumnmeta(function(err, data){
-                    if (err) {
-                      console.log("Error in thisFilteredDataset.datacolumnmeta:", err);
-                    }
-                    console.log("*****Entire dataset result:", datasetResult[i]);
-                    console.log("dataset result:", datasetResult[i]);
-                    console.log("dataset result j:", j);
-                    filteredDataResult[j].column = data;
-                    filteredDataColumnCounter--;
-                  });
-                })(j);
-              };
-
-              var doneReadFilteredDataColumn = setInterval(function(){
-                console.log("Checking counter:", counter);
-                if (filteredDataColumnCounter === 0) {
-                  clearInterval(doneReadFilteredDataColumn);
-                  res.send(filteredDataResult);
-                }
-              }, 100);
-            }
-          }
-          ,500
-      );
-
-      var filteredTaggedData = function(){
-        var counter = {};//object that track how many meta
-        var tableMeta = {};
-        var result = [];
-        for (var i = 0; i < taggedData.length; i++){
-          for (var j = 0; j < taggedData[i].length; j++){
-            if (taggedData[i][j] !== null){
-              if (counter.hasOwnProperty(taggedData[i][j].id)){
-                counter[taggedData[i][j].id] += 1;
-              } else {
-                tableMeta[taggedData[i][j].id] = taggedData[i][j];
-                counter[taggedData[i][j].id] = 1;
-              }
-            }
-          }        
-        }
-        console.log("counter:", counter);  
-        for(var key in counter){
-          if (counter[key] === taggedData.length){
-            result.push(tableMeta[key]);
-          }
-        }
-        console.log("result:", result);
-        return result;
-      };
+    var tag = req.query.tag;
+    if(tag === undefined) {
+      metaSearch.getAllMeta(req,res);
+    } else if (typeof tag === 'string') {
+      metaSearch.getSomeMeta(frontendControllers.cleanTags([tag]),req,res);
+    } else if (Array.isArray(tag)){
+      metaSearch.getSomeMeta(frontendControllers.cleanTags(tag),req,res);
     }
+  },
+
+  cleanTags: function(tags){
+    var filtered = [];
+    for (var i = 0; i < tags.length; i ++) {
+      filtered.push(tags[i].replace(/[^a-zA-Z0-9 ]|^\s*|\s*$/g, '').toLowerCase());
+    }
+    return filtered;
   },
 
   'apiSearchTags2': function(req, res){
@@ -604,15 +444,15 @@ frontendControllers = {
     tagSearch.restartSchema();
     console.log(typeof req.query.tag,'tag');
       // 1) GET search/tag
-      // 2) GET search/meta?tag=<tagname>
-      // 3) GET search/meta?tag=<tagname>&tag=<tagname>
+      // 2) GET search/tag?tag=<tagname>
+      // 3) GET search/tag?tag=<tagname>&tag=<tagname>
     var tag = req.query.tag;
     if(tag === undefined) {
       tagSearch.getAllTags(req,res);
     } else if (typeof tag === 'string') {
-      tagSearch.getSomeTags([tag],req,res);
+      tagSearch.getSomeTags(frontendControllers.cleanTags([tag]),req,res);
     } else if (Array.isArray(tag)){
-      tagSearch.getSomeTags(tag,req,res);
+      tagSearch.getSomeTags(frontendControllers.cleanTags(tag),req,res);
     }
   }, 
 
@@ -649,6 +489,10 @@ frontendControllers = {
       }
 
       var result = Metadata.Dataset.all({where:{table_name: req.query.name}}, function(err, data){
+        if (err) {
+          console.log("Error in reading Metadata.Dataset:", err);
+        }
+          console.log("Data in reading Metadata.Dataset:", data);
         expectedResultLength = data.length;
         resultLength = data.length;
         for (var i = 0; i < data.length; i++){
@@ -659,6 +503,10 @@ frontendControllers = {
           (function(j){
 
             Metadata.DataColumn.all({where:{dataset_id:data[0].id}}, function(err, data){
+              if (err) {
+                console.log("Error in reading Metadata.DataColumn:", err);
+              }
+              console.log("Data in reading Metadata.DataColumn:", data);
               var columnDefines = {};
               var currentDatasetId = data[j].dataset_id;
               for(var i = 0; i < data.length; i++){
@@ -668,11 +516,17 @@ frontendControllers = {
 
               updateSchema().then(function(){
                 thisTable.all({limit:rowNumber}, function(err, data){
+                  if (err) {
+                    console.log("Error in reading thisTable.all:", err);
+                  }
+                  console.log("Data in reading thisTable.all:", data);
+
                   metaDataResult[currentDatasetId]["row"] = data;
                   if (filterColumn.length != 0){
                     metaDataResult[currentDatasetId]["row"] = filterDatabaseColumn(metaDataResult[currentDatasetId]["row"], filterColumn);
                   };
                   finalMetaDataResult["Result"] = metaDataResult[currentDatasetId];
+                  console.log("Final Meta Data Result:", finalMetaDataResult["Result"]);
                   res.send(finalMetaDataResult);
                 });
               });

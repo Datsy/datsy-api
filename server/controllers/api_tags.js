@@ -65,6 +65,10 @@ var apiControllers = {
         res.send("500 Internal Server Error error:", err);
       } else {
         console.log("Successfully retrieved all tags.");
+        if (data.length === 0) {
+          res.send(result);
+          return;
+        }
         for(i = 0; i < data.length; i++) {
           result.tag.push(data[i].label);
           tagsID.push(data[i].id);
@@ -93,20 +97,24 @@ var apiControllers = {
           res.send("500 Internal Server Error error:", err);
         } else {
           console.log("Successfully retrieved tags", data);
+          if (data.length === 0) {
+            res.send(result);
+            return;
+          }
           for (var j = 0; j < data.length; j ++) {
             tagIDs.push(data[j].id);
           }
           tagsLeft --;
+          
+          var intervalID = setInterval(function(){
+            if (tagsLeft === 0) {
+              apiControllers.getMetaTableIDwithSearchTagID(tagIDs,controller);
+              clearInterval(intervalID);
+            }
+          }, 100);
         }
       });
     }
-
-    var intervalID = setInterval(function(){
-      if (tagsLeft === 0) {
-        apiControllers.getMetaTableIDwithTagID(tagIDs,controller);
-        clearInterval(intervalID);
-      }
-    }, 100);
 
     controller.on('getMetaTableId',function(metaTablsIds){
       result.total = metaTablsIds.length;
@@ -194,8 +202,44 @@ var apiControllers = {
         clearInterval(intervalID);
       }
     }, 100);
+  },
+
+  getMetaTableIDwithSearchTagID: function(tagIDs, controller) {
+    //to fix. 
+    var filterController = new EventEmitter();
+    var i,j,tag,seenId, dataLeft = tagIDs.length, obj = {};
+    for(i = 0; i < tagIDs.length; i ++) {
+      tag = new Tag({id:tagIDs[i]});
+      tag.dataset(function(err,dataset) {
+        var currentSet = {};
+        for(j = 0; j < dataset.length; j ++) {
+          currentSet[dataset[j].id] = true;
+        }
+        dataLeft --;
+        filterController.emit('searchNext', currentSet)
+      });
+    }
+
+    filterController.on('searchNext', function(currentSet){
+
+      if (dataLeft === tagIDs.length -1) {
+        obj = currentSet;
+      } else {
+        for (var key in obj) {
+          if (currentSet[key] === undefined) {obj[key] = false};
+        }
+      }
+
+      if(dataLeft === 0) {
+        var filteredMetaIDs = [];
+        for (var key in obj) {
+          if (obj[key]) {filteredMetaIDs.push(obj[key]); }
+        }
+        controller.emit('getMetaTableId',filteredMetaIDs);
+      }
+    });
   }
 
-}
+};
 
 module.exports = apiControllers;
