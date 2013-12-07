@@ -83,3 +83,22 @@ p select {
 #columnSelect {
   background-color: rgb(250, 250, 250);
 }
+
+.linkedInLogo{
+  max-width: 5%;
+  margin-left: 3%;
+  border-radius: 0.2em;
+
+}
+.gitHubLogo {
+  max-width: 7%;
+  margin-left: 2%;
+}
+.twitterLogo {
+  max-width: 8%;
+  margin-left: 0.5%;  
+}
+
+.wordpressLogo{
+  max-width: 8%;
+}
