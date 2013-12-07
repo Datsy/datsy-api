@@ -286,7 +286,7 @@ frontendControllers = {
       stars: 0
     };
 
-    tableMetaData.table_name = tableMetaData.title.replace(/ /g, '_').replace(/`/g, '').toLowerCase();
+    tableMetaData.table_name = tableMetaData.title.replace(/ /g, '_').replace(/\'/g, '').toLowerCase();
     tableMetaData.tags = req.body.dataset_tags.toLowerCase().split(',');
     // Save the selected CSV file to the server
 
