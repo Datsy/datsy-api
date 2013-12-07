@@ -21,13 +21,13 @@ config = {
       }
     },
     database: {
-      user: "woonketwong",
+      user: "pieterdejong",
       password: "",
       host: "",
       dbname: "datsy"
     },
     datastore: {
-      user: "woonketwong",
+      user: "pieterdejong",
       password: "",
       host: "",
       dbname: "datastore"
