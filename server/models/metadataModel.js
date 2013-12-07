@@ -91,49 +91,84 @@ Models.saveDataset = function(json, cb) {
     created_at: json.created_at
   })
   .success(function(dataset) {
+    var d = (new Date()).toISOString(),
+        column,
+        tag,
+        str;
 
-      var addAssociation = function(columns, i) {
-        var column = columns[i];
-        var d = (new Date()).toISOString();
-        sequelize.query('INSERT INTO "Columns" ("name", "datatype", "description", ' +
-            '"createdAt", "updatedAt", "DatasetId") VALUES (' + column.name + ', ' +
-            column.datatype + ', ' + column.description + ', ' + d + ', ' + d +
-            ', ' + dataset.id + ')')
+
+    // Recursively insert the columns
+
+    var addColumns = function(columns, i) {
+      column = columns[i];
+
+      str = 'INSERT INTO "Columns" ("name", "datatype", "description", ' +
+        '"createdAt", "updatedAt", "DatasetId") VALUES (\'' + column.name + '\', \'' +
+        column.datatype + '\', \'' + column.description + '\', \'' + d + '\', \'' + d +
+        '\', \'' + dataset.id + '\')';
+
+      sequelize.query(str)
         .success(function(row) {
           console.log('i: ', i, '  length: ', columns.length);
-          if (i < columns.length) {
-            addAssociation(columns, i+1);
+          if (i < columns.length - 1) {
+            addColumns(columns, i+1);
           } else {
-            cb();
+            addTags(json.tags, 0);  // Create tags
           }
         });
+    };
 
-/*
-        var column = self.Column.build(columns[i]);
-        dataset.addColumn(column).success(function(obj) {
-         console.log('i: ', i, '  length: ', columns.length);
-              if (i < columns.length) {
-                addAssociation(columns, i+1);
+
+    // Recursively insert the columns
+
+    var addTags = function(tags, i) {
+      var self = this;
+      tag = tags[i];
+
+      this.Tag.findAll({
+        where: { label: tag }
+      }).success(function(result) {
+
+        if (result.length === 0) {
+
+          // Tag does not exist, create it
+
+          self.Tag.create({ label: tag })
+            .success(function(newTag) {
+              dataset.addTag(newTag)
+                .success(function() {
+                  console.log('Tags: i = ', i, ',  length = ', tags.length);
+                  if (i < tags.length - 1) {
+                    addTags(tags, i+1);
+                  } else {
+                    cb();
+                  }
+                });;
+            });
+
+        } else {
+
+          // Tag exists, associate it with this dataset
+
+          dataset.setTags(result)
+            .success(function(associatedTag) {
+              console.log('i: ', i, '  length: ', tags.length);
+              if (i < tags.length - 1) {
+                addTags(tags, i+1);
               } else {
                 cb();
               }
-        }).error(function(err) { console.log(err); });
-*/
-      };
+            });
+        }
+      });
 
-      addAssociation(json.columns, 0);
-/*
-        // Turn tags into {label: ___} objects
+    };
 
-        var tagArray = self.tagObjects(json.tags);
 
-        self.Tag.bulkCreate(tagArray).success(function(tags) {
-          dataset.setTags(tags).success(function() {
-            console.log('All Done!');
-          }).error(function(err) {console.log(err);});
-        }).error(function(err) {console.log(err);});
-      }).error(function(err) {console.log(err);});
-*/
+    // Kickoff the process by creating columns first
+
+    addColumns(json.columns, 0);
+
   }).error(function(err) {console.log(err);});
 };
 
