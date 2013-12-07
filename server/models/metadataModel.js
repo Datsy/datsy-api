@@ -75,7 +75,7 @@ sequelize.sync();
  * Define helper functions
  */
 
-Models.saveDataset = function(json) {
+Models.saveDataset = function(json, cb) {
   var self = this;
 
   this.Dataset.create({
@@ -92,11 +92,37 @@ Models.saveDataset = function(json) {
   })
   .success(function(dataset) {
 
-    // Bulk create columns
+      var addAssociation = function(columns, i) {
+        var column = columns[i];
+        var d = (new Date()).toISOString();
+        sequelize.query('INSERT INTO "Columns" ("name", "datatype", "description", ' +
+            '"createdAt", "updatedAt", "DatasetId") VALUES (' + column.name + ', ' +
+            column.datatype + ', ' + column.description + ', ' + d + ', ' + d +
+            ', ' + dataset.id + ')')
+        .success(function(row) {
+          console.log('i: ', i, '  length: ', columns.length);
+          if (i < columns.length) {
+            addAssociation(columns, i+1);
+          } else {
+            cb();
+          }
+        });
 
-    self.Column.bulkCreate(json.columns).success(function(columns) {
-      dataset.setColumns(columns).success(function() {
+/*
+        var column = self.Column.build(columns[i]);
+        dataset.addColumn(column).success(function(obj) {
+         console.log('i: ', i, '  length: ', columns.length);
+              if (i < columns.length) {
+                addAssociation(columns, i+1);
+              } else {
+                cb();
+              }
+        }).error(function(err) { console.log(err); });
+*/
+      };
 
+      addAssociation(json.columns, 0);
+/*
         // Turn tags into {label: ___} objects
 
         var tagArray = self.tagObjects(json.tags);
@@ -107,8 +133,8 @@ Models.saveDataset = function(json) {
           }).error(function(err) {console.log(err);});
         }).error(function(err) {console.log(err);});
       }).error(function(err) {console.log(err);});
-    }).error(function(err) {console.log(err);});
-  }).error(function(err) {console.log(err);});;
+*/
+  }).error(function(err) {console.log(err);});
 };
 
 

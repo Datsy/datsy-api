@@ -252,33 +252,34 @@ var frontendControllers = {
 
     // Save to the datastore
 
+/*
     var csvPath = req.body.uploadFile;
     csvLoader.saveDataset(csvPath, schema, metadata);
+*/
 
 
     // Save the metadata
 
-    Metadata.saveDataset(metadata);
+    models.saveDataset(metadata, function() {
 
+      // Redirect to '/profile' with updated dataset object
 
-
-    // Redirect to '/profile' with updated dataset object
-
-    Dataset.findAll({
-      where:{user_id: req.user[0].id}
-    }).success(function(datasets) {
-      if (!middleware.isAuth(req)) {
-        res.render('index');
-      } else {
-        res.render('profile', {
-          datasets: datasets,
-          isAuthenticated: true,
-          apiKey: req.user[0].api_key,
-          user: {
-            username: req.user[0].name
-          }
-        });
-      }
+      Dataset.findAll({
+        where:{user_id: req.user[0].id}
+      }).success(function(datasets) {
+        if (!middleware.isAuth(req)) {
+          res.render('index');
+        } else {
+          res.render('profile', {
+            datasets: datasets,
+            isAuthenticated: true,
+            apiKey: req.user[0].api_key,
+            user: {
+              username: req.user[0].name
+            }
+          });
+        }
+      });
     });
  },
 
@@ -404,6 +405,7 @@ module.exports = function(Models) {
     Tag = Models.Tag;
     Column = Models.Column;
     EmailToken = Models.EmailToken;
+    models = Models;
     schema = Models.sequelize;
 
     return frontendControllers;
