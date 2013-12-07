@@ -18,6 +18,7 @@ var passwordHash = require('password-hash'),
     EmailToken,
     schema,
     frontendControllers,
+    EventEmitter = require('events').EventEmitter,
     indexController = require('./index_controller.js');
 
 var Schema = require('jugglingdb').Schema;
@@ -270,6 +271,7 @@ frontendControllers = {
   },
 
   'saveDataset': function(req, res) {
+    var controller = new EventEmitter();
 
     // Construct metadata JSON object
     console.log("****req.body:", req.body);
@@ -311,33 +313,39 @@ frontendControllers = {
 
     // Save to the datastore
 
-    csvLoader.saveDataset(csvPath, schema, tableMetaData);
+    csvLoader.saveDataset(csvPath, schema, tableMetaData, controller);
+    controller.on('csvSaved', function(){
+      // Save the metadata
+      console.log('end csv, start saveDataset');
+      Metadata.saveDataset(tableMetaData, controller);
+      
+    });
 
-    // Save the metadata
+    controller.on('metaDataSaved', function(){
+      console.log('end saveDataset, start giving res');
 
-    Metadata.saveDataset(tableMetaData);
-
+      Metadata.Dataset.all({where:{user_id: req.user.id}}, function(err, datasets) {
+        if (err) {
+          res.writeHead(500);
+          res.end("500 Internal Server Error error:", err);
+        } else {
+          if (!middleware.isAuth(req)) {
+            res.render('index');
+          } else {
+            res.render('profile', {
+              datasets: datasets,
+              isAuthenticated: true,
+              apiKey: req.user.apikey,
+              user: {
+                username: req.user.name
+              }
+            });
+          }
+        }
+      });
+    });
     // Read table meta data
 
-    Metadata.Dataset.all({where:{user_id: req.user.id}}, function(err, datasets) {
-      if (err) {
-        res.writeHead(500);
-        res.end("500 Internal Server Error error:", err);
-      } else {
-        if (!middleware.isAuth(req)) {
-          res.render('index');
-        } else {
-          res.render('profile', {
-            datasets: datasets,
-            isAuthenticated: true,
-            apiKey: req.user.apikey,
-            user: {
-              username: req.user.name
-            }
-          });
-        }
-      }
-    });
  },
 
  'generateApiKey': function(req, res) {

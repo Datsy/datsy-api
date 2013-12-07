@@ -1,3 +1,4 @@
+
 var metadataModel = function(schema) {
 
   // Namespace for the Metadata tables / relationships
@@ -48,7 +49,8 @@ var metadataModel = function(schema) {
 
   // Saves a JSON object into the database
 
-  Metadata.saveDataset = function(jsonMetadata) {
+  Metadata.saveDataset = function(jsonMetadata, controller) {
+    this.controller = controller;
 
     var dataset         = new this.Dataset();
     dataset.table_name  = jsonMetadata.table_name;
@@ -111,7 +113,14 @@ var metadataModel = function(schema) {
   // Save tag data to the database
 
   Metadata.saveTags = function(dataset, jsonMetadata, i) {
-    if (i >= jsonMetadata.tags.length) {return;}
+
+    var self = this;
+
+    if (i >= jsonMetadata.tags.length) {
+      console.log('in saveTags');
+      self.controller.emit('metaDataSaved');
+      return;
+    }
 
     var cb = function(err, data) {
       if (err) {
@@ -136,7 +145,6 @@ var metadataModel = function(schema) {
     };
 
     i = i || 0;
-    var self = this,
     tag = jsonMetadata.tags[i];
     console.log('in metadatamodel file     ', tag);
 
