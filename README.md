@@ -24,6 +24,28 @@ Run `grunt prod` to do the following:
 API Endpoints
 -------
 
+### All Tags Endpoint
+GET /search/tag
+Returns object with two fields:
+- tag: array of all tags in the database
+- total: number of tables that have tags
+
+###### Parameters
+None
+
+###### Example
+```
+/search/tag
+```
+###### Response
+```
+{
+  tag: ["san francisco", "technology", "stock", "weather", "fitbit", "ufo"],
+  total: <total number of table relating to the tags>
+}
+```
+
+
 ### Search Endpoint
 
 ###### Parameters
