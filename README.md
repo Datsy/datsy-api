@@ -113,11 +113,14 @@ GET search/meta
 ```
 ###### Response
 Returns an array of JSON objects, each representing the metadata for a table in the database. MetaData object also include column information.
+
 Response to:
 ```
 http://datsy-dev.azurewebsites.net/search/meta
 ```
+
 Returned:
+
 ```
 [
   {
@@ -168,11 +171,14 @@ GET search/meta?tag=<tagname>
 ###### Response
 - returns metadata, including column information, of tables associated with the <tagname>s.
 - a query can consist of multiple tags
+
 Response to:
+
 ```
 http://datsy-dev.azurewebsites.net/search/meta?tag=technology
 ```
 Returned:
+
 ```
 [
   {
@@ -204,8 +210,9 @@ Returned:
       }
     ]
   },
-  ...more tables as found...
+
 ]
+
 ```
 
 ### Search Endpoint
