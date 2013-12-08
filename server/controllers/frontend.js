@@ -473,6 +473,8 @@ frontendControllers = {
     var expectedResultLength = undefined;
     var rowNumber;
     var filterColumn = [];
+    var tableNameNotValid = false;
+    var returnedData = null;
 
     if (req.query.name !== undefined){
       // setup number of row to return
@@ -502,60 +504,70 @@ frontendControllers = {
         console.log(req.query.name,'name');
         if (err) {
           console.log("Error in reading Metadata.Dataset:", err);
-        }
-          console.log("Data in reading Metadata.Dataset:", data);
-        expectedResultLength = data.length;
-        resultLength = data.length;
-        for (var i = 0; i < data.length; i++){
-          metaDataResult[data[i].id] = {tableMeta: data[i]};
-          // metaDataResult.push(metaData);
-          var j = i;
+        } else if (data.length === 0){
+          var message = "ERROR: table name doesn't exist";
+          console.log(message);
+          tableNameNotValid = true;
+          returnedData = message;
+        } else {
+          expectedResultLength = data.length;
+          resultLength = data.length;
+          for (var i = 0; i < data.length; i++){
+            metaDataResult[data[i].id] = {tableMeta: data[i]};
+            // metaDataResult.push(metaData);
+            var j = i;
 
-          (function(j){
+            (function(j){
 
-            Metadata.DataColumn.all({where:{dataset_id:data[0].id}}, function(err, data){
-              if (err) {
-                console.log("Error in reading Metadata.DataColumn:", err);
-              }
-              console.log("Data in reading Metadata.DataColumn:", data);
-              var columnDefines = {};
-              var currentDatasetId = data[j].dataset_id;
-              for(var i = 0; i < data.length; i++){
-                columnDefines[data[i].name] = {type: data[i].datatype};
-              }
-              var thisTable = schema.define(metaDataResult[currentDatasetId]["tableMeta"]["table_name"],columnDefines);
+              Metadata.DataColumn.all({where:{dataset_id:data[0].id}}, function(err, data){
+                if (err) {
+                  console.log("Error in reading Metadata.DataColumn:", err);
+                }
+                // console.log("Data in reading Metadata.DataColumn:", data);
+                var columnDefines = {};
+                var currentDatasetId = data[j].dataset_id;
+                for(var i = 0; i < data.length; i++){
+                  columnDefines[data[i].name] = {type: data[i].datatype};
+                }
+                var thisTable = schema.define(metaDataResult[currentDatasetId]["tableMeta"]["table_name"],columnDefines);
 
-              updateSchema().then(function(){
-                thisTable.all({limit:rowNumber}, function(err, data){
-                  if (err) {
-                    console.log("Error in reading thisTable.all:", err);
-                  }
-                  console.log("Data in reading thisTable.all:", data);
+                updateSchema().then(function(){
+                  thisTable.all({limit:rowNumber}, function(err, data){
+                    if (err) {
+                      console.log("Error in reading thisTable.all:", err);
+                    }
+                    // console.log("Data in reading thisTable.all:", data);
 
-                  metaDataResult[currentDatasetId]["row"] = data;
-                  if (filterColumn.length != 0){
-                    metaDataResult[currentDatasetId]["row"] = filterDatabaseColumn(metaDataResult[currentDatasetId]["row"], filterColumn);
-                  };
-                  finalMetaDataResult["Result"] = metaDataResult[currentDatasetId];
-                  console.log("Final Meta Data Result:", finalMetaDataResult["Result"]);
-                  res.send(finalMetaDataResult);
+                    metaDataResult[currentDatasetId]["row"] = data;
+                    if (filterColumn.length != 0){
+                      metaDataResult[currentDatasetId]["row"] = filterDatabaseColumn(metaDataResult[currentDatasetId]["row"], filterColumn);
+                    };
+                    finalMetaDataResult["Result"] = metaDataResult[currentDatasetId];
+                    // console.log("Final Meta Data Result:", finalMetaDataResult["Result"]);
+                    returnedData = finalMetaDataResult;
+                  });
                 });
-              });
-            })
-          })(j);
+              })
+            })(j);
+          }
         }
       });
-
+  
       var doneId = setInterval(function(){
-          if (resultLength === expectedResultLength){
+          console.log("This doneId = setInterval keep running");
+          if ((resultLength === expectedResultLength || tableNameNotValid === true) && (returnedData !== null)) {
+            console.log("This doneId = setInterval is CLEARED!!");
             clearInterval(doneId);
+            res.send(returnedData);
           }
         }
         ,3000
       );
+
     } else {
       var message = "ERROR: the query string, 'name' is not found in the endpoint request";
-      res.send(message); 
+      returnedData = message;
+      res.send(returnedData); 
     }
 
     var filterDatabaseColumn = function(rowResult, filter){
