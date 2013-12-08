@@ -21,13 +21,21 @@ config = {
       }
     },
     database: {
+<<<<<<< HEAD
       user: "pieterdejong",
+=======
+      user: "shanshan",
+>>>>>>> af90cbee06a22a26c7169bcabc01f6d56f709e7f
       password: "",
       host: "",
       dbname: "datsy"
     },
     datastore: {
+<<<<<<< HEAD
       user: "pieterdejong",
+=======
+      user: "shanshan",
+>>>>>>> af90cbee06a22a26c7169bcabc01f6d56f709e7f
       password: "",
       host: "",
       dbname: "datastore"
@@ -132,4 +140,8 @@ config = {
 };
 
 // Export config
+<<<<<<< HEAD
 module.exports = config;
+=======
+module.exports = config;
+>>>>>>> af90cbee06a22a26c7169bcabc01f6d56f709e7f
