@@ -3,6 +3,7 @@ var express = require('express'),
     config = require('./config.js'),
     routes = require('./server/routes'),
     passport = require("passport"),
+    pingHost = require("./server/helpers/pingHost.js"),
     port = process.env.PORT || 5000,
     app = express(),
     flash = require("connect-flash"),
@@ -78,5 +79,31 @@ app.use(function(req, res, next){
   res.type('txt').send('Not found');
 });
 
+app.listen(port, function(){
+  // make database query to make database connection alive
+  
+  var request = require('request');
+  var httpReqToPing = function(){
+    request('http://datsy-dev.azurewebsites.net/search/tag', function (error, response, body) {
+      if (!error && response.statusCode == 200) {
+        console.log("azure database is alive"); // Print the google web page.
+      } else {
+        console.log('ERROR: azure database is DEAD!!!',response.statusCode);
+      }
+    });
+  }
 
-app.listen(port);
+  // var useDatabaseReqToPing = function(){
+  //   var User = Models.User;
+  //   User.findOne({where: {id: 1}},
+  //     function (err, result) {
+  //       var msg = err ? 'ERROR: azure database is DEAD!!!' + err : 'azure database is alive'; 
+  //       console.log(msg);
+  //   });
+  // };
+
+  setInterval(httpReqToPing, 60000);
+
+  //ping virtual macihne not working at this time
+  //pingHost([config[app.get('env')].database.host]);
+});

@@ -8,23 +8,36 @@ var passwordHash = require('password-hash'),
     hat = require('hat'),
     mailer = require('../helpers/sendEmail.js'),
     middleware = require('../middleware/middleware.js'),
-    binaryCSV = require('binary-csv');
+    binaryCSV = require('binary-csv'),
+    tagSearch = require('./api_tags.js'),
+    metaSearch = require('./api_meta.js'),
+    User,
+    Metadata,
+    EmailToken,
+    schema,
+    frontendControllers,
+    EventEmitter = require('events').EventEmitter,
+    indexController = require('./index_controller.js');
 
+var Schema = require('jugglingdb').Schema;
+var _ = require("underscore");
 
+var updateSchema = function(){
+    var deferred = q.defer();
+    console.log("updating schema");
 
+    schema.autoupdate(function(msg){
+      console.log("*** db schema update completed");
+      deferred.resolve('deferred resolved!!');
+    });
+
+    return deferred.promise;
+};
 
 var frontendControllers = {
   'index': function(req, res) {
-    if (!middleware.isAuth(req)) {
-      res.render('index');
-    } else {
-      res.render('index', {
-        isAuthenticated: true,
-        user: {
-          username: req.user[0].name
-        }
-      });
-    }
+    indexController.init0(User, Metadata, EmailToken, schema);
+    indexController.init(req, res);
   },
 
 
@@ -217,6 +230,7 @@ var frontendControllers = {
 
 
   'saveDataset': function(req, res) {
+    var controller = new EventEmitter();
 
     // Construct metadata JSON object
 
@@ -290,110 +304,199 @@ var frontendControllers = {
   },
 
   'apiSearchMeta': function(req, res){
+    metaSearch.init({
+      User: User,
+      Metadata: Metadata,
+      EmailToken: EmailToken});
+
+    metaSearch.restartSchema();
+
     console.log("In apiSearchMeta");
     console.log("Query String parameters:", req.query.tag);
 
-    if(req.query.tag === undefined){
-      // 2) GET search/meta
-      // - return all tables meta data
-      Metadata.Dataset.all(function(err, data){
-        if(err) {
-          res.send("500 Internal Server Error error:", err);
-        } else {
-          console.log("Successfully retrieved all table meta.");
-          res.send(data);
-        }
-      });
-    } else {
+      // 1) GET search/meta
+      // 2) GET search/meta?tag=<tagname>
       // 3) GET search/meta?tag=<tagname>&tag=<tagname>
-      // - return meta data of tables associated with these <tagname>s.
-
-      // dataset associated with each tag
-      taggedData = [];
-      // copy req.query.tag into queryTag
-      var queryTag = [];
-      if ( Array.isArray(req.query.tag) ){
-        for (var i = 0; i < req.query.tag.length; i++){
-          queryTag[i] = req.query.tag[i];
-        }
-      } else {
-        queryTag.push(req.query.tag);
-      }
-
-      console.log("queryTag:", queryTag);
-      for (var i = 0; i < queryTag.length; i++){
-        Metadata.Tag.all({where: {label: queryTag[i]}},
-          function(err, data){
-            console.log("Tag info:", data);
-            if (data.length !== 0){
-              var thisTag = new Metadata.Tag({id:data[0].id});
-              thisTag.dataset(function(err, data){
-                console.log("Dataset Found:", data);
-                taggedData.push(data);
-              });
-            } else {
-              // to facilitate the return of an empty array
-              // in the following code
-              taggedData.push([]);
-            }
-          }
-        );
-      }
-
-      var doneId = setInterval(function(){
-            console.log("taggedData.length:", taggedData.length);
-            if (taggedData.length === queryTag.length){
-              console.log("****Done:", taggedData);
-              clearInterval(doneId);
-              var result = filterTaggedData();
-              res.send(result);
-            }
-          }
-          ,500
-      );
-
-      var filterTaggedData = function(){
-        var counter = {};
-        var tableMeta = {};
-        var result = [];
-        for (var i = 0; i < taggedData.length; i++){
-          for (var j = 0; j < taggedData[i].length; j++){
-            if (taggedData[i][j] !== null){
-              if (counter.hasOwnProperty(taggedData[i][j].id)){
-                counter[taggedData[i][j].id] += 1;
-              } else {
-                tableMeta[taggedData[i][j].id] = taggedData[i][j];
-                counter[taggedData[i][j].id] = 1;
-              }
-            }
-          }
-        }
-        console.log("counter:", counter);
-        for(var key in counter){
-          if (counter[key] === taggedData.length){
-            result.push(tableMeta[key]);
-          }
-        }
-        console.log("result:", result);
-        return result;
-      };
+    var tag = req.query.tag;
+    if(tag === undefined) {
+      metaSearch.getAllMeta(req,res);
+    } else if (typeof tag === 'string') {
+      metaSearch.getSomeMeta(frontendControllers.cleanTags([tag]),req,res);
+    } else if (Array.isArray(tag)){
+      metaSearch.getSomeMeta(frontendControllers.cleanTags(tag),req,res);
     }
   },
 
-  'apiSearchTags': function(req, res){
+  cleanTags: function(tags) {
+    var filtered = [];
+    for (var i = 0; i < tags.length; i ++) {
+      filtered.push(tags[i].replace(/[^a-zA-Z0-9 ]|^\s*|\s*$/g, '').toLowerCase());
+    }
+    return filtered;
+  },
+
+  'apiSearchTags2': function(req, res){
     console.log("Retrieving all tags...");
-    var result = [];
+    var result = {
+      tag: [],
+      total: 0
+    };
     Metadata.Tag.all(function(err, data){
       if(err) {
         res.send("500 Internal Server Error error:", err);
       } else {
         console.log("Successfully retrieved all tags.");
-        for(var i = 0; i < data.length; i++){
-          result.push(data[i].label);
+        var i,j,tag, dataLeft = data.length, obj = {};
+
+        for(i = 0; i < data.length; i++) {
+          result.tag.push(data[i].label);
+          tag = new Metadata.Tag({id:data[i].id});
+          tag.dataset(function(err,dataset) {
+            for(j = 0; j < dataset.length; j ++) {
+              seenId = dataset[j].id;
+              if (!obj[seenId]) {
+                obj[seenId] = true;
+              }
+            }
+            dataLeft --;
+          });
         }
-        res.send(result);
+        var intervalID = setInterval(function(){
+          if (dataLeft === 0) {
+            result.total = Object.keys(obj).length;
+            res.send(result);
+            clearInterval(intervalID);
+          }
+        }, 100);
       }
     });
+  },
+
+  'apiSearchTags': function(req, res){
+    tagSearch.init({
+      User: User,
+      Metadata: Metadata,
+      EmailToken: EmailToken});
+    tagSearch.restartSchema();
+    console.log(typeof req.query.tag,'tag');
+      // 1) GET search/tag
+      // 2) GET search/tag?tag=<tagname>
+      // 3) GET search/tag?tag=<tagname>&tag=<tagname>
+    var tag = req.query.tag;
+    if(tag === undefined) {
+      tagSearch.getAllTags(req,res);
+    } else if (typeof tag === 'string') {
+      tagSearch.getSomeTags(frontendControllers.cleanTags([tag]),req,res);
+    } else if (Array.isArray(tag)){
+      tagSearch.getSomeTags(frontendControllers.cleanTags(tag),req,res);
+    }
+  },
+
+  'apiSearchTable': function(req, res){
+    var metaDataResult = {};
+    var finalMetaDataResult = {};
+    var resultLength = 0;
+    var expectedResultLength = undefined;
+    var rowNumber;
+    var filterColumn = [];
+
+    if (req.query.name !== undefined){
+      // setup number of row to return
+      if (req.query.row === undefined){
+        // if row is not specified, default to this
+        rowNumber = 5;
+      } else if (req.query.row === "ALL"){
+        // this will read all rows
+        rowNumber = '';
+      } else {
+        rowNumber = req.query.row;
+      }
+
+      // set up column type to return
+      if (req.query.column === undefined){
+        // if column is not specified, default to an empty array
+        filterColumn = [];
+      } else {
+        if (typeof req.query.column === "string"){
+          filterColumn.push(req.query.column);
+        } else {
+          filterColumn = req.query.column;
+        }
+      }
+
+      var result = Metadata.Dataset.all({where:{table_name: req.query.name}}, function(err, data){
+        if (err) {
+          console.log("Error in reading Metadata.Dataset:", err);
+        }
+          console.log("Data in reading Metadata.Dataset:", data);
+        expectedResultLength = data.length;
+        resultLength = data.length;
+        for (var i = 0; i < data.length; i++){
+          metaDataResult[data[i].id] = {tableMeta: data[i]};
+          // metaDataResult.push(metaData);
+          var j = i;
+
+          (function(j){
+
+            Metadata.DataColumn.all({where:{dataset_id:data[0].id}}, function(err, data){
+              if (err) {
+                console.log("Error in reading Metadata.DataColumn:", err);
+              }
+              console.log("Data in reading Metadata.DataColumn:", data);
+              var columnDefines = {};
+              var currentDatasetId = data[j].dataset_id;
+              for(var i = 0; i < data.length; i++){
+                columnDefines[data[i].name] = {type: data[i].datatype};
+              }
+              var thisTable = schema.define(metaDataResult[currentDatasetId]["tableMeta"]["table_name"],columnDefines);
+
+              updateSchema().then(function(){
+                thisTable.all({limit:rowNumber}, function(err, data){
+                  if (err) {
+                    console.log("Error in reading thisTable.all:", err);
+                  }
+                  console.log("Data in reading thisTable.all:", data);
+
+                  metaDataResult[currentDatasetId]["row"] = data;
+                  if (filterColumn.length != 0){
+                    metaDataResult[currentDatasetId]["row"] = filterDatabaseColumn(metaDataResult[currentDatasetId]["row"], filterColumn);
+                  };
+                  finalMetaDataResult["Result"] = metaDataResult[currentDatasetId];
+                  console.log("Final Meta Data Result:", finalMetaDataResult["Result"]);
+                  res.send(finalMetaDataResult);
+                });
+              });
+            })
+          })(j);
+        }
+      });
+
+      var doneId = setInterval(function(){
+          if (resultLength === expectedResultLength){
+            clearInterval(doneId);
+          }
+        }
+        ,3000
+      );
+    } else {
+      var message = "ERROR: the query string, 'name' is not found in the endpoint request";
+      res.send(message);
+    }
+
+    var filterDatabaseColumn = function(rowResult, filter){
+      var newRowResult = [];
+      var tempRow = {};
+      for (var i = 0; i < rowResult.length; i++){
+        for (var j = 0; j < filter.length; j++){
+          if (rowResult[i][filter[j]] !== undefined){
+            tempRow[filter[j]] = rowResult[i][filter[j]];
+          }
+        }
+        newRowResult.push(tempRow);
+        tempRow = {};
+      }
+      return newRowResult;
+    }
   }
 };
 

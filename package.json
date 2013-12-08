@@ -30,7 +30,9 @@
     "binary-csv": "~0.1.6",
     "hat": "0.0.x",
     "pg": "~2.0.0",
-    "sequelize": "~2.0.0"
+    "sequelize": "~2.0.0",
+    "jQuery": "1.7.4",
+    "ping": "0.1.x"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
@@ -48,7 +50,9 @@
     "superagent": "*",
     "expect.js": "*",
     "phantom": "0.5.4",
+    "scraper": "0.0.9",
     "should": "*"
+
   },
   "scripts": {
     "test": "grunt travis"

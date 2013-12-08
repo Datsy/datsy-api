@@ -1,8 +1,8 @@
 var fs = require('fs'),
     q = require('q'),
     binaryCSV = require('binary-csv'),
-    parser = binaryCSV(),
     config = require('../../config.js');
+    // Writable = require('stream').Writable;
 
 
 var csv = {};
@@ -16,9 +16,8 @@ csv.file = '';
 csv.metadata = '';
 csv.columnNames = [];
 csv.model = {};
-csv.schema;
 
-csv.saveDataset = function(path, schema, metadata) {
+csv.saveDataset = function(path, schema, metadata,controller) {
   if (!path) {
     return;
   }
@@ -26,6 +25,7 @@ csv.saveDataset = function(path, schema, metadata) {
   this.path = path;
   this.schema = schema;
   this.metadata = metadata;
+  this.controller = controller;
   this.createModel();
 };
 
@@ -36,14 +36,14 @@ csv.saveDataset = function(path, schema, metadata) {
  */
 
 csv.saveData = function() {
-  var self = this,
+  var parser = binaryCSV(),//must be defined here for the scope!
+      self = this,
       count = 0;
-
+  console.log("In saveData");
   fs.createReadStream(this.path).pipe(parser)
     .on('data', function(line) {
       if (count > 0) {
         line = line.toString().split(',');
-
         var obj = {};
         for (var i = 0; i < line.length; i++) {
           obj[self.columnNames[i]] = line[i];
@@ -55,7 +55,18 @@ csv.saveData = function() {
       } else {
         count++;
       }
+    })
+    .on('error', function(err) {
+      console.log('cannot read csv', err);
+    })
+    .on('end', function(){
+      console.log(self.controller,'on end');
+
+      if (self.controller) {
+        self.controller.emit('csvSaved');
+      }
     });
+  console.log('start piping');
 };
 
 
@@ -113,6 +124,7 @@ csv.createModel = function() {
   }
 
   this.Table = this.schema.define(this.metadata.table_name, model);
+  console.log("Woon Ket - after create table schema");
 
   var self = this;
   var createTable = function() {
@@ -120,12 +132,14 @@ csv.createModel = function() {
     self.schema.autoupdate(function() {
       deferred.resolve();
     });
-
+    console.log('autoupdating')
     return deferred.promise;
   };
 
   createTable()
     .then(function() {
+    console.log('done autoupdating')
+
       self.saveData();
     });
 };

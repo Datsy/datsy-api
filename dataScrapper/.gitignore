@@ -1,5 +1,6 @@
 *.json
 screenshot/
 *.xlsx
+dataUrl.txt
 pyphantomjs-master/
 phantomjs-1.9.2-macosx/

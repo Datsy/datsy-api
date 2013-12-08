@@ -13,7 +13,7 @@ block content
         p.lead Welcome back to your Datsy profile!  You currently have&nbsp;
           span.badge.badge-info= datasets.length
           &nbsp;datasets uploaded, and there have been&nbsp;
-          span.badge.badge-info TBD
+          span.badge.badge-info=view_count
           &nbsp;new views since your last login.  As a reference, your API key is&nbsp;
           code
            -  var text = apiKey.toUpperCase();
@@ -31,7 +31,7 @@ block content
           th Created At
           th Views
           - var userTableMetaData = datasets || []
-          - for (var i =0; i < userTableMetaData.length; i++){
+          - for (var i = 0; i < userTableMetaData.length; i++){
           - total_views += userTableMetaData[i].view_count;
           tr
             td= userTableMetaData[i].title
@@ -39,7 +39,7 @@ block content
             td= userTableMetaData[i].row_count
             td= userTableMetaData[i].col_count
             td= userTableMetaData[i].created_at.toUTCString()
-            td= userTableMetaData[i].view_count
+            td= +(userTableMetaData[i].view_count)
           -};
 
     script(src='/app.js')

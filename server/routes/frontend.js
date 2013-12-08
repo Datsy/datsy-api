@@ -8,8 +8,7 @@ module.exports = function(app, passport, Models) {
 
   app.get('/', frontend.index);
 
-
-  app.post('/login',
+  app.post("/login",
     passport.authenticate('user', {failureRedirect : "#/user-login-fail"}),
     function(req, res) {
       res.redirect('/profile');
@@ -45,4 +44,6 @@ module.exports = function(app, passport, Models) {
   app.get('/userTableMetaData', frontend.userTableMetaData);
   app.get('/search/meta', frontend.apiSearchMeta);
   app.get('/search/tag', frontend.apiSearchTags);
+  app.get('/search/tag2', frontend.apiSearchTags2);
+  app.get('/search/table', frontend.apiSearchTable);
 };

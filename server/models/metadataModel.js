@@ -173,20 +173,6 @@ Models.saveDataset = function(json, cb) {
 };
 
 
-Models.tagObjects = function(tags) {
-  var obj = [];
-  for (var i = 0; i < tags.length; i++) {
-    obj.push({
-      label: tags[i]
-    });
-  }
-
-  return obj;
-};
-
-
-Models.sequelize = sequelize;
-
 
 
 module.exports = Models;

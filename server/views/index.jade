@@ -6,21 +6,23 @@ block content
   div.page-header
     h1 Manage Data Better
        br
-       small  Easily upload, share and explore data. Track versions, usage and relationsihps with other datasets. Datsy makes sharing and exploring data easy.
+       small  Easily upload, share and explore data. Track versions, usage and relationships with other datasets. Datsy makes sharing and exploring data easy.
     p
      a.btn.btn-primary.btn-large(href='#/signup') Signup
   div.row
     div.span4
       div.well
         h1.text-center
-          a.splash(href='/signup') Click Here to Signup
+          img(src='/imgs/databaselogo.png')
         hr
         p.lead
+          strong Setup your profile
         p Signup and access your profile in one quick step
     div.span4
      div.well
        h1.text-center
-         a.splash(href='/') To Be Determined
+       a.blah
+        img(src='/imgs/cloudupload3.png')
        hr
        p.lead
          strong Upload and share
@@ -28,15 +30,35 @@ block content
     div.span4
      div.well
        h1.text-center
-         a.splash(href='/') To Be Determined
+         img(src='/imgs/searchglass.png')
        hr
        p.lead
          strong Search datasets
        p Find data based on tags, column names and descriptions
 
-    div.span12
-      br
-      br
-      br
-      legend Recently Created Datasets
+    //- div.user-table
+    //-   table.table.table-hover
+    //-     legend(style='border: none') Recently Created Datasets
+    //-       tr
+    //-         th Title
+    //-         th Description
+    //-         th Rows
+    //-         th Columns
+    //-         th Created At
+    //-         th Views
+    //-         - var userTableMetaData = datasets || []
+    //-         - userTableMetaData.sort(function(a,b) {
+    //-         -    return b.created_at - a.created_at
+    //-         - });
+    //-         - for (var i =0; i < 5; i++){
+    //-         - total_views += userTableMetaData[i].view_count;
+    //-         tr
+    //-           td= userTableMetaData[i].title
+    //-           td= userTableMetaData[i].description
+    //-           td= userTableMetaData[i].row_count
+    //-           td= userTableMetaData[i].col_count
+    //-           td= userTableMetaData[i].created_at.toUTCString()
+    //-           td= +(userTableMetaData[i].view_count)
+    //-         -};
+
 
