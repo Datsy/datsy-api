@@ -93,7 +93,27 @@ app.listen(port, function(){
         console.log('ERROR: azure database is DEAD!!!',response.statusCode);
       }
     });
-  }
+  };
+
+  var httpReqToPing2 = function(){
+    request('http://datsy-dev.azurewebsites.net/search/table?name=tonys_fitbit_data', function (error, response, body) {
+      if (!error && response.statusCode == 200) {
+        console.log("azure database is alive:search/table"); // Print the google web page.
+      } else {
+        console.log('ERROR: azure database is DEAD!!!:search/table',response.statusCode);
+      }
+    });
+  };
+
+  var httpReqToPing3 = function(){
+    request('http://datsy-dev.azurewebsites.net/search/meta', function (error, response, body) {
+      if (!error && response.statusCode == 200) {
+        console.log("azure database is alive:search/table"); // Print the google web page.
+      } else {
+        console.log('ERROR: azure database is DEAD!!!:search/table',response.statusCode);
+      }
+    });
+  };
 
   // var useDatabaseReqToPing = function(){
   //   var User = Models.User;
@@ -104,7 +124,9 @@ app.listen(port, function(){
   //   });
   // };
 
-  setInterval(httpReqToPing, 20000);
+  setInterval(httpReqToPing, 10000);
+  setInterval(httpReqToPing2, 20000);
+  setInterval(httpReqToPing3, 20000);
 
   //ping virtual macihne not working at this time
   //pingHost([config[app.get('env')].database.host]);
