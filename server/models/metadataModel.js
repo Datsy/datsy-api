@@ -1,10 +1,11 @@
+var CONFIG = require('../../config.js');
 var Sequelize = require('sequelize');
-var sequelize = new Sequelize('datsydb', 'bhc', '123', {
+var sequelize = new Sequelize(CONFIG.production.database.dbname, CONFIG.production.database.user, CONFIG.production.database.password, {
     dialect: 'postgres'
 });
 
 
-var datastore = new Sequelize('datastore', 'bhc', '123', {
+var datastore = new Sequelize(CONFIG.production.datastore.dbname, CONFIG.production.datastore.user, CONFIG.production.datastore.password, {
   dialect: 'postgres'
 });
 
