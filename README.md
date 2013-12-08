@@ -48,19 +48,15 @@ None
 ```
 
 ### Get All Metadata
+Returns metadata for all tables, including column metadata.
+
+###### Usage
 ```
 GET search/meta
 ```
-Returns metadata for all tables, including column metadata.
-
-###### Example
-```
-/search/meta
-```
-
 ###### Response
 ```
-
+{}
 ```
 
 ### Search Endpoint
