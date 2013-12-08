@@ -17,51 +17,51 @@ var apiControllers = {
   },
 
   restartSchema: function(){
-    schema = new Schema('postgres', {
-      username: "masterofdata",
-      password: "gj1h23gnbfsjdhfg234234kjhskdfjhsdfKJHsdf234",
-      host: "137.135.14.92",
-      database: "datsydata"
-    });
+    // schema = new Schema('postgres', {
+    //   username: "masterofdata",
+    //   password: "gj1h23gnbfsjdhfg234234kjhskdfjhsdfKJHsdf234",
+    //   host: "137.135.14.92",
+    //   database: "datsydata"
+    // });
 
-    Tag = schema.define('datasettag', {
-      label: {type: String, unique: true}
-    });
+    // Tag = schema.define('datasettag', {
+    //   label: {type: String, unique: true}
+    // });
 
-    Dataset = schema.define('datasetmeta', {
-      table_name: {type: String, unique: true},
-      user_id: {type: Number},
-      url: {type: String},
-      title: {type: String},
-      description: {type: String},
-      author: {type: String},
-      created_at: {type: Date},
-      last_access: {type: Date},
-      view_count: {type: Number},
-      star_count: {type: Number},
-      row_count: {type: Number},
-      col_count: {type: Number}, 
-      last_viewed:{type: Date},
-      view_count:{type: Number},
-      token: {type: String}
-    });
+    // Dataset = schema.define('datasetmeta', {
+    //   table_name: {type: String, unique: true},
+    //   user_id: {type: Number},
+    //   url: {type: String},
+    //   title: {type: String},
+    //   description: {type: String},
+    //   author: {type: String},
+    //   created_at: {type: Date},
+    //   last_access: {type: Date},
+    //   view_count: {type: Number},
+    //   star_count: {type: Number},
+    //   row_count: {type: Number},
+    //   col_count: {type: Number}, 
+    //   last_viewed:{type: Date},
+    //   view_count:{type: Number},
+    //   token: {type: String}
+    // });
 
-    DataColumn = schema.define('datacolumnmeta', {
-      name: {type: String},
-      datatype: {type: String},
-      description: {type: String}
-    });
+    // DataColumn = schema.define('datacolumnmeta', {
+    //   name: {type: String},
+    //   datatype: {type: String},
+    //   description: {type: String}
+    // });
 
-    Dataset.hasAndBelongsToMany(Tag, {as: 'datasettag', foreignKey: 'tag_id'});
-    Tag.hasAndBelongsToMany(Dataset, {as: 'dataset', foreignKey: 'datasettag_id'});
-    Dataset.hasMany(DataColumn, {as: 'datacolumnmeta', foreignKey: 'dataset_id'});
+    // Dataset.hasAndBelongsToMany(Tag, {as: 'datasettag', foreignKey: 'tag_id'});
+    // Tag.hasAndBelongsToMany(Dataset, {as: 'dataset', foreignKey: 'datasettag_id'});
+    // Dataset.hasMany(DataColumn, {as: 'datacolumnmeta', foreignKey: 'dataset_id'});
 
   },
 
   getAllMeta: function(req, res) {
     var controller = new EventEmitter();
 
-    Dataset.all(function(err, data){
+    Metadata.Dataset.all(function(err, data){
       if(err) {
         res.send("(custom message) - 500 Internal Server Error error:", err);
       } else {
@@ -80,14 +80,14 @@ var apiControllers = {
     var tagsLeft = queryTag.length;
     var controller = new EventEmitter();
     for (var i = 0; i < queryTag.length; i++){
-      Tag.all({where: {label: queryTag[i]}},
+      Metadata.Tag.all({where: {label: queryTag[i]}},
         function(err, data){
           console.log("Tag info:", data);
           if (data.length === 0) {
             res.send(taggedData);
             return;
           }
-          var thisTag = new Tag({id:data[0].id});
+          var thisTag = new Metadata.Tag({id:data[0].id});
           thisTag.dataset(function(err, data){
             console.log("Dataset Found:", data);
             taggedData.push(data);
@@ -147,7 +147,7 @@ var apiControllers = {
     }
     var j = 0;
     for (var i = 0; i < rawMetas.length; i ++) {
-      DataColumn.all({where:{dataset_id: rawMetas[i].id}}, function(err,data) {
+      Metadata.DataColumn.all({where:{dataset_id: rawMetas[i].id}}, function(err,data) {
         rawMetas[j]['columns'] = rawMetas[j]['columns'] || [];
         for (var k = 0; k < data.length; k ++) {
           rawMetas[j]['columns'][k] = {
