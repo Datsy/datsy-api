@@ -1,11 +1,12 @@
-var CONFIG = require('../../config.js');
 var Sequelize = require('sequelize');
-var sequelize = new Sequelize(CONFIG.production.database.dbname, CONFIG.production.database.user, CONFIG.production.database.password, {
-    dialect: 'postgres'
+var sequelize = new Sequelize(process.env.DATABASE, process.env.USER, process.env.PASS, {
+  host: process.env.HOST,
+  dialect: 'postgres'
 });
 
 
-var datastore = new Sequelize(CONFIG.production.datastore.dbname, CONFIG.production.datastore.user, CONFIG.production.datastore.password, {
+var datastore = new Sequelize(process.env.DATASTORE, process.env.USER, process.env.PASS , {
+  host: process.env.HOST,
   dialect: 'postgres'
 });
 
