@@ -47,6 +47,9 @@ Returns object with two fields:
 }
 ```
 ###### 1.2 Usage: search using tags
+- Queries can contain one or more <code>tagname</code>s;
+- Punctuation is removed from the search.
+
 ```
 GET /search/tag?tag=<tagname>
 GET /search/tag?tag=<tagname>&tag=<anotherTagname>
@@ -54,8 +57,6 @@ GET /search/tag?tag=<tagname>&tag=<anotherTagname>
 Returns object with two fields:
 - total: return the total number of tables that contains the tag;
 - tag: return all the tags in the tables;
-- there can be multiple query string;
-- punctuation is removed from the search;
 
 Response to:
 ```
