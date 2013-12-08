@@ -24,6 +24,72 @@ Run `grunt prod` to do the following:
 API Endpoints
 -------
 
+### All Tags Endpoint
+Returns object with two fields:
+- tag: array of all tags attached to tables
+- total: total number of tables that have tags
+
+###### Usage
+```
+GET /search/tag
+```
+###### Response
+```
+{
+  tag: ["san francisco", "technology", "stock", "weather", "fitbit", "ufo"],
+  total: <total number of table relating to the tags>
+}
+```
+
+### Get All Metadata
+Returns metadata for all tables, including column metadata.
+
+###### Usage
+```
+GET search/meta
+```
+###### Response
+Returns an array of objects, each representing metadata a table. Tables contain metadata for their columns.
+```
+[
+  {
+    "table_name": "samsung_stock",
+    "user_id": 5,
+    "url": "www.yahoo.com",
+    "title": "samsung stock",
+    "description": "samsung stock data",
+    "author": "Yahoo finance",
+    "created_at": "2013-12-06T22:22:49.000Z",
+    "last_access": null,
+    "view_count": null,
+    "star_count": null,
+    "row_count": 786,
+    "col_count": 7,
+    "last_viewed": null,
+    "token": null,
+    "id": 1,
+    "columns": [
+      {
+        "name": "Date",
+        "description": "Date",
+        "data_type": "Date"
+      },
+      {
+        "name": "Open",
+        "description": "Open",
+        "data_type": "String"
+      }
+    ]
+  },
+  {
+    "table_name": "samsung_stock",
+    "user_id": 5,
+    "url": "www.yahoo.com",
+    ...
+  }
+]
+```
+
 ### Search Endpoint
 
 ###### Parameters
