@@ -26,8 +26,8 @@ API Endpoints
 
 ### All Tags Endpoint
 Returns object with two fields:
-- tag: array of all tags in the database
-- total: number of tables that have tags
+- tag: array of all tags attached to tables
+- total: total number of tables that have tags
 
 ###### Usage
 ```
