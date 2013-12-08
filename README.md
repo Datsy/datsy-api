@@ -25,19 +25,13 @@ API Endpoints
 -------
 
 ### All Tags Endpoint
-```
-GET /search/tag
-```
 Returns object with two fields:
 - tag: array of all tags in the database
 - total: number of tables that have tags
 
-###### Parameters
-None
-
-###### Example
+###### Usage
 ```
-/search/tag
+GET /search/tag
 ```
 ###### Response
 ```
