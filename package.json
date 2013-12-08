@@ -31,7 +31,6 @@
     "hat": "0.0.x",
     "pg": "~2.0.0",
     "sequelize": "~2.0.0",
-    "jQuery": "1.7.4",
     "ping": "0.1.x"
   },
   "devDependencies": {
