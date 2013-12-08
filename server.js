@@ -86,7 +86,7 @@ app.listen(port, function(){
   
   var request = require('request');
   var httpReqToPing = function(){
-    request('http://localhost:5000/search/tag', function (error, response, body) {
+    request('http://datsy-dev.azurewebsites.net/search/tag', function (error, response, body) {
       if (!error && response.statusCode == 200) {
         console.log("azure database is alive"); // Print the google web page.
       } else {
