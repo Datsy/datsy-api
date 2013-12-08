@@ -79,8 +79,8 @@ app.use(function(req, res, next){
   res.type('txt').send('Not found');
 });
 
+app.listen(port); //, function(){
 /*
-app.listen(port, function(){
   // make database query to make database connection alive
 
   var request = require('request');
@@ -104,7 +104,7 @@ app.listen(port, function(){
   // };
 
   setInterval(httpReqToPing, 60000);
-*/
   //ping virtual macihne not working at this time
   //pingHost([config[app.get('env')].database.host]);
 });
+*/
