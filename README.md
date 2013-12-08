@@ -156,11 +156,15 @@ Returned:
     ...
   }
 ]
+
 ```
+
 ###### 2.2 Usage
+
 ```
 GET search/meta?tag=<tagname>
 ```
+
 ###### Response
 - returns metadata, including column information, of tables associated with the <tagname>s.
 - a query can consist of multiple tags
