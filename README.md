@@ -31,8 +31,7 @@ API Endpoints
 | `tag `   | Optional    | The tags to be searched for                    |
 
 
-###### 1.1 
-###### Usage
+###### 1.1 Usage: get all tags
 ```
 GET /search/tag
 ```
@@ -47,7 +46,7 @@ Returns object with two fields:
   total: 9
 }
 ```
-###### 1.2 Usage
+###### 1.2 Usage: search using tags
 ```
 GET /search/tag?tag=<tagname>
 GET /search/tag?tag=<tagname>&tag=<anotherTagname>
@@ -107,7 +106,7 @@ Returns metadata for all tables, including column metadata.
 | `tag `   | Optional    | The tags to be searched for                    |
 
 
-###### 2.1 Usage
+###### 2.1 Usage: get metadata for all tables
 ```
 GET search/meta
 ```
@@ -161,7 +160,7 @@ Returned:
 ]
 ```
 
-###### 2.2 Usage
+###### 2.2 Usage: search metadata using tags 
 
 ```
 GET search/meta?tag=<tagname>
