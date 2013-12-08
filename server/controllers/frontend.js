@@ -1,5 +1,3 @@
-// Global requires
-
 var passwordHash = require('password-hash'),
     crypto = require('crypto'),
     q = require('q'),
@@ -11,32 +9,25 @@ var passwordHash = require('password-hash'),
     binaryCSV = require('binary-csv'),
     tagSearch = require('./api_tags.js'),
     metaSearch = require('./api_meta.js'),
+
     User,
-    Metadata,
+    Dataset,
+    Tag,
+    Column,
     EmailToken,
+    models,
     schema,
+
     frontendControllers,
+
     EventEmitter = require('events').EventEmitter,
     indexController = require('./index_controller.js');
 
-var Schema = require('jugglingdb').Schema;
-var _ = require("underscore");
 
-var updateSchema = function(){
-    var deferred = q.defer();
-    console.log("updating schema");
+frontendControllers = {
 
-    schema.autoupdate(function(msg){
-      console.log("*** db schema update completed");
-      deferred.resolve('deferred resolved!!');
-    });
-
-    return deferred.promise;
-};
-
-var frontendControllers = {
   'index': function(req, res) {
-    indexController.init0(User, Metadata, EmailToken, schema);
+    indexController.init0(models);
     indexController.init(req, res);
   },
 
@@ -75,7 +66,7 @@ var frontendControllers = {
     req.session.passport.userType = "user";
 
     Dataset.findAll({
-      where: {user_id: req.user[0].id}
+      where: { user_id: req.user[0].id }
     }).success(function(datasets) {
       console.log('found datasets');
       User.findAll({
@@ -266,36 +257,34 @@ var frontendControllers = {
 
     // Save to the datastore
 
-/*
     var csvPath = req.body.uploadFile;
-    csvLoader.saveDataset(csvPath, schema, metadata);
-*/
+    csvLoader.saveDataset(csvPath, metadata, models, function() {
 
+      // Save the metadata
 
-    // Save the metadata
+      models.saveDataset(metadata, function() {
 
-    models.saveDataset(metadata, function() {
+        // Redirect to '/profile' with updated dataset object
 
-      // Redirect to '/profile' with updated dataset object
-
-      Dataset.findAll({
-        where:{user_id: req.user[0].id}
-      }).success(function(datasets) {
-        if (!middleware.isAuth(req)) {
-          res.render('index');
-        } else {
-          res.render('profile', {
-            datasets: datasets,
-            isAuthenticated: true,
-            apiKey: req.user[0].api_key,
-            user: {
-              username: req.user[0].name
-            }
-          });
-        }
+        Dataset.findAll({
+          where:{user_id: req.user[0].id}
+        }).success(function(datasets) {
+          if (!middleware.isAuth(req)) {
+            res.render('index');
+          } else {
+            res.render('profile', {
+              datasets: datasets,
+              isAuthenticated: true,
+              apiKey: req.user[0].api_key,
+              user: {
+                username: req.user[0].name
+              }
+            });
+          }
+        });
       });
     });
- },
+  },
 
   'userTableMetaData': function(req, res) {
     console.log("In userTableMetaData");

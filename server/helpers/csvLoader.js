@@ -1,11 +1,11 @@
 var fs = require('fs'),
     q = require('q'),
     binaryCSV = require('binary-csv'),
-    config = require('../../config.js');
-    // Writable = require('stream').Writable;
-
+    config = require('../../config.js'),
+    Sequelize = require('sequelize');
 
 var csv = {};
+
 
 /**
  * After initializing the paths to the csv and metadata files, creates the
@@ -13,20 +13,19 @@ var csv = {};
  */
 
 csv.file = '';
-csv.metadata = '';
-csv.columnNames = [];
 csv.model = {};
 
-csv.saveDataset = function(path, schema, metadata,controller) {
+csv.saveDataset = function(path, metadata, Models, cb) {
   if (!path) {
     return;
   }
 
   this.path = path;
-  this.schema = schema;
+  this.datastore = Models.datastore;
   this.metadata = metadata;
-  this.controller = controller;
+  this.columnNames = [];
   this.createModel();
+  this.cb = cb;
 };
 
 
@@ -39,34 +38,33 @@ csv.saveData = function() {
   var parser = binaryCSV(),//must be defined here for the scope!
       self = this,
       count = 0;
-  console.log("In saveData");
+
   fs.createReadStream(this.path).pipe(parser)
     .on('data', function(line) {
       if (count > 0) {
         line = line.toString().split(',');
+        console.log(line);
         var obj = {};
         for (var i = 0; i < line.length; i++) {
           obj[self.columnNames[i]] = line[i];
         }
 
-        self.Table.create(obj);
-        count++;
-
-      } else {
-        count++;
+        new Sequelize.Utils.QueryChainer()
+          .add(self.Table.create(obj))
+          .run()
+          .success(function() { console.log('Success!'); })
+          .error(function(err) { console.log(err, obj); });
       }
+
+      count++;
     })
     .on('error', function(err) {
-      console.log('cannot read csv', err);
+      console.log('csv.saveData(): ', err);
     })
     .on('end', function(){
-      console.log(self.controller,'on end');
-
-      if (self.controller) {
-        self.controller.emit('csvSaved');
-      }
+      console.log('csv.saveData(): ENDED!');
+      self.cb();
     });
-  console.log('start piping');
 };
 
 
@@ -98,50 +96,36 @@ csv.createModel = function() {
 
   var model = {};
   for (var i = 0; i < this.metadata.columns.length; i++) {
-    var col = this.metadata.columns[i],
+    var column = this.metadata.columns[i],
         type;
 
-    switch (col.datatype) {
+    switch (column.datatype) {
       case 'String':
-        type = String;
+        type = Sequelize.STRING;
         break;
 
       case 'Date':
-        type = Date;
+        type = Sequelize.DATE;
         break;
 
       case 'Number':
-        type = Number;
+        type = Sequelize.INTEGER;
         break;
 
       default:
-        type = String;
+        type = Sequelize.STRING;
         break;
     }
 
-    model[col.name] = {type: type};
-    this.columnNames.push(col.name);
+    model[column.name] = {type: type};
+    this.columnNames.push(column.name);
   }
 
-  this.Table = this.schema.define(this.metadata.table_name, model);
-  console.log("Woon Ket - after create table schema");
-
-  var self = this;
-  var createTable = function() {
-    var deferred = q.defer();
-    self.schema.autoupdate(function() {
-      deferred.resolve();
-    });
-    console.log('autoupdating')
-    return deferred.promise;
-  };
-
-  createTable()
-    .then(function() {
-    console.log('done autoupdating')
-
+  self = this;
+  this.Table = this.datastore.define(this.metadata.table_name, model);
+  this.Table.sync().success(function() {
       self.saveData();
-    });
+  });
 };
 
 

@@ -4,6 +4,11 @@ var sequelize = new Sequelize('datsydb', 'bhc', '123', {
 });
 
 
+var datastore = new Sequelize('datastore', 'bhc', '123', {
+  dialect: 'postgres'
+});
+
+
 /**
  *  Define the table schemas
  */
@@ -85,7 +90,6 @@ Models.saveDataset = function(json, cb) {
     row_count: json.row_count,
     user_id: json.user_id,
     url: json.url,
-    title: json.title,
     description: json.description,
     author: json.author,
     created_at: json.created_at
@@ -122,10 +126,9 @@ Models.saveDataset = function(json, cb) {
     // Recursively insert the columns
 
     var addTags = function(tags, i) {
-      var self = this;
       tag = tags[i];
 
-      this.Tag.findAll({
+      self.Tag.findAll({
         where: { label: tag }
       }).success(function(result) {
 
@@ -173,6 +176,10 @@ Models.saveDataset = function(json, cb) {
 };
 
 
+// Pass around the db connections
+
+Models.sequelize = sequelize;
+Models.datastore = datastore;
 
 
 module.exports = Models;
