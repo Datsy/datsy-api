@@ -1,7 +1,7 @@
 var Sequelize = require('sequelize');
 var sequelize = new Sequelize(process.env.DATABASE, process.env.USER, process.env.PASS, {
   host: process.env.HOST,
-  dialect: 'postgres'
+    dialect: 'postgres'
 });
 
 
