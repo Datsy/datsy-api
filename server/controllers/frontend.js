@@ -499,6 +499,7 @@ frontendControllers = {
       }
 
       var result = Metadata.Dataset.all({where:{table_name: req.query.name}}, function(err, data){
+        console.log(req.query.name,'name');
         if (err) {
           console.log("Error in reading Metadata.Dataset:", err);
         }
