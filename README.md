@@ -204,7 +204,6 @@ Returned:
 ]
 ```
 
-
 ### Search Endpoint
 
 ###### Parameters
