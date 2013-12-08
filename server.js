@@ -3,7 +3,7 @@ var express = require('express'),
     config = require('./config.js'),
     routes = require('./server/routes'),
     passport = require("passport"),
-    pingHost = require("./server/helpers/pingHost.js"),
+    // pingHost = require("./server/helpers/pingHost.js"),
     port = process.env.PORT || 5000,
     app = express(),
     flash = require("connect-flash"),
@@ -81,7 +81,7 @@ app.use(function(req, res, next){
 
 app.listen(port, function(){
   // make database query to make database connection alive
-  
+
   var request = require('request');
   var httpReqToPing = function(){
     request('http://datsy-dev.azurewebsites.net/search/tag', function (error, response, body) {
@@ -97,7 +97,7 @@ app.listen(port, function(){
   //   var User = Models.User;
   //   User.findOne({where: {id: 1}},
   //     function (err, result) {
-  //       var msg = err ? 'ERROR: azure database is DEAD!!!' + err : 'azure database is alive'; 
+  //       var msg = err ? 'ERROR: azure database is DEAD!!!' + err : 'azure database is alive';
   //       console.log(msg);
   //   });
   // };
