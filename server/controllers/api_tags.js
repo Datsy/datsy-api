@@ -15,37 +15,37 @@ var apiControllers = {
   },
 
   restartSchema: function(){
-    schema = new Schema('postgres', {
-      username: "masterofdata",
-      password: "gj1h23gnbfsjdhfg234234kjhskdfjhsdfKJHsdf234",
-      host: "137.135.14.92",
-      database: "datsydata"
-    });
+    // schema = new Schema('postgres', {
+    //   username: "masterofdata",
+    //   password: "gj1h23gnbfsjdhfg234234kjhskdfjhsdfKJHsdf234",
+    //   host: "137.135.14.92",
+    //   database: "datsydata"
+    // });
 
-    Tag = schema.define('datasettag', {
-      label: {type: String, unique: true}
-    });
+    // Tag = schema.define('datasettag', {
+    //   label: {type: String, unique: true}
+    // });
 
-    Dataset = schema.define('datasetmeta', {
-      table_name: {type: String, unique: true},
-      user_id: {type: Number},
-      url: {type: String},
-      title: {type: String},
-      description: {type: String},
-      author: {type: String},
-      created_at: {type: Date},
-      last_access: {type: Date},
-      view_count: {type: Number},
-      star_count: {type: Number},
-      row_count: {type: Number},
-      col_count: {type: Number}, 
-      last_viewed:{type: Date},
-      view_count:{type: Number},
-      token: {type: String}
-    });
+    // Dataset = schema.define('datasetmeta', {
+    //   table_name: {type: String, unique: true},
+    //   user_id: {type: Number},
+    //   url: {type: String},
+    //   title: {type: String},
+    //   description: {type: String},
+    //   author: {type: String},
+    //   created_at: {type: Date},
+    //   last_access: {type: Date},
+    //   view_count: {type: Number},
+    //   star_count: {type: Number},
+    //   row_count: {type: Number},
+    //   col_count: {type: Number}, 
+    //   last_viewed:{type: Date},
+    //   view_count:{type: Number},
+    //   token: {type: String}
+    // });
 
-    Dataset.hasAndBelongsToMany(Tag, {as: 'datasettag', foreignKey: 'tag_id'});
-    Tag.hasAndBelongsToMany(Dataset, {as: 'dataset', foreignKey: 'datasettag_id'});
+    // Dataset.hasAndBelongsToMany(Tag, {as: 'datasettag', foreignKey: 'tag_id'});
+    // Tag.hasAndBelongsToMany(Dataset, {as: 'dataset', foreignKey: 'datasettag_id'});
 
   },
 
@@ -60,7 +60,7 @@ var apiControllers = {
     var tagsID = [];
 
   //query  the datasettag db to get all tags
-    Tag.all(function(err, data) {
+    Metadata.Tag.all(function(err, data) {
       if(err) {
         res.send("500 Internal Server Error error:", err);
       } else {
@@ -92,7 +92,7 @@ var apiControllers = {
           total: 0
         };
     for (var i = 0; i < tags.length; i ++) {
-      Tag.all({where:{label: tags[i]}}, function(err, data) {
+      Metadata.Tag.all({where:{label: tags[i]}}, function(err, data) {
         if(err) {
           res.send("500 Internal Server Error error:", err);
         } else {
@@ -139,7 +139,7 @@ var apiControllers = {
     var tagLabels = [],
         tagsLeft = tags.length;
     for (var i = 0; i < tags.length; i ++) {
-      Tag.all({where:{id: tags[i]}}, function(err, data) {
+      Metadata.Tag.all({where:{id: tags[i]}}, function(err, data) {
         if(err) {
           res.send("500 Internal Server Error error:", err);
         } else {
@@ -164,8 +164,8 @@ var apiControllers = {
   getTagsWithMetaTableID: function(metaTablsIds,controller) {
     var i,j,tag,seenId, dataLeft = metaTablsIds.length, obj = {};
     for(i = 0; i < metaTablsIds.length; i ++) {
-      dataset = new Dataset({id:metaTablsIds[i]});
-      dataset.datasettag(function(err,tag) {
+      dataset = new Metadata.Dataset({id:metaTablsIds[i]});
+      Metadata.dataset.datasettag(function(err,tag) {
         for(j = 0; j < tag.length; j ++) {
           seenId = tag[j].id;
           if (!obj[seenId]) {
@@ -187,7 +187,7 @@ var apiControllers = {
   getMetaTableIDwithTagID: function(tagIDs, controller) {
     var i,j,tag,seenId, dataLeft = tagIDs.length, obj = {};
     for(i = 0; i < tagIDs.length; i ++) {
-      tag = new Tag({id:tagIDs[i]});
+      tag = new Metadata.Tag({id:tagIDs[i]});
       tag.dataset(function(err,dataset) {
         for(j = 0; j < dataset.length; j ++) {
           seenId = dataset[j].id;
@@ -212,7 +212,7 @@ var apiControllers = {
     var filterController = new EventEmitter();
     var i,j,tag,seenId, dataLeft = tagIDs.length, obj = {};
     for(i = 0; i < tagIDs.length; i ++) {
-      tag = new Tag({id:tagIDs[i]});
+      tag = new Metadata.Tag({id:tagIDs[i]});
       tag.dataset(function(err,dataset) {
         var currentSet = {};
         for(j = 0; j < dataset.length; j ++) {
