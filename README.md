@@ -159,7 +159,6 @@ Returned:
     ...
   }
 ]
-
 ```
 
 ###### 2.2 Usage
@@ -210,9 +209,7 @@ Returned:
       }
     ]
   },
-
 ]
-
 ```
 
 ### Search Endpoint
