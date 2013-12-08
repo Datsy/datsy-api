@@ -165,7 +165,7 @@ var apiControllers = {
     var i,j,tag,seenId, dataLeft = metaTablsIds.length, obj = {};
     for(i = 0; i < metaTablsIds.length; i ++) {
       dataset = new Metadata.Dataset({id:metaTablsIds[i]});
-      Metadata.dataset.datasettag(function(err,tag) {
+      dataset.datasettag(function(err,tag) {
         for(j = 0; j < tag.length; j ++) {
           seenId = tag[j].id;
           if (!obj[seenId]) {
