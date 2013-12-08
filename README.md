@@ -25,7 +25,9 @@ API Endpoints
 -------
 
 ### All Tags Endpoint
+```
 GET /search/tag
+```
 Returns object with two fields:
 - tag: array of all tags in the database
 - total: number of tables that have tags
@@ -45,6 +47,21 @@ None
 }
 ```
 
+### Get All Metadata
+```
+GET search/meta
+```
+Returns metadata for all tables, including column metadata.
+
+###### Example
+```
+/search/meta
+```
+
+###### Response
+```
+
+```
 
 ### Search Endpoint
 
