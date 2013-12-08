@@ -49,8 +49,45 @@ Returns metadata for all tables, including column metadata.
 GET search/meta
 ```
 ###### Response
+Returns an array of objects, each representing metadata a table. Tables contain metadata for their columns.
 ```
-{}
+[
+  {
+    "table_name": "samsung_stock",
+    "user_id": 5,
+    "url": "www.yahoo.com",
+    "title": "samsung stock",
+    "description": "samsung stock data",
+    "author": "Yahoo finance",
+    "created_at": "2013-12-06T22:22:49.000Z",
+    "last_access": null,
+    "view_count": null,
+    "star_count": null,
+    "row_count": 786,
+    "col_count": 7,
+    "last_viewed": null,
+    "token": null,
+    "id": 1,
+    "columns": [
+      {
+        "name": "Date",
+        "description": "Date",
+        "data_type": "Date"
+      },
+      {
+        "name": "Open",
+        "description": "Open",
+        "data_type": "String"
+      }
+    ]
+  },
+  {
+    "table_name": "samsung_stock",
+    "user_id": 5,
+    "url": "www.yahoo.com",
+    ...
+  }
+]
 ```
 
 ### Search Endpoint
