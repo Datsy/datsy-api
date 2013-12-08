@@ -23,34 +23,193 @@ Run `grunt prod` to do the following:
 
 API Endpoints
 -------
+### 1. Tag Search Endpoint
 
-### All Tags Endpoint
-Returns object with two fields:
-- tag: array of all tags attached to tables
-- total: total number of tables that have tags
+###### Parameters
+| Name     | Required    | Description                                    |
+| -------- | ----------- | ---------------------------------------------- |
+| `tag `   | Optional    | The tags to be searched for                    |
 
+
+###### 1.1 
 ###### Usage
 ```
 GET /search/tag
 ```
+Returns object with two fields:
+- tag: array of all tags attached to tables
+- total: total number of tables relating to the tags
+
 ###### Response
 ```
 {
   tag: ["san francisco", "technology", "stock", "weather", "fitbit", "ufo"],
-  total: <total number of table relating to the tags>
+  total: 9
+}
+```
+###### 1.2 Usage
+```
+GET /search/tag?tag=<tagname>
+GET /search/tag?tag=<tagname>&tag=<anotherTagname>
+```
+Returns object with two fields:
+- total: return the total number of tables that contains the tag;
+- tag: return all the tags in the tables;
+- there can be multiple query string;
+- punctuation is removed from the search;
+
+Response to:
+```
+http://datsy-dev.azurewebsites.net/search/tag?tag=san+francisco
+```
+Returned:
+```
+{
+  "tag": [
+    "daily",
+    "san francisco",
+    "weather",
+    "temperature",
+    "fitbit",
+    "health",
+    "exercise",
+    "fitness",
+    "public policy",
+    "lobbying",
+    "lobbyists"
+  ],
+  "total": 3
+}
+```
+Response to:
+```
+http://datsy-dev.azurewebsites.net/search/tag?tag=San+Francisco&tag=lobbying
+```
+Returned:
+```
+{
+  "tag": [
+    "san francisco",
+    "public policy",
+    "lobbying",
+    "lobbyists"
+  ],
+  "total": 1
 }
 ```
 
-### Get All Metadata
+### 2. Metadata Search Endpoint
 Returns metadata for all tables, including column metadata.
 
-###### Usage
+###### Parameters
+| Name     | Required    | Description                                    |
+| -------- | ----------- | ---------------------------------------------- |
+| `tag `   | Optional    | The tags to be searched for                    |
+
+
+###### 2.1 Usage
 ```
 GET search/meta
 ```
 ###### Response
+Returns an array of JSON objects, each representing the metadata for a table in the database. MetaData object also include column information.
+
+Response to:
 ```
-{}
+http://datsy-dev.azurewebsites.net/search/meta
+```
+
+Returned:
+
+```
+[
+  {
+    "table_name": "samsung_stock",
+    "user_id": 5,
+    "url": "www.yahoo.com",
+    "title": "samsung stock",
+    "description": "samsung stock data",
+    "author": "Yahoo finance",
+    "created_at": "2013-12-06T22:22:49.000Z",
+    "last_access": null,
+    "view_count": null,
+    "star_count": null,
+    "row_count": 786,
+    "col_count": 7,
+    "last_viewed": null,
+    "token": null,
+    "id": 1,
+    "columns": [
+      {
+        "name": "Date",
+        "description": "Date",
+        "data_type": "Date"
+      },
+      {
+        "name": "Open",
+        "description": "Open",
+        "data_type": "String"
+      }
+    ]
+  },
+  {
+    "table_name": "samsung_stock",
+    "user_id": 5,
+    "url": "www.yahoo.com",
+    ...
+  }
+]
+```
+
+###### 2.2 Usage
+
+```
+GET search/meta?tag=<tagname>
+```
+
+###### Response
+- returns metadata, including column information, of tables associated with the <tagname>s.
+- a query can consist of multiple tags
+
+Response to:
+
+```
+http://datsy-dev.azurewebsites.net/search/meta?tag=technology
+```
+Returned:
+
+```
+[
+  {
+    "table_name": "samsung_stock",
+    "user_id": 5,
+    "url": "www.yahoo.com",
+    "title": "samsung stock",
+    "description": "samsung stock data",
+    "author": "Yahoo finance",
+    "created_at": "2013-12-06T22:22:49.000Z",
+    "last_access": null,
+    "view_count": null,
+    "star_count": null,
+    "row_count": 786,
+    "col_count": 7,
+    "last_viewed": null,
+    "token": null,
+    "id": 1,
+    "columns": [
+      {
+        "name": "Date",
+        "description": "Date",
+        "data_type": "Date"
+      },
+      {
+        "name": "Open",
+        "description": "Open",
+        "data_type": "String"
+      }
+    ]
+  },
+]
 ```
 
 ### Search Endpoint

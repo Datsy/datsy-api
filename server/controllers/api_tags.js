@@ -118,15 +118,18 @@ var apiControllers = {
 
     controller.on('getMetaTableId',function(metaTablsIds){
       result.total = metaTablsIds.length;
+      console.log(metaTablsIds,'metaTablesIDs');
       apiControllers.getTagsWithMetaTableID(metaTablsIds,controller);
     });
 
     controller.on('getTagsWithMetaTableID',function(filteredTagsIDs){
+      console.log(filteredTagsIDs,'filteredTagsIDs');
       apiControllers.getTagNameWithID(filteredTagsIDs, controller);
       // res.send(result);
     });
 
     controller.on('getTagNameWithID',function(tagLabels){
+      console.log(tagLabels,'tagLabels');
       result.tag = tagLabels;
       res.send(result);
     });
@@ -233,7 +236,8 @@ var apiControllers = {
       if(dataLeft === 0) {
         var filteredMetaIDs = [];
         for (var key in obj) {
-          if (obj[key]) {filteredMetaIDs.push(obj[key]); }
+          console.log(obj,'obj');
+          if (obj[key]) {filteredMetaIDs.push(key); }
         }
         controller.emit('getMetaTableId',filteredMetaIDs);
       }
