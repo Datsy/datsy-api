@@ -47,8 +47,7 @@ Returns object with two fields:
   total: 9
 }
 ```
-###### 1.2 
-###### Usage
+###### 1.2 Usage
 ```
 GET /search/tag?tag=<tagname>
 GET /search/tag?tag=<tagname>&tag=<anotherTagname>
@@ -59,11 +58,11 @@ Returns object with two fields:
 - there can be multiple query string;
 - punctuation is removed from the search;
 
-```
-###### Response
+Response to:
 ```
 http://datsy-dev.azurewebsites.net/search/tag?tag=san+francisco
 ```
+Returned:
 ```
 {
   "tag": [
@@ -84,8 +83,9 @@ http://datsy-dev.azurewebsites.net/search/tag?tag=san+francisco
 ```
 Response to:
 ```
-http://localhost:5000/search/tag?tag=San+Francisco&tag=lobbying
+http://datsy-dev.azurewebsites.net/search/tag?tag=San+Francisco&tag=lobbying
 ```
+Returned:
 ```
 {
   "tag": [
@@ -107,13 +107,17 @@ Returns metadata for all tables, including column metadata.
 | `tag `   | Optional    | The tags to be searched for                    |
 
 
-###### 2.1 
-###### Usage
+###### 2.1 Usage
 ```
 GET search/meta
 ```
 ###### Response
 Returns an array of JSON objects, each representing the metadata for a table in the database. MetaData object also include column information.
+Response to:
+```
+http://datsy-dev.azurewebsites.net/search/meta
+```
+Returned:
 ```
 [
   {
