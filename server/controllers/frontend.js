@@ -452,7 +452,7 @@ frontendControllers = {
       Metadata: Metadata,
       EmailToken: EmailToken});
     tagSearch.restartSchema();
-    console.log(typeof req.query.tag,'tag');
+    // console.log(typeof req.query.tag,'tag');
       // 1) GET search/tag
       // 2) GET search/tag?tag=<tagname>
       // 3) GET search/tag?tag=<tagname>&tag=<tagname>

@@ -86,7 +86,7 @@ app.listen(port, function(){
   
   var request = require('request');
   var httpReqToPing = function(){
-    request('http://datsy-dev.azurewebsites.net/search/tag', function (error, response, body) {
+    request('http://localhost:5000/search/tag', function (error, response, body) {
       if (!error && response.statusCode == 200) {
         console.log("azure database is alive"); // Print the google web page.
       } else {
@@ -104,7 +104,7 @@ app.listen(port, function(){
   //   });
   // };
 
-  setInterval(httpReqToPing, 60000);
+  setInterval(httpReqToPing, 20000);
 
   //ping virtual macihne not working at this time
   //pingHost([config[app.get('env')].database.host]);
