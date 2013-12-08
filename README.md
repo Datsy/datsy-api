@@ -168,7 +168,7 @@ GET search/meta?tag=<tagname>
 ```
 
 ###### Response
-- returns metadata, including column information, of tables associated with the <tagname>s.
+- returns metadata, including column information, of tables associated with the <code>tagname</code>s.
 - a query can consist of multiple tags
 
 Response to:
