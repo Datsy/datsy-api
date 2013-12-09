@@ -1,6 +1,7 @@
 var Sequelize = require('sequelize');
 var sequelize = new Sequelize(process.env.DATABASE, process.env.USER, process.env.PASS, {
   host: process.env.HOST,
+  port: 5432,
   dialect: 'postgres',
   pool: { maxConnection: 3, maxIdleTime: 10 }
 });
@@ -8,6 +9,7 @@ var sequelize = new Sequelize(process.env.DATABASE, process.env.USER, process.en
 
 var datastore = new Sequelize(process.env.DATASTORE, process.env.USER, process.env.PASS , {
   host: process.env.HOST,
+  port: 5432,
   dialect: 'postgres',
   pool: { maxConnection: 3, maxIdleTime: 10 }
 });
