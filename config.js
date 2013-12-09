@@ -1,5 +1,3 @@
-// # Ghost Configuration
-// Setup your Ghost install for various environments
 
 var path = require('path');
 var config;
