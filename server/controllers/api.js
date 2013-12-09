@@ -53,29 +53,44 @@ apiControllers = {
 
     };
 
+
+    // Select datasets that match one or more of the tags
+    // (or all if no tags are specified)
+
     if (!req.query.tag) {
 
-      // No tags specified, so get all
+      var result = {};
+      result.tag = [];
+      result.total = 0;
 
-      Dataset.findAll({
-        include: [Tag],
-      }).success(function(datasets) {
-        createResult(res, datasets, []);
-      });
 
-/*
+      // No tags specified, so get all tags and count all datasets
+
       Tag.findAll({
-        include: [Dataset],
-        attributes: ['Tags.id', 'Tags.label', 'Datasets.id']
+        attributes: ['label']
       }).success(function(tags) {
-        createResult(res, tags);  // Add dataset count and respond
+        for (var i = 0; i < tags.length; i++) {
+          result.tag.push(tags[i].label);
+        }
+
+        Dataset.count().success(function(datasets) {
+          result.total = datasets;
+          res.send(result);
+        });
       });
-*/
 
     } else {
 
+
+      // One or more tags specified, so get only those that match at least one
+
       if (typeof req.query.tag === 'string') {
+        req.query.tag = req.query.tag.toLowerCase();
         req.query.tag = [ req.query.tag ];
+      } else {
+        for (var j = 0; j < req.query.tag.length; j++) {
+          req.query.tag[j] = req.query.tag[j].toLowerCase();
+        }
       }
 
       Dataset.findAll({
@@ -84,17 +99,6 @@ apiControllers = {
       }).success(function(datasets) {
         createResult(res, datasets, req.query.tag);
       });
-
-/*
-        Tag.findAll({
-          where: { label: req.query.tag },
-          include: [Dataset],
-          attributes: ['Tags.id', 'Tags.label', 'Datasets.id']
-        }).success(function(tags) {
-        console.log(tags[0].datasets);
-          createResult(res, tags, req.query.tag);  // Add dataset count and respond
-        });
-*/
 
     }
   }
