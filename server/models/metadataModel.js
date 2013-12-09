@@ -1,31 +1,33 @@
 var Sequelize = require('sequelize');
-/*
 var sequelize = new Sequelize(process.env.DATABASE, process.env.USER, process.env.PASS, {
   host: process.env.HOST,
-  dialect: 'postgres'
+  dialect: 'postgres',
+  pool: { maxConnection: 3, maxIdleTime: 10 }
 });
 
 
 var datastore = new Sequelize(process.env.DATASTORE, process.env.USER, process.env.PASS , {
   host: process.env.HOST,
-  dialect: 'postgres'
+  dialect: 'postgres',
+  pool: { maxConnection: 3, maxIdleTime: 10 }
+});
+
+/*
+var sequelize = new Sequelize('datsydb', 'bhc', '123', {
+//  host: '137.135.14.92',
+  port: 5432,
+  dialect: 'postgres',
+  pool: { maxConnection: 3, maxIdleTime: 10 }
+});
+
+
+var datastore = new Sequelize('datastore', 'bhc', '123', {
+//  host: '137.135.14.92',
+  port: 5432,
+  dialect: 'postgres',
+  pool: { maxConnection: 3, maxIdleTime: 10 }
 });
 */
-
-var sequelize = new Sequelize('datsydata', 'masterofdata', 'gj1h23gnbfsjdhfg234234kjhskdfjhsdfKJHsdf234', {
-  host: '137.135.14.92',
-  port: 5432,
-  dialect: 'postgres',
-  pool: { maxConnection: 3, maxIdleTime: 10 }
-});
-
-
-var datastore = new Sequelize('postgres', 'masterofdata', 'gj1h23gnbfsjdhfg234234kjhskdfjhsdfKJHsdf234', {
-  host: '137.135.14.92',
-  port: 5432,
-  dialect: 'postgres',
-  pool: { maxConnection: 3, maxIdleTime: 10 }
-});
 
 /**
  *  Define the table schemas
@@ -145,7 +147,6 @@ Models.saveDataset = function(json, cb) {
 
     var addTags = function(tags, i) {
       tag = tags[i];
-console.log('addTag: ', tag);
 
       self.Tag.findAll({
         where: { label: tag }
@@ -159,22 +160,22 @@ console.log('addTag: ', tag);
             .success(function(newTag) {
               dataset.addTag(newTag)
                 .success(function() {
-                  console.log('Tags: i = ', i, ',  length = ', tags.length);
+                  console.log('New Tag: i = ', i, ',  length = ', tags.length, '  tag = ', newTag, '\n\n');
                   if (i < tags.length - 1) {
                     addTags(tags, i+1);
                   } else {
                     cb();
                   }
                 }).error(function(err) { console.log('addTags: ', err); });
-            });
+            }).error(function(err) { console.log('addTags: ', err); });
 
         } else {
 
           // Tag exists, associate it with this dataset
 
-          dataset.setTags(result)
+          dataset.addTag(result[0])
             .success(function(associatedTag) {
-              console.log('i: ', i, '  length: ', tags.length);
+              console.log('Existing Tag: i = ', i, ',  length = ', tags.length, '  tag = ',associatedTag, '\n\n');
               if (i < tags.length - 1) {
                 addTags(tags, i+1);
               } else {
