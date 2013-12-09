@@ -14,13 +14,15 @@ var datastore = new Sequelize(process.env.DATASTORE, process.env.USER, process.e
 
 var sequelize = new Sequelize('datsydata', 'masterofdata', 'gj1h23gnbfsjdhfg234234kjhskdfjhsdfKJHsdf234', {
   host: '137.135.14.92',
-  dialect: 'postgres'
+  dialect: 'postgres',
+  pool: { maxConnection: 3, maxIdleTime: 10 }
 });
 
 
 var datastore = new Sequelize('postgres', 'masterofdata', 'gj1h23gnbfsjdhfg234234kjhskdfjhsdfKJHsdf234', {
   host: '137.135.14.92',
-  dialect: 'postgres'
+  dialect: 'postgres',
+  pool: { maxConnection: 3, maxIdleTime: 10 }
 });
 
 /**
@@ -141,6 +143,7 @@ Models.saveDataset = function(json, cb) {
 
     var addTags = function(tags, i) {
       tag = tags[i];
+console.log('addTag: ', tag);
 
       self.Tag.findAll({
         where: { label: tag }
@@ -160,7 +163,7 @@ Models.saveDataset = function(json, cb) {
                   } else {
                     cb();
                   }
-                });;
+                }).error(function(err) { console.log('addTags: ', err); });
             });
 
         } else {
@@ -175,10 +178,9 @@ Models.saveDataset = function(json, cb) {
               } else {
                 cb();
               }
-            });
+            }).error(function(err) { console.log('addTags: ', err); });
         }
-      });
-
+      }).error(function(err) { console.log('addTags: ', err); });
     };
 
 

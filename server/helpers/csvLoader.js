@@ -109,7 +109,7 @@ csv.createModel = function() {
         break;
 
       case 'Number':
-        type = Sequelize.INTEGER;
+        type = Sequelize.FLOAT;
         break;
 
       default:

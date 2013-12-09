@@ -226,7 +226,7 @@ frontendControllers = {
     // Construct metadata JSON object
 
     var metadata = {
-      table_name: req.body.dataset_title.replace(/ /g, '_').toLowerCase() + '_' + hat(32),
+      table_name: req.body.dataset_title.replace(/ /g, '_').replace(/'/g, '').toLowerCase() + '_' + hat(32),
       url: req.body.dataset_url,
       title: req.body.dataset_title,
       description: req.body.dataset_description,
@@ -240,6 +240,7 @@ frontendControllers = {
     };
 
     metadata.tags = req.body.dataset_tags.split(',');
+    console.log(req.body.datase_tags);
     for (var i = 0; i < metadata.tags.length; i++) {
       metadata.tags[i] = metadata.tags[i].toLowerCase();
     }
