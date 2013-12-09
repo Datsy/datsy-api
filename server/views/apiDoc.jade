@@ -1,0 +1,233 @@
+extends layout
+
+block head
+
+block content
+	.container
+		.row
+			div.panel.panel-default
+		a.anchor(name='api-endpoints', href='#api-endpoints')
+			span.octicon.octicon-link
+		| API Endpoints
+		h3
+			a.anchor(name='1-tag-search-endpoint', href='#1-tag-search-endpoint')
+				span.octicon.octicon-link
+			| 1. Tag Search Endpoint
+		h6
+			a.anchor(name='parameters', href='#parameters')
+				span.octicon.octicon-link
+			| Parameters
+		table
+			thead
+				tr
+					th Name
+					th Required
+					th Description
+			tbody
+				tr
+					td
+						code tag
+					td Optional
+					td The tags to be searched for
+		h6
+			a.anchor(name='11-usage-get-all-tags', href='#11-usage-get-all-tags')
+				span.octicon.octicon-link
+			| 1.1 Usage: get all tags
+		pre.
+
+		p Returns object with two fields:
+		ul
+			li tag: array of all tags attached to tables
+			li total: total number of tables relating to the tags
+		h6
+			a.anchor(name='response', href='#response')
+				span.octicon.octicon-link
+			| Response
+		pre.
+
+		h6
+			a.anchor(name='12-usage-search-using-tags', href='#12-usage-search-using-tags')
+				span.octicon.octicon-link
+			| 1.2 Usage: search using tags
+		ul
+			li
+				| Queries can contain one or more
+				code tagname
+				| s;
+			li Punctuation is removed from the search.
+		pre.
+
+		p Returns object with two fields:
+		ul
+			li total: return the total number of tables that contains the tag;
+			li tag: return all the tags in the tables;
+		p Response to:
+		pre.
+
+		p Returned:
+		pre.
+
+		p Response to:
+		pre.
+
+		p Returned:
+		pre.
+
+		h3
+			a.anchor(name='2-metadata-search-endpoint', href='#2-metadata-search-endpoint')
+				span.octicon.octicon-link
+			| 2. Metadata Search Endpoint
+		p Returns metadata for all tables, including column metadata.
+		h6
+			a.anchor(name='parameters-1', href='#parameters-1')
+				span.octicon.octicon-link
+			| Parameters
+		table
+			thead
+				tr
+					th Name
+					th Required
+					th Description
+			tbody
+				tr
+					td
+						code tag
+					td Optional
+					td The tags to be searched for
+		h6
+			a.anchor(name='21-usage-get-metadata-for-all-tables', href='#21-usage-get-metadata-for-all-tables')
+				span.octicon.octicon-link
+			| 2.1 Usage: get metadata for all tables
+		pre.
+
+		h6
+			a.anchor(name='response-1', href='#response-1')
+				span.octicon.octicon-link
+			| Response
+		p
+			| Returns an array of JSON objects, each representing the metadata for a table in the database. MetaData object also include column information.
+		p Response to:
+		pre.
+
+		p Returned:
+		pre.
+
+		h6
+			a.anchor(name='22-usage-search-metadata-using-tags', href='#22-usage-search-metadata-using-tags')
+				span.octicon.octicon-link
+			| 2.2 Usage: search metadata using tags
+		pre.
+
+		ul
+			li
+				| returns metadata, including column information, of tables associated with the
+				code tagname
+				| .
+		p Response to:
+		pre.
+
+		p Returned:
+		pre.
+
+		h3
+			a.anchor(name='3-table-search-endpoint', href='#3-table-search-endpoint')
+				span.octicon.octicon-link
+			| 3. Table Search Endpoint
+		h6
+			a.anchor(name='parameters-2', href='#parameters-2')
+				span.octicon.octicon-link
+			| Parameters
+		table
+			thead
+				tr
+					th Name
+					th Required
+					th Description
+			tbody
+				tr
+					td
+						code name
+					td Required
+					td The name of table to be queried
+				tr
+					td
+						code column
+					td Optional
+					td The column name, if not specified, return all columns in the table
+				tr
+					td
+						code row
+					td Optional
+					td
+						| The number of rows retrieved, if not specified, return the first 5 rows in the table; use 'ALL' to get all rows
+		h6
+			a.anchor(name='31-usage', href='#31-usage')
+				span.octicon.octicon-link
+			| 3.1 Usage
+		pre.
+
+		h6
+			a.anchor(name='response-2', href='#response-2')
+				span.octicon.octicon-link
+		  | Response
+		p
+		  | Returns a JSON object
+		  | tableMeta: metadata of the table named
+		  | rows: by default, return the first 5 rows of all columns
+		p Response to:
+		pre.
+		  
+		p Returned:
+		pre.
+		  
+		h6
+		  a.anchor(name='32-usage', href='#32-usage')
+		    span.octicon.octicon-link
+		  | 3.2 Usage
+		pre.
+		  
+		h6
+		  a.anchor(name='response-3', href='#response-3')
+		    span.octicon.octicon-link
+		  | Response
+		p Returns a JSON object.
+		p
+		  | tableMeta: metadata of the table named
+		  | rows:By default, return the first 5 rows of the specified column
+		p Response to:
+		pre.
+		  
+		p Returned:
+		pre.
+		  
+		h6
+		  a.anchor(name='33-usage', href='#33-usage')
+		    span.octicon.octicon-link
+		  | 3.3 Usage
+		p Note: multiple "column" can be selected (see example 3).
+		pre.
+		  
+		h6
+		  a.anchor(name='response-4', href='#response-4')
+		    span.octicon.octicon-link
+		  | Response
+		p Returns a JSON object.
+		p
+		  | tableMeta: metadata of the table named
+		  | rows:By default, return the first 5 rows of the specified column
+		p Example 1:
+		pre.
+		  
+		p Returned:
+		pre.
+		  
+		p Example 2:
+		pre.
+		  
+		p Returned:
+		pre.
+		  
+		p Example 3:
+		pre.
+
+script(src='/app.js')

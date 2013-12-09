@@ -1,0 +1,375 @@
+<a name="api-endpoints" class="anchor" href="#api-endpoints"><span class="octicon octicon-link"></span></a>API Endpoints</h2>
+
+<h3>
+<a name="1-tag-search-endpoint" class="anchor" href="#1-tag-search-endpoint"><span class="octicon octicon-link"></span></a>1. Tag Search Endpoint</h3>
+
+<h6>
+<a name="parameters" class="anchor" href="#parameters"><span class="octicon octicon-link"></span></a>Parameters</h6>
+
+<table>
+<thead><tr>
+<th>Name</th>
+<th>Required</th>
+<th>Description</th>
+</tr></thead>
+<tbody><tr>
+<td><code>tag</code></td>
+<td>Optional</td>
+<td>The tags to be searched for</td>
+</tr></tbody>
+</table><h6>
+<a name="11-usage-get-all-tags" class="anchor" href="#11-usage-get-all-tags"><span class="octicon octicon-link"></span></a>1.1 Usage: get all tags</h6>
+
+<pre><code>GET /search/tag
+</code></pre>
+
+<p>Returns object with two fields:</p>
+
+<ul>
+<li>tag: array of all tags attached to tables</li>
+<li>total: total number of tables relating to the tags</li>
+</ul><h6>
+<a name="response" class="anchor" href="#response"><span class="octicon octicon-link"></span></a>Response</h6>
+
+<pre><code>{
+  tag: ["san francisco", "technology", "stock", "weather", "fitbit", "ufo"],
+  total: 9
+}
+</code></pre>
+
+<h6>
+<a name="12-usage-search-using-tags" class="anchor" href="#12-usage-search-using-tags"><span class="octicon octicon-link"></span></a>1.2 Usage: search using tags</h6>
+
+<ul>
+<li>Queries can contain one or more <code>tagname</code>s;</li>
+<li>Punctuation is removed from the search.</li>
+</ul><pre><code>GET /search/tag?tag=&lt;tagname&gt;
+GET /search/tag?tag=&lt;tagname&gt;&amp;tag=&lt;anotherTagname&gt;
+</code></pre>
+
+<p>Returns object with two fields:</p>
+
+<ul>
+<li>total: return the total number of tables that contains the tag;</li>
+<li>tag: return all the tags in the tables;</li>
+</ul><p>Response to:</p>
+
+<pre><code>http://datsy-dev.azurewebsites.net/search/tag?tag=san+francisco
+</code></pre>
+
+<p>Returned:</p>
+
+<pre><code>{
+  "tag": [
+    "daily",
+    "san francisco",
+    "weather",
+    "temperature",
+    "fitbit",
+    "health",
+    "exercise",
+    "fitness",
+    "public policy",
+    "lobbying",
+    "lobbyists"
+  ],
+  "total": 3
+}
+</code></pre>
+
+<p>Response to:</p>
+
+<pre><code>http://datsy-dev.azurewebsites.net/search/tag?tag=San+Francisco&amp;tag=lobbying
+</code></pre>
+
+<p>Returned:</p>
+
+<pre><code>{
+  "tag": [
+    "san francisco",
+    "public policy",
+    "lobbying",
+    "lobbyists"
+  ],
+  "total": 1
+}
+</code></pre>
+
+<h3>
+<a name="2-metadata-search-endpoint" class="anchor" href="#2-metadata-search-endpoint"><span class="octicon octicon-link"></span></a>2. Metadata Search Endpoint</h3>
+
+<p>Returns metadata for all tables, including column metadata.</p>
+
+<h6>
+<a name="parameters-1" class="anchor" href="#parameters-1"><span class="octicon octicon-link"></span></a>Parameters</h6>
+
+<table>
+<thead><tr>
+<th>Name</th>
+<th>Required</th>
+<th>Description</th>
+</tr></thead>
+<tbody><tr>
+<td><code>tag</code></td>
+<td>Optional</td>
+<td>The tags to be searched for</td>
+</tr></tbody>
+</table><h6>
+<a name="21-usage-get-metadata-for-all-tables" class="anchor" href="#21-usage-get-metadata-for-all-tables"><span class="octicon octicon-link"></span></a>2.1 Usage: get metadata for all tables</h6>
+
+<pre><code>GET search/meta
+</code></pre>
+
+<h6>
+<a name="response-1" class="anchor" href="#response-1"><span class="octicon octicon-link"></span></a>Response</h6>
+
+<p>Returns an array of JSON objects, each representing the metadata for a table in the database. MetaData object also include column information.</p>
+
+<p>Response to:</p>
+
+<pre><code>http://datsy-dev.azurewebsites.net/search/meta
+</code></pre>
+
+<p>Returned:</p>
+
+<pre><code>[
+  {
+    "table_name": "samsung_stock",
+    "user_id": 5,
+    "url": "www.yahoo.com",
+    "title": "samsung stock",
+    "description": "samsung stock data",
+    "author": "Yahoo finance",
+    "created_at": "2013-12-06T22:22:49.000Z",
+    "last_access": null,
+    "view_count": null,
+    "star_count": null,
+    "row_count": 786,
+    "col_count": 7,
+    "last_viewed": null,
+    "token": null,
+    "id": 1,
+    "columns": [
+      {
+        "name": "Date",
+        "description": "Date",
+        "data_type": "Date"
+      },
+      {
+        "name": "Open",
+        "description": "Open",
+        "data_type": "String"
+      }
+    ]
+  },
+  {
+    "table_name": "samsung_stock",
+    "user_id": 5,
+    "url": "www.yahoo.com",
+    ...
+  }
+]
+</code></pre>
+
+<h6>
+<a name="22-usage-search-metadata-using-tags" class="anchor" href="#22-usage-search-metadata-using-tags"><span class="octicon octicon-link"></span></a>2.2 Usage: search metadata using tags</h6>
+
+<pre><code>GET search/meta?tag=&lt;tagname&gt;
+</code></pre>
+
+<ul>
+<li>returns metadata, including column information, of tables associated with the <code>tagname</code>.</li>
+</ul><p>Response to:</p>
+
+<pre><code>http://datsy-dev.azurewebsites.net/search/meta?tag=technology
+</code></pre>
+
+<p>Returned:</p>
+
+<pre><code>[
+  {
+    "table_name": "samsung_stock",
+    &lt;!-- other property saved in the metadata table --&gt;
+    "columns": [
+      {
+        "name": "Date",
+        "description": "Date",
+        "data_type": "Date"
+      },
+      {
+        "name": "Open",
+        "description": "Open",
+        "data_type": "String"
+      }
+    ]
+  },
+  &lt;!-- more tables if applicable --&gt;
+]
+</code></pre>
+
+<h3>
+<a name="3-table-search-endpoint" class="anchor" href="#3-table-search-endpoint"><span class="octicon octicon-link"></span></a>3. Table Search Endpoint</h3>
+
+<h6>
+<a name="parameters-2" class="anchor" href="#parameters-2"><span class="octicon octicon-link"></span></a>Parameters</h6>
+
+<table>
+<thead><tr>
+<th>Name</th>
+<th>Required</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr>
+<td><code>name</code></td>
+<td>Required</td>
+<td>The name of table to be queried</td>
+</tr>
+<tr>
+<td><code>column</code></td>
+<td>Optional</td>
+<td>The column name, if not specified, return all columns in the table</td>
+</tr>
+<tr>
+<td><code>row</code></td>
+<td>Optional</td>
+<td>The number of rows retrieved, if not specified, return the first 5 rows in the table; use 'ALL' to get all rows</td>
+</tr>
+</tbody>
+</table><h6>
+<a name="31-usage" class="anchor" href="#31-usage"><span class="octicon octicon-link"></span></a>3.1 Usage</h6>
+
+<pre><code>GET search/table?name=&lt;tablename&gt;
+</code></pre>
+
+<h6>
+<a name="response-2" class="anchor" href="#response-2"><span class="octicon octicon-link"></span></a>Response</h6>
+
+<p>Returns a JSON object 
+tableMeta: metadata of the table named 
+rows: by default, return the first 5 rows of all columns</p>
+
+<p>Response to:</p>
+
+<pre><code>http://datsy-dev.azurewebsites.net/search/table?name=lobbyist_activity
+</code></pre>
+
+<p>Returned:</p>
+
+<pre><code>{"Result":
+  {"tableMeta":
+    {"table_name":"lobbyist_activity"
+      &lt;!-- other property saved in the metadata table --&gt;
+    },
+    "row":[
+      {"Date":"2010-01-01 00:00:00+00",
+       "Visit Count":1,
+       "id":1
+      },
+      {&lt;!-- the next four rows of data --&gt;}
+    ]
+  }
+}
+</code></pre>
+
+<h6>
+<a name="32-usage" class="anchor" href="#32-usage"><span class="octicon octicon-link"></span></a>3.2 Usage</h6>
+
+<pre><code>GET search/table?name=&lt;tablename&gt;&amp;column=&lt;columnname&gt;
+</code></pre>
+
+<h6>
+<a name="response-3" class="anchor" href="#response-3"><span class="octicon octicon-link"></span></a>Response</h6>
+
+<p>Returns a JSON object.</p>
+
+<p>tableMeta: metadata of the table named 
+rows:By default, return the first 5 rows of the specified column</p>
+
+<p>Response to:</p>
+
+<pre><code>http://datsy-dev.azurewebsites.net/search/table?name=lobbyist_activity&amp;column=Date
+</code></pre>
+
+<p>Returned:</p>
+
+<pre><code>{"Result":
+  {"tableMeta":
+    {"table_name":"lobbyist_activity"
+      &lt;!-- other property saved in the metadata table --&gt;
+    },
+    "row":[
+      {"Date":"2010-01-01 00:00:00+00"},
+      {"Date":"2010-01-04 00:00:00+00"},
+      {"Date":"2010-01-05 00:00:00+00"},
+      {"Date":"2010-01-06 00:00:00+00"},
+      {"Date":"2010-01-07 00:00:00+00"}
+    ]
+  }
+}
+</code></pre>
+
+<h6>
+<a name="33-usage" class="anchor" href="#33-usage"><span class="octicon octicon-link"></span></a>3.3 Usage</h6>
+
+<p>Note: multiple "column" can be selected (see example 3).</p>
+
+<pre><code>GET search/table?name=&lt;tablename&gt;&amp;column=&lt;columnname&gt;&amp;row=&lt;numberofrow&gt;
+</code></pre>
+
+<h6>
+<a name="response-4" class="anchor" href="#response-4"><span class="octicon octicon-link"></span></a>Response</h6>
+
+<p>Returns a JSON object.</p>
+
+<p>tableMeta: metadata of the table named 
+rows:By default, return the first 5 rows of the specified column</p>
+
+<p>Example 1:</p>
+
+<pre><code>http://datsy-dev.azurewebsites.net/search/table?name=lobbyist_activity&amp;column=Date&amp;row=10
+</code></pre>
+
+<p>Returned:</p>
+
+<pre><code>{"Result":
+  {"tableMeta":
+    {"table_name":"lobbyist_activity"
+      &lt;!-- other property saved in the metadata table --&gt;
+    },
+    "row":[
+      {"Date":"2010-01-01 00:00:00+00"}
+      &lt;!-- first 10 rows of the 'Date' column --&gt;
+    ]
+  }
+}
+
+</code></pre>
+
+<p>Example 2:</p>
+
+<pre><code>http://datsy-dev.azurewebsites.net/search/table?name=lobbyist_activity&amp;column=Date&amp;row=ALL
+</code></pre>
+
+<p>Returned:</p>
+
+<pre><code>{"Result":
+  {"tableMeta":
+    {"table_name":"lobbyist_activity"
+      &lt;!-- other property saved in the metadata table --&gt;
+    },
+    "row":[
+      {"Date":"2010-01-01 00:00:00+00"}
+      &lt;!-- All rows of the 'Date' column --&gt;
+    ]
+  }
+}
+
+</code></pre>
+
+<p>Example 3:</p>
+
+<pre><code>http://datsy-dev.azurewebsites.net/search/table?name=lobbyist_activity&amp;column=Date&amp;column=Visit+Count
+
+</code></pre>
+

@@ -66,6 +66,10 @@ frontendControllers = {
     }
   },
 
+  'apiDoc': function(req, res) {
+    res.render('apiDoc');
+  },
+  
   'newdataset': function(req, res) {
     res.render('newdataset', {
       isAuthenticated: true,
