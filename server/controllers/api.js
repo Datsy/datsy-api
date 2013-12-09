@@ -4,6 +4,15 @@ var User, Dataset, Tag, Column,
 
 apiControllers = {
 
+  /**
+   * Function:  getTags()
+   *
+   * Retreives the number of datasets associated with all of the tags in the query
+   * set and a list of all tags associated with this subset of datasets. Note
+   * an empty query set will retreive the full list of tags and count the entire
+   * number of datasets in the datastore.
+   */
+
   'getTags': function(req, res) {
 
     // Helper function to get the number of datasets associated with a set of tags
@@ -54,15 +63,15 @@ apiControllers = {
     };
 
 
-    // Select datasets that match one or more of the tags
-    // (or all if no tags are specified)
+    // Retrieve dataset count and list of all tags associated with the subset of
+    // datasets that match one or more of the queried tags (or all if no tags
+    // are specified)
 
     if (!req.query.tag) {
 
       var result = {};
       result.tag = [];
       result.total = 0;
-
 
       // No tags specified, so get all tags and count all datasets
 
@@ -80,7 +89,6 @@ apiControllers = {
       });
 
     } else {
-
 
       // One or more tags specified, so get only those that match at least one
 
@@ -100,8 +108,109 @@ apiControllers = {
         createResult(res, datasets, req.query.tag);
       });
 
+     }
+   },
+
+
+   /**
+    *  Function:  getMetadata()
+    *
+    *  Returns the metadata for all tables that are associated with a set of tags.
+    *  Note an empty tag query set will result in the return of the metadata for
+    *  all datasets in the datastore.
+    */
+
+    'getMetadata': function(req, res) {
+
+      var createResult = function(req, datasets) {
+        var result = [];
+
+        for (var i = 0; i < datasets.length; i++) {
+
+          var dataset = datasets[i];
+
+          result.push({
+            table_name: dataset.table_name,
+            url: dataset.url,
+            title: dataset.title,
+            description: dataset.description,
+            author: dataset.author,
+            view_count: dataset.view_count,
+            star_count: dataset.star_count,
+            row_count: dataset.row_count,
+            col_count: dataset.col_count,
+            user_id: dataset.user_id,
+            columns: []
+          });
+
+          for (var j = 0; j < datasets[i].columns.length; j++) {
+
+            var column = datasets[i].columns[j];
+
+            result[i].columns.push({
+              name: column.name,
+              description: column.description,
+              data_type: column.datatype
+            });
+          }
+        }
+
+        res.send(result);
+      };
+
+
+      if (!req.query.tag) {
+
+        Dataset.findAll({
+         include: [Column]
+        }).success(function(datasets) {
+           createResult(res, datasets);
+        }).error(function(err) { console.log('getMetadata: ', err); });
+
+      } else {
+
+        // One or more tags specified, so get only those datasets that match at
+        // least one
+
+        if (typeof req.query.tag === 'string') {
+          req.query.tag = req.query.tag.toLowerCase();
+          req.query.tag = [ req.query.tag ];
+        } else {
+          for (var j = 0; j < req.query.tag.length; j++) {
+            req.query.tag[j] = req.query.tag[j].toLowerCase();
+          }
+        }
+
+        Dataset.findAll({
+          include: [Tag],
+          where: { 'Tags.label': req.query.tag }
+        }).success(function(datasets) {
+
+          // Count the datasets that are associated with all queried tags
+
+          var datasetIds = [];
+
+          for (var i = 0; i < datasets.length; i++) {
+
+            var dataset = datasets[i];
+
+            for (var j = 0; j < dataset.tags.length; j++) {
+              if (datasets[i].tags.length === req.query.tag.length) {
+                datasetIds.push(datasets[i].id);
+              }
+            }
+          }
+
+          Dataset.findAll({
+            where: { id: datasetIds },
+            include: [Column]
+          }).success(function(datasets) {
+            createResult(res, datasets, req.query.tag);
+          }).error(function(err) { console.log('getMetadata: ', err); });
+
+        }).error(function(err) { console.log('getMetadata: ', err); });
+      }
     }
-  }
 };
 
 module.exports = function(Models) {

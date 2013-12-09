@@ -5,4 +5,5 @@ module.exports = function(app, passport, Models){
   var api = require('../controllers/api.js')(Models);
 
   app.get('/search/tag', api.getTags);
+  app.get('/search/meta', api.getMetadata);
 };

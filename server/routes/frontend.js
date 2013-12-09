@@ -41,8 +41,8 @@ module.exports = function(app, passport, Models) {
 
   app.get('/about', frontend.about);
   app.get('/user-sign-up/checkEmail', frontend.checkEmailIfExists);
-  app.get('/search/meta', frontend.apiSearchMeta);
+//  app.get('/search/meta', frontend.apiSearchMeta);
 //  app.get('/search/tag', frontend.apiSearchTags);
-  app.get('/search/tag2', frontend.apiSearchTags2);
+//  app.get('/search/tag2', frontend.apiSearchTags2);
   app.get('/search/table', frontend.apiSearchTable);
 };
