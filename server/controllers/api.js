@@ -282,17 +282,25 @@ apiControllers = {
 
         res.send('Error: A table name must be provided');
 
+
+      // YES: table name
+      // NO: row, column
+
       } else if (req.query.name && !req.query.row && !req.query.column) {
 
         Dataset.find({
           where: { table_name: req.query.name },
           include: [Column]
         }).success(function(dataset) {
-          datastore.query('SELECT * FROM ' + req.query.name + 's ORDER BY "Date";')
+          datastore.query('SELECT * FROM ' + req.query.name + 's ORDER BY "Date" LIMIT 5;')
             .success(function(data) {
               createResult(res, dataset, data);
             });
         });
+
+
+      // YES: table name, row
+      // NO: column
 
       } else if (req.query.name && req.query.row && !req.query.column) {
 
@@ -300,11 +308,22 @@ apiControllers = {
           where: { table_name: req.query.name },
           include: [Column]
         }).success(function(dataset) {
-          datastore.query('SELECT * FROM ' + req.query.name + 's ORDER BY "Date" LIMIT ' + req.query.row + ';')
-            .success(function(data) {
-              createResult(res, dataset, data);
-            });
+          if (req.query.row === 'ALL') {
+            datastore.query('SELECT * FROM ' + req.query.name + 's ORDER BY "Date";')
+              .success(function(data) {
+                createResult(res, dataset, data);
+              });
+          } else {
+            datastore.query('SELECT * FROM ' + req.query.name + 's ORDER BY "Date" LIMIT ' + req.query.row + ';')
+              .success(function(data) {
+                createResult(res, dataset, data);
+              });
+          }
         });
+
+
+      // YES: table name, row, column
+      // NO:
 
       } else if (req.query.name && req.query.row && req.query.column) {
 
@@ -312,15 +331,31 @@ apiControllers = {
           where: { table_name: req.query.name },
           include: [Column]
         }).success(function(dataset) {
-          datastore.query('SELECT * FROM ' + req.query.name + 's ORDER BY "Date" LIMIT ' + req.query.row + ';')
-            .success(function(data) {
-              if (typeof req.query.column === 'string') {
-                req.query.column = [ req.query.column ];
-              }
 
-              createResult(res, dataset, data, req.query.column);
+          if (req.query.row === 'ALL') {
+            datastore.query('SELECT * FROM ' + req.query.name + 's ORDER BY "Date";')
+              .success(function(data) {
+                if (typeof req.query.column === 'string') {
+                  req.query.column = [ req.query.column ];
+                }
+
+                createResult(res, dataset, data, req.query.column);
             });
+          } else {
+            datastore.query('SELECT * FROM ' + req.query.name + 's ORDER BY "Date" LIMIT ' + req.query.row + ';')
+              .success(function(data) {
+                if (typeof req.query.column === 'string') {
+                  req.query.column = [ req.query.column ];
+                }
+
+                createResult(res, dataset, data, req.query.column);
+            });
+          }
         });
+
+
+      // YES: table name, column
+      // NO: row
 
       } else if (req.query.name && !req.query.row && req.query.column) {
 
@@ -328,7 +363,7 @@ apiControllers = {
           where: { table_name: req.query.name },
           include: [Column]
         }).success(function(dataset) {
-          datastore.query('SELECT * FROM ' + req.query.name + 's ORDER BY "Date";')
+          datastore.query('SELECT * FROM ' + req.query.name + 's ORDER BY "Date" LIMIT 5;')
             .success(function(data) {
               if (typeof req.query.column === 'string') {
                 req.query.column = [ req.query.column ];
