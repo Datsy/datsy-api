@@ -14,10 +14,14 @@ html(lang='en')
   body
     nav.navbar.navbar-default.navbar-static-top
       div.navbar-inner
-        a.brand(href='/' id='datsy') Datsy API
+        a.brand(href='/' id='datsy') Datsy
         ul.nav.navbar-nav(style='float:right')
           li
             input.form-control(type='text', placeholder='Search for a dataset', style='margin: 5px')
+          li
+            a(href='https://github.com/Datsy/datsy-api/tree/master') API Documentation
+          li
+            a(href='/about') About
           - if (!isAuthenticated) {
             li
               a(href='#/login') Login
@@ -31,10 +35,6 @@ html(lang='en')
             li
               a(href='/logout') Logout
           - }
-          li
-            a(href='https://github.com/Datsy/datsy-api/tree/master') Documentation
-          li
-            a(href='/about') About
 
   .container
     .section1
