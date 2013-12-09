@@ -226,7 +226,7 @@ frontendControllers = {
     // Construct metadata JSON object
 
     var metadata = {
-      table_name: req.body.dataset_title.replace(/ /g, '_').toLowerCase(),
+      table_name: req.body.dataset_title.replace(/ /g, '_').toLowerCase() + '_' + hat(32),
       url: req.body.dataset_url,
       title: req.body.dataset_title,
       description: req.body.dataset_description,
@@ -240,6 +240,9 @@ frontendControllers = {
     };
 
     metadata.tags = req.body.dataset_tags.split(',');
+    for (var i = 0; i < metadata.tags.length; i++) {
+      metadata.tags[i] = metadata.tags[i].toLowerCase();
+    }
 
     metadata.columns = [];
     for (key in req.body) {
@@ -286,11 +289,7 @@ frontendControllers = {
     });
   },
 
-  'userTableMetaData': function(req, res) {
-    console.log("In userTableMetaData");
-    res.writeHead(200);
-    res.end();
-  },
+
 
   'apiSearchMeta': function(req, res){
     metaSearch.init({
@@ -362,6 +361,15 @@ frontendControllers = {
   },
 
   'apiSearchTags': function(req, res){
+    var tags = req.query.tag;
+
+    if (!tags) {
+      Tag.findAll().success(function(tags) {
+
+      });
+    }
+
+
     tagSearch.init({
       User: User,
       Metadata: Metadata,

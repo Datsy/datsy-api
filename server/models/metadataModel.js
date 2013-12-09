@@ -1,4 +1,5 @@
 var Sequelize = require('sequelize');
+/*
 var sequelize = new Sequelize(process.env.DATABASE, process.env.USER, process.env.PASS, {
   host: process.env.HOST,
   dialect: 'postgres'
@@ -9,7 +10,18 @@ var datastore = new Sequelize(process.env.DATASTORE, process.env.USER, process.e
   host: process.env.HOST,
   dialect: 'postgres'
 });
+*/
 
+var sequelize = new Sequelize('datsydata', 'masterofdata', 'gj1h23gnbfsjdhfg234234kjhskdfjhsdfKJHsdf234', {
+  host: '137.135.14.92',
+  dialect: 'postgres'
+});
+
+
+var datastore = new Sequelize('postgres', 'masterofdata', 'gj1h23gnbfsjdhfg234234kjhskdfjhsdfKJHsdf234', {
+  host: '137.135.14.92',
+  dialect: 'postgres'
+});
 
 /**
  *  Define the table schemas

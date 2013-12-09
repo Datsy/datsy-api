@@ -47,11 +47,11 @@ app.configure(function () {
   app.use(express.static(path.join(__dirname, 'client')));
 });
 
+
 // Initialize routing
 
 routes.frontend(app, passport, Models);
-
-// TODO: add api routes
+routes.api(app, passport, Models);
 
 
 // If in development, use Express error handler
