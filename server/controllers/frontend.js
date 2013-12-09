@@ -409,43 +409,6 @@ frontendControllers = {
     return filtered;
   },
 
-  'apiSearchTags2': function(req, res){
-    console.log("Retrieving all tags...");
-    var result = {
-      tag: [],
-      total: 0
-    };
-    Metadata.Tag.all(function(err, data){
-      if(err) {
-        res.send("500 Internal Server Error error:", err);
-      } else {
-        console.log("Successfully retrieved all tags.");
-        var i,j,tag, dataLeft = data.length, obj = {};
-
-        for(i = 0; i < data.length; i++) {
-          result.tag.push(data[i].label);
-          tag = new Metadata.Tag({id:data[i].id});
-          tag.dataset(function(err,dataset) {
-            for(j = 0; j < dataset.length; j ++) {
-              seenId = dataset[j].id;
-              if (!obj[seenId]) {
-                obj[seenId] = true;
-              }
-            }
-            dataLeft --;
-          });
-        }
-        var intervalID = setInterval(function(){
-          if (dataLeft === 0) {
-            result.total = Object.keys(obj).length;
-            res.send(result);
-            clearInterval(intervalID);
-          }
-        }, 100);
-      }
-    });
-  },
-
   'apiSearchTags': function(req, res){
     tagSearch.init({
       User: User,
