@@ -1,5 +1,5 @@
 var User, Dataset, Tag, Column,
-    models, schema,
+    models, schema, datastore,
     apiControllers;
 
 apiControllers = {
@@ -210,6 +210,135 @@ apiControllers = {
 
         }).error(function(err) { console.log('getMetadata: ', err); });
       }
+    },
+
+
+    /**
+     *
+     */
+
+    'getTable': function(req, res) {
+
+      var createResult = function(res, dataset, rows, selectedColumns) {
+
+        // TODO: Refactor the organization of this response so that it isn't
+        //       result.Result.tableMeta...
+
+        var result = {
+          'Result': {
+            'tableMeta': {},
+            'row': []
+          }
+        };
+
+        result.Result.tableMeta['table_name'] = dataset.table_name;
+        result.Result.tableMeta['url'] = dataset.url;
+        result.Result.tableMeta['title'] = dataset.title;
+        result.Result.tableMeta['description'] = dataset.description;
+        result.Result.tableMeta['author'] = dataset.author;
+        result.Result.tableMeta['view_count'] = dataset.view_count;
+        result.Result.tableMeta['star_count'] = dataset.star_count;
+        result.Result.tableMeta['row_count'] = dataset.row_count;
+        result.Result.tableMeta['col_count'] = dataset.col_count;
+        result.Result.tableMeta['user_id'] = dataset.user_id;
+        result.Result.tableMeta['columns'] = [];
+
+        for (var j = 0; j < dataset.columns.length; j++) {
+
+          var column = dataset.columns[j];
+
+          result.Result.tableMeta.columns.push({
+            name: column.name,
+            description: column.description,
+            data_type: column.datatype
+          });
+        }
+
+        for (var k = 0; k < rows.length; k++) {
+
+          var row = rows[k];
+          result.Result.row.push({});
+
+          for (var m = 0; m < dataset.columns.length; m++) {
+            var column = dataset.columns[m];
+
+            if (selectedColumns) {
+              if (selectedColumns.indexOf(column.name) !== -1) {
+                result.Result.row[k][column.name] = row[column.name];
+              }
+            } else {
+              result.Result.row[k][column.name] = row[column.name];
+            }
+          }
+        }
+
+        res.send(result);
+      };
+
+
+      if (!req.query.name) {
+
+        // No table name specified
+
+        res.send('Error: A table name must be provided');
+
+      } else if (req.query.name && !req.query.row && !req.query.column) {
+
+        Dataset.find({
+          where: { table_name: req.query.name },
+          include: [Column]
+        }).success(function(dataset) {
+          datastore.query('SELECT * FROM ' + req.query.name + 's ORDER BY "Date";')
+            .success(function(data) {
+              createResult(res, dataset, data);
+            });
+        });
+
+      } else if (req.query.name && req.query.row && !req.query.column) {
+
+        Dataset.find({
+          where: { table_name: req.query.name },
+          include: [Column]
+        }).success(function(dataset) {
+          datastore.query('SELECT * FROM ' + req.query.name + 's ORDER BY "Date" LIMIT ' + req.query.row + ';')
+            .success(function(data) {
+              createResult(res, dataset, data);
+            });
+        });
+
+      } else if (req.query.name && req.query.row && req.query.column) {
+
+        Dataset.find({
+          where: { table_name: req.query.name },
+          include: [Column]
+        }).success(function(dataset) {
+          datastore.query('SELECT * FROM ' + req.query.name + 's ORDER BY "Date" LIMIT ' + req.query.row + ';')
+            .success(function(data) {
+              if (typeof req.query.column === 'string') {
+                req.query.column = [ req.query.column ];
+              }
+
+              createResult(res, dataset, data, req.query.column);
+            });
+        });
+
+      } else if (req.query.name && !req.query.row && req.query.column) {
+
+        Dataset.find({
+          where: { table_name: req.query.name },
+          include: [Column]
+        }).success(function(dataset) {
+          datastore.query('SELECT * FROM ' + req.query.name + 's ORDER BY "Date";')
+            .success(function(data) {
+              if (typeof req.query.column === 'string') {
+                req.query.column = [ req.query.column ];
+              }
+
+              createResult(res, dataset, data, req.query.column);
+            });
+        });
+
+      }
     }
 };
 
@@ -220,6 +349,7 @@ module.exports = function(Models) {
   Column = Models.Column;
   models = Models;
   schema = Models.sequelize;
+  datastore = Models.datastore;
 
   return apiControllers;
 };

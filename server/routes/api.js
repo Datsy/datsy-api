@@ -6,4 +6,5 @@ module.exports = function(app, passport, Models){
 
   app.get('/search/tag', api.getTags);
   app.get('/search/meta', api.getMetadata);
+  app.get('/search/table', api.getTable);
 };
