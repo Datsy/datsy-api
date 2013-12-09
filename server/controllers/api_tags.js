@@ -64,7 +64,6 @@ var apiControllers = {
       if(err) {
         res.send("500 Internal Server Error error:", err);
       } else {
-        console.log("Successfully retrieved all tags.");
         if (data.length === 0) {
           res.send(result);
           return;
@@ -96,7 +95,6 @@ var apiControllers = {
         if(err) {
           res.send("500 Internal Server Error error:", err);
         } else {
-          console.log("Successfully retrieved tags", data);
           if (data.length === 0) {
             res.send(result);
             return;
@@ -118,18 +116,15 @@ var apiControllers = {
 
     controller.on('getMetaTableId',function(metaTablsIds){
       result.total = metaTablsIds.length;
-      console.log(metaTablsIds,'metaTablesIDs');
       apiControllers.getTagsWithMetaTableID(metaTablsIds,controller);
     });
 
     controller.on('getTagsWithMetaTableID',function(filteredTagsIDs){
-      console.log(filteredTagsIDs,'filteredTagsIDs');
       apiControllers.getTagNameWithID(filteredTagsIDs, controller);
       // res.send(result);
     });
 
     controller.on('getTagNameWithID',function(tagLabels){
-      console.log(tagLabels,'tagLabels');
       result.tag = tagLabels;
       res.send(result);
     });
@@ -143,7 +138,6 @@ var apiControllers = {
         if(err) {
           res.send("500 Internal Server Error error:", err);
         } else {
-          console.log("Successfully retrieved tags in the pool");
           for (var j = 0; j < data.length; j ++) {
             tagLabels.push(data[j].label);
           }
@@ -236,7 +230,6 @@ var apiControllers = {
       if(dataLeft === 0) {
         var filteredMetaIDs = [];
         for (var key in obj) {
-          console.log(obj,'obj');
           if (obj[key]) {filteredMetaIDs.push(key); }
         }
         controller.emit('getMetaTableId',filteredMetaIDs);
