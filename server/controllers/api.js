@@ -272,7 +272,11 @@ apiControllers = {
           }
         }
 
-        res.send(result);
+        task.updateAttributes({
+          view_count: dataset.view_count + 1
+        }).success(function() {
+          res.send(result);
+        });
       };
 
 
