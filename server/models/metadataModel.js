@@ -1,4 +1,5 @@
 var Sequelize = require('sequelize');
+/*
 var sequelize = new Sequelize(process.env.DATABASE, process.env.USER, process.env.PASS, {
   host: process.env.HOST,
   port: 5432,
@@ -13,23 +14,22 @@ var datastore = new Sequelize(process.env.DATASTORE, process.env.USER, process.e
   dialect: 'postgres',
   pool: { maxConnection: 3, maxIdleTime: 10 }
 });
-
-/*
-var sequelize = new Sequelize('datsydb', 'bhc', '123', {
-//  host: '137.135.14.92',
-  port: 5432,
-  dialect: 'postgres',
-  pool: { maxConnection: 3, maxIdleTime: 10 }
-});
-
-
-var datastore = new Sequelize('datastore', 'bhc', '123', {
-//  host: '137.135.14.92',
-  port: 5432,
-  dialect: 'postgres',
-  pool: { maxConnection: 3, maxIdleTime: 10 }
-});
 */
+
+var sequelize = new Sequelize('datsydata', 'masterofdata', 'gj1h23gnbfsjdhfg234234kjhskdfjhsdfKJHsdf234', {
+//  host: '137.135.14.92',
+  port: 5432,
+  dialect: 'postgres',
+  pool: { maxConnection: 3, maxIdleTime: 10 }
+});
+
+
+var datastore = new Sequelize('postgres', 'masterofdata', 'gj1h23gnbfsjdhfg234234kjhskdfjhsdfKJHsdf234', {
+//  host: '137.135.14.92',
+  port: 5432,
+  dialect: 'postgres',
+  pool: { maxConnection: 3, maxIdleTime: 10 }
+});
 
 /**
  *  Define the table schemas
