@@ -115,6 +115,15 @@ app.listen(port, function(){
     });
   };
 
+  var httpReqToPing4 = function(){
+    request('http://datsy-dev.azurewebsites.net/search/tag?tag=san+francisco', function (error, response, body) {
+      if (!error && response.statusCode == 200) {
+        console.log("azure database is alive:search/tag?tag=san+francisco"); // Print the google web page.
+      } else {
+        console.log('ERROR: azure database is DEAD!!!:search/tag?tag=san+francisco',response.statusCode);
+      }
+    });
+  };
   // var useDatabaseReqToPing = function(){
   //   var User = Models.User;
   //   User.findOne({where: {id: 1}},
@@ -127,6 +136,7 @@ app.listen(port, function(){
   setInterval(httpReqToPing, 10000);
   setInterval(httpReqToPing2, 20000);
   setInterval(httpReqToPing3, 20000);
+  setInterval(httpReqToPing4, 40000);
 
   //ping virtual macihne not working at this time
   //pingHost([config[app.get('env')].database.host]);
