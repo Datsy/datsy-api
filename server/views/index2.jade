@@ -1,0 +1,361 @@
+!!! 5
+html(lang='en')
+head
+    meta(charset='utf-8')
+    title Datsy
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    meta(name='description', content='')
+    meta(name='author', content='')
+    //
+       Styles
+    link(href='stylesheets/bootstrap.css', rel='stylesheet')
+    link(href='stylesheets/style.css', rel='stylesheet')
+    link#prettyphoto-css(rel='stylesheet', href='stylesheets/prettyPhoto.css', type='text/css', media='all')
+    link(href='stylesheets/fontello.css', type='text/css', rel='stylesheet')
+    //if lt IE 7
+      link(href='stylesheets/fontello-ie7.css', type='text/css', rel='stylesheet')
+    //
+       Google Web fonts 
+    link(href='http://fonts.googleapis.com/css?family=Quattrocento:400,700', rel='stylesheet', type='text/css')
+    link(href='http://fonts.googleapis.com/css?family=Patua+One', rel='stylesheet', type='text/css')
+    link(href='http://fonts.googleapis.com/css?family=Open+Sans', rel='stylesheet', type='text/css')
+    style
+      body {
+      padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+      }
+    link(href='stylesheets/bootstrap-responsive.css', rel='stylesheet')
+    //
+       Le HTML5 shim, for IE6-8 support of HTML5 elements 
+    //if lt IE 9
+      script(src='http://html5shim.googlecode.com/svn/trunk/html5.js')
+    //
+       Favicon 
+    link(rel='shortcut icon', href='imgs/favicon.ico')
+    //
+       JQuery 
+    script(type='text/javascript', src='javascripts/jquery.js')
+    script(src='/javascripts/underscore/underscore-1.5.2.min.js')
+    script(src='/javascripts/backbone/backbone-1.1.0.min.js')
+    //
+       Load ScrollTo 
+    script(type='text/javascript', src='javascripts/jquery.scrollTo-1.4.2-min.js')
+    //
+       Load LocalScroll 
+    script(type='text/javascript', src='javascripts/jquery.localscroll-1.2.7-min.js')
+    //
+       prettyPhoto Initialization 
+    script(type='text/javascript', charset='utf-8')
+      $(document).ready(function(){
+      $("a[rel^='prettyPhoto']").prettyPhoto();
+      });
+  body
+    //
+      ******************** NAVBAR ********************
+    .navbar-wrapper
+      .navbar.navbar-inverse.navbar-fixed-top
+        .navbar-inner
+          .container
+            //
+               Responsive Navbar Part 1: Button for triggering responsive navbar (not covered in tutorial). Include responsive CSS to utilize. 
+            a.btn.btn-navbar(data-toggle='collapse', data-target='.nav-collapse')
+              span.icon-bar
+              span.icon-bar
+              span.icon-bar
+            h1.brand
+              a(href='#top') Datsy
+            //
+               Responsive Navbar Part 2: Place all navbar contents you want collapsed withing .navbar-collapse.collapse. 
+            nav.pull-right.nav-collapse.collapse
+              ul#menu-main.nav
+                li
+                  a(href='https://github.com/Datsy/datsy-api/tree/master') API Documentation
+                - if (!isAuthenticated) {
+                li
+                  a(href='http://datsy-dev.azurewebsites.net/#/login') Login
+                - } else {
+                li
+                  a(href='/profile')
+                    strong
+                      =user.username
+                li
+                  a(href='/newdataset') Create Dataset
+                li
+                  a(href='/logout') Logout
+                - }
+                li
+                  a(title='features', href='#portfolio') Features
+                li
+                  a(title='team', href='#team') Team
+                li
+                  a(title='contact', href='#contact') Contact
+          //
+             /.container 
+        //
+           /.navbar-inner 
+      //
+         /.navbar 
+    //
+       /.navbar-wrapper 
+    #top
+    //
+       ******************** HeaderWrap ********************
+    #headerwrap
+      header.clearfix
+        h1
+          span 
+          | Manage Data Better
+          br
+          small Easily upload, share and explore data. 
+          small Track versions, usage and relationships with other datasets. Datsy makes sharing and exploring data easy.
+        .container
+          .row
+            .span12
+              h2 Signup for our Newsletter to be updated
+              input.cform-text(type='text', name='your-email', placeholder='you@yourmail.com', size='40', title='your email')
+              input.cform-submit(type='submit', value='Notify me')
+          .row
+            .span12
+              ul.icon
+                li
+                  a(href='#', target='_blank')
+                    i.icon-pinterest-circled
+                li
+                  a(href='#', target='_blank')
+                    i.icon-facebook-circled
+                li
+                  a(href='#', target='_blank')
+                    i.icon-twitter-circled
+                li
+                  a(href='#', target='_blank')
+                    i.icon-gplus-circled
+                li
+                  a(href='#', target='_blank')
+                    i.icon-skype-circled
+    //
+      ******************** Feature ********************
+    .scrollblock
+      section#feature
+        .container
+          .row
+            .span12
+              article
+                p We work to make web a beautiful place.
+                p We craft beautiful designs and convert them into
+                p fully functional and user-friendy web app.
+            //
+               ./span12 
+          //
+             .row 
+        //
+           ./container 
+    hr
+    //
+      ******************** Portfolio Section ********************
+    section#portfolio.single-page.scrollblock
+      .container
+        .align
+          i.icon-desktop-circled
+        h1#folio-headline Features
+        .row
+          div.span4
+            div.well(style='background-color: #0b333f')
+              h1.text-center
+                img(src='/imgs/databaselogo.png')
+              hr
+              p.lead(style='color: rgb(250,250,250)')
+                strong Setup your profile 
+              p(style='color: rgb(250,250,250)') Signup and access your profile in one quick step
+          div.span4
+            div.well(style='background-color: #0b333f')
+              h1.text-center
+                img(src='/imgs/cloudupload3.png')
+              hr
+              p.lead(style='color: rgb(250,250,250)')
+                strong Upload and share
+              p(style='color: rgb(250,250,250)') Load CSV or API data so others can access the dataset
+          div.span4
+           div.well(style='background-color: #0b333f')
+             h1.text-center
+               img(src='/imgs/searchglass.png')
+             hr
+             p.lead(style='color: rgb(250,250,250)')
+               strong Search datasets
+             p(style='color: rgb(250,250,250)') Find data based on tags, column names and descriptions
+        //
+           /.row 
+        .row
+        //
+           /.row 
+      //
+         /.container 
+    hr
+    //
+
+      ******************** Team Section ********************
+    section#team.single-page.scrollblock
+      .container
+        .align
+          i.icon-group-circled
+        h1 Meet the team
+        //
+           Five columns 
+        .row
+          .span2.offset1
+            .teamalign
+              img.team-thumb.img-circle(src='imgs/portrait-1.jpg', alt='')
+            h3 Woon Ket Wong
+          //
+             ./span2 
+          .span2
+            .teamalign
+              img.team-thumb.img-circle(src='imgs/portrait-2.jpg', alt='')
+            h3 Pieter de Jong
+          //
+             ./span2 
+          .span2
+            .teamalign
+              img.team-thumb.img-circle(src='imgs/portrait-3.jpg', alt='')
+            h3 Emma Yiqiao Tang
+          //
+             ./span2 
+          .span2
+            .teamalign
+              img.team-thumb.img-circle(src='imgs/portrait-4.jpg', alt='')
+            h3 Bradford Cook
+          //
+             ./span2 
+          .span2
+            .teamalign
+              img.team-thumb.img-circle(src='imgs/portrait-5.jpg', alt='')
+            h3 Shanshan Zhu
+          //
+             ./span2 
+        //
+           /.row 
+        .row
+          .span10.offset1
+            hr.featurette-divider
+            .featurette
+              h2.featurette-heading
+                | Want to know more?
+                span.muted | a little about us
+              p
+                h1
+                  small Brad Cook, Full Stack Software Engineer
+
+                    a(href='http://www.linkedin.com/pub/bradford-cook/11/a75/516')
+                      i.icon-linkedin-circled
+                    a(href='https://github.com/bradfordh/')
+                      i.icon-group-circled
+                    a(href='https://twitter.com/bradfordhc')
+                      i.icon-twitter-circled
+                
+                h1
+                  small Pieter de Jong, Full Stack Software Engineer
+                    a(href='http://www.linkedin.com/in/pieteradejong')
+                      i.icon-linkedin-circled
+                    a(href='https://github.com/pieteradejong')
+                      i.icon-group-circled
+                    a(href='https://twitter.com/pieteradejong')
+                      i.icon-twitter-circled
+                h1
+                  small Emma Yiqiao Tang, Full Stack Software Engineer
+                    a(href='http://www.linkedin.com/in/yiqiaotang')
+                      i.icon-linkedin-circled
+                    a(href='https://github.com/jokomo')
+                      i.icon-group-circled
+                    a(href='https://twitter.com/yiqiaotang')
+                      i.icon-twitter-circled
+                h1
+                  small Woon Ket Wong, Full Stack Software Engineer
+                    a(href='http://www.linkedin.com/pub/woon-ket-wong/2/996/8a5')
+                      i.icon-linkedin-circled
+                    a(href='https://github.com/woonketwong')
+                      i.icon-group-circled
+                    a(href='https://twitter.com/woonketwong')
+                      i.icon-twitter-circled
+                h1
+                  small Shanshan Zhu, Full Stack Software Engineer
+                    a(href='http://www.linkedin.com/pub/shanshan-zhu/34/886/53/')
+                      i.icon-linkedin-circled
+                    a(href='https://github.com/shanshanzhu')
+                      i.icon-group-circled
+                    a(href='https://shanshanzhu.wordpress.com')
+                      i.icon-tumblr-circled
+            //
+               /.featurette 
+            hr.featurette-divider
+          //
+             .span10 
+        //
+           /.row 
+      //
+         /.container 
+    //
+      ******************** Contact Section ********************
+    section#contact.single-page.scrollblock
+      .container
+        .align
+          i.icon-mail-2
+        h1 Contact us now!
+        .row
+          .span12
+            #theme-form.cform
+              form.cform-form(action='#', method='post')
+                .row
+                  .span6
+                    span.your-name
+                      input.cform-text(type='text', name='your-name', placeholder='Your Name', size='40', title='your name')
+                  .span6
+                    span.your-email
+                      input.cform-text(type='text', name='your-email', placeholder='Your Email', size='40', title='your email')
+                .row
+                  .span6
+                    span.company
+                      input.cform-text(type='text', name='company', placeholder='Your Company', size='40', title='company')
+                  .span6
+                    span.website
+                      input.cform-text(type='text', name='website', placeholder='Your Website', size='40', title='website')
+                .row
+                  .span12
+                    span.message
+                      textarea.cform-textarea(name='message', cols='40', rows='10', title='drop us a line.')
+                div
+                  input.cform-submit.pull-left(type='submit', value='Send message')
+                .cform-response-output
+          //
+             ./span12 
+        //
+           /.row 
+      //
+         /.container 
+    hr
+    .footer-wrapper
+      .container
+        footer
+          small © 2013 Datsy. All rights reserved.
+      //
+         ./container 
+    //
+       Loading the javaScript at the end of the page 
+    script(type='text/javascript', src='javascripts/bootstrap.js')
+    script(type='text/javascript', src='javascripts/jquery.prettyPhoto.js')
+    script(type='text/javascript', src='javascripts/site.js')
+    //
+    script(src='/views/loginView.js')
+    script(src='/views/signupView.js')
+    script(src='/views/verifyEmailView.js')
+    script(src='/views/aboutUsView.js')
+    script(src='/views/app.js')
+      ANALYTICS CODE
+    script(type='text/javascript')
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-29231762-1']);
+      _gaq.push(['_setDomainName', 'dzyngiri.com']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+

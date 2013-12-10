@@ -48,7 +48,7 @@ var indexController = {
       
       if (isloggedin){
       console.log('data sets is ', datasets);
-      res.render('index', {
+      res.render('index2', {
         datasets: datasets,
         // view_count: view_count,
         // apiKey: req.user.apikey,
@@ -58,7 +58,7 @@ var indexController = {
         }
       });
       } else {
-          res.render('index', {
+          res.render('index2', {
             datasets: datasets,
             isAuthenticated: isloggedin,
           });

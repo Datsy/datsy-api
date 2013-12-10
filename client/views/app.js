@@ -20,7 +20,11 @@ var Datsy = Backbone.View.extend({
   },
 
   userLogin: function(className){
+    console.log("In user login");
     this.pageView = new LoginView();
+    $('body').empty();
+    var e = $("<div class='container'><div class='section1'></div></div>");
+    $('body').append(e);
     $('.container .section1').html(this.pageView.render().el);
   },
 

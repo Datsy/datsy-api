@@ -133,10 +133,10 @@ app.listen(port, function(){
   //   });
   // };
 
-  setInterval(httpReqToPing, 10000);
-  setInterval(httpReqToPing2, 20000);
-  setInterval(httpReqToPing3, 20000);
-  setInterval(httpReqToPing4, 40000);
+  // setInterval(httpReqToPing, 10000);
+  // setInterval(httpReqToPing2, 20000);
+  // setInterval(httpReqToPing3, 20000);
+  // setInterval(httpReqToPing4, 40000);
 
   //ping virtual macihne not working at this time
   //pingHost([config[app.get('env')].database.host]);

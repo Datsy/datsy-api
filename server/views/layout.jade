@@ -12,9 +12,9 @@ html(lang='en')
     link(href='/stylesheets/bootstrap-2.3.2.css', rel='stylesheet')
     link(href='/stylesheets/style.css', rel='stylesheet')
   body
-    nav.navbar.navbar-default.navbar-static-top
+    nav.navbar-wrapper.navbar.navbar-inverse.navbar-fixed-top
       div.navbar-inner
-        a.brand(href='/' id='datsy') Datsy
+        a.brand.clearfix(href='/' id='datsy') Datsy
         ul.nav.navbar-nav(style='float:right')
           li
             input.form-control(type='text', placeholder='Search for a dataset', style='margin: 5px')
