@@ -90,8 +90,9 @@ p select {
   border-radius: 0.2em;
 
 }
-.linkedInLogo,.gitHubLogo,.twitterLogo,.wordpressLogo{
-  margin-top:-10%
+h4.about-icon-thumb {
+  margin-top:-10%;
+  text-align:center
 }
 .gitHubLogo {
   max-width: 19%;
@@ -108,12 +109,12 @@ p select {
 
 .teamalign{
   text-align:center;
-  margin-right: 10%;
+  /*margin-right: 10%;*/
 }
 
 .teamalign-title {
   text-align: center;
-  /*margin-bottom: 40%;*/
+  margin-top: -3%;
 }
 
 .team-thumb {
@@ -122,5 +123,6 @@ p select {
 }
 
 h3.teamText{
-  font-size: 0.4em;
+  text-align:center;
+  font-size: 0.4em
 }
