@@ -111,6 +111,11 @@ p select {
   margin-right: 10%;
 }
 
+.teamalign-title {
+  text-align: center;
+  /*margin-bottom: 40%;*/
+}
+
 .team-thumb {
   margin-top: 20%;
   text-align:center;
