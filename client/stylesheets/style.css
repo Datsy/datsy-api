@@ -85,20 +85,37 @@ p select {
 }
 
 .linkedInLogo{
-  max-width: 5%;
+  max-width: 15%;
   margin-left: 3%;
   border-radius: 0.2em;
 
 }
+.linkedInLogo,.gitHubLogo,.twitterLogo,.wordpressLogo{
+  margin-top:-10%
+}
 .gitHubLogo {
-  max-width: 7%;
-  margin-left: 2%;
+  max-width: 19%;
+  margin-left: 5%;
 }
 .twitterLogo {
-  max-width: 8%;
+  max-width: 25%;
   margin-left: 0.5%;  
 }
 
 .wordpressLogo{
-  max-width: 8%;
+  max-width: 20%;
+}
+
+.teamalign{
+  text-align:center;
+  margin-right: 10%;
+}
+
+.team-thumb {
+  margin-top: 20%;
+  text-align:center;
+}
+
+h3.teamText{
+  font-size: 0.4em;
 }
