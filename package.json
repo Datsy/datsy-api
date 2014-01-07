@@ -13,7 +13,7 @@
     "pg": "~2.8.3",
     "node-fs": "~0.1.7",
     "csv": "~0.3.6",
-    "jade": "*",
+    "jade": "0.35.0",
     "passport": "*",
     "passport-local": "*",
     "connect-flash": "*",
