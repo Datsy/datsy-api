@@ -34,6 +34,7 @@ module.exports = function(app, passport, Models, schema){
   app.get('/apiDoc', frontend.apiDoc);
   app.get('/login', frontend.login);
   app.get('/newdataset', middleware.auth, frontend.newdataset);
+  app.post('/uploadFile', middleware.auth, frontend.uploadFile);
   app.post('/apiDoc', middleware.auth, frontend.apiDoc);
   app.post('/saveDataset', middleware.auth, frontend.saveDataset);
   app.get('/about', frontend.about);
