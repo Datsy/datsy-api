@@ -9,55 +9,35 @@ block content
        small  Easily upload, share and explore data. Track versions, usage and relationships with other datasets. Datsy makes sharing and exploring data easy.
     p
      a.btn.btn-primary.btn-large(href='#/signup') Signup
-  div.row
-    div.span4
-      div.well
-        h1.text-center
-          img(src='/imgs/databaselogo.png')
-        hr
-        p.lead
-          strong Setup your profile 
-        p Signup and access your profile in one quick step
-    div.span4
-     div.well
-       h1.text-center
-       a.blah
-        img(src='/imgs/cloudupload3.png')
-       hr
-       p.lead
-         strong Upload and share
-       p Load CSV or API data so others can access the dataset
-    div.span4
-     div.well
-       h1.text-center
-         img(src='/imgs/searchglass.png')
-       hr
-       p.lead
-         strong Search datasets
-       p Find data based on tags, column names and descriptions
 
-    div.user-table
-      table.table.table-hover
-        legend(style='border: none') &nbsp;Recently Created Datasets
-          tr
-            th Title
-            th Description
-            th Rows
-            th Columns
-            th(style='width: 150px') Created At
-            th Views
-            - var userTableMetaData = datasets || [];
-            - userTableMetaData.sort(function(a,b) {
-            -    return b.created_at - a.created_at;
-            - });
-            - for (var i = 0; i < 5; i++){
-            tr
-              td= userTableMetaData[i].title
-              td= userTableMetaData[i].description
-              td= userTableMetaData[i].row_count
-              td= userTableMetaData[i].col_count
-              td= userTableMetaData[i].created_at.toUTCString()
-              td= +(userTableMetaData[i].view_count)
-            -};
-
+    section#portfolio.single-page.scrollblock
+      .container
+        .align
+          i.icon-desktop-circled
+        h1#folio-headline Features
+        .row
+          div.span4
+            div.well(style='background-color: #0b333f')
+              h1.text-center
+                img(src='/imgs/databaselogo.png')
+              hr
+              p.lead(style='color: rgb(250,250,250)')
+                strong Setup your profile 
+              p(style='color: rgb(250,250,250)') Signup and access your profile in one quick step
+          div.span4
+            div.well(style='background-color: #0b333f')
+              h1.text-center
+                img(src='/imgs/cloudupload3.png')
+              hr
+              p.lead(style='color: rgb(250,250,250)')
+                strong Upload and share
+              p(style='color: rgb(250,250,250)') Load CSV or API data so others can access the dataset
+          div.span4
+           div.well(style='background-color: #0b333f')
+             h1.text-center
+               img(src='/imgs/searchglass.png')
+             hr
+             p.lead(style='color: rgb(250,250,250)')
+               strong Search datasets
+             p(style='color: rgb(250,250,250)') Find data based on tags, column names and descriptions
 
